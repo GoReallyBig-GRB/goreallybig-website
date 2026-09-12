@@ -1,0 +1,16 @@
+GoReallyBig Landing Page - Final Image Reliability Cleanup
+
+- Kept the existing HTML/CSS/JS architecture.
+- Removed WebP source selection from the landing-page image markup so supplied PNG assets are the deterministic image source.
+- Made the Promise and Problem production visuals eager-loaded to avoid mobile lazy-load timing failures.
+- Kept existing image dimensions, layout, styling, CTA behaviour, forms, copy, and interactions unchanged.
+- No React/JSX conversion was made.
+
+FINAL PRODUCTION READINESS / SECURITY PASS
+- Executable JavaScript moved from index.html to assets/app.js.
+- Removed remaining innerHTML construction from contact-form success state.
+- Added Cloudflare Pages _headers security policy.
+- Hardened target=_blank links with noopener noreferrer.
+- Confirmed local asset references resolve.
+- Confirmed no eval/new Function/document.write/fetch/XMLHttpRequest patterns.
+- Added SECURITY_AUDIT.md documenting scope, controls, and remaining launch checks.
