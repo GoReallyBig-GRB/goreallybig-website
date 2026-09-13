@@ -1,0 +1,326 @@
+name: Validate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate site and changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ------------------------------------------------------------------
+      # SECURITY POLICY
+      #
+      # This workflow validates pull requests targeting main.
+      #
+      # .github/workflows/** changes are ALWAYS rejected here.
+      #
+      # There is intentionally no:
+      #   - branch-name bypass
+      #   - author-name bypass
+      #   - label bypass
+      #   - workflow-dispatch bypass
+      #   - input-based bootstrap exception
+      #
+      # Workflow installation/maintenance is an administrative operation
+      # performed outside this permanent validator.
+      #
+      # Never use an author-controlled string as an authorization
+      # mechanism.
+      # ------------------------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Inventory changed files
+        id: changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Use the exact SHAs from the pull_request event.
+          # Do not compare against a moving origin/main or the synthetic
+          # pull_request merge ref.
+
+          git diff --name-status \
+            "${BASE_SHA}...${HEAD_SHA}" > /tmp/changed-files.txt
+
+          echo "Base:  $BASE_SHA"
+          echo "Head:  $HEAD_SHA"
+          echo
+          echo "Changed files:"
+          cat /tmp/changed-files.txt
+
+          {
+            echo "count=$(wc -l < /tmp/changed-files.txt)"
+            echo "base_sha=${BASE_SHA}"
+            echo "head_sha=${HEAD_SHA}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Reject workflow changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          workflow_changes="$(
+            git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
+            grep -E '^\.github/workflows/' || true
+          )"
+
+          if [ -n "$workflow_changes" ]; then
+            echo "ERROR: Changes to .github/workflows/** are not allowed through this validator."
+            echo
+            echo "$workflow_changes"
+            echo
+            echo "Workflow changes require the administrative bootstrap/maintenance path."
+            exit 1
+          fi
+
+          echo "No .github/workflows/** files changed."
+
+      - name: Enforce change-size limit
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          stats="$(git diff --numstat "${BASE_SHA}...${HEAD_SHA}")"
+
+          added="$(awk '{ added += $1 } END { print added + 0 }' <<< "$stats")"
+          deleted="$(awk '{ deleted += $2 } END { print deleted + 0 }' <<< "$stats")"
+
+          echo "Added lines:   $added"
+          echo "Deleted lines: $deleted"
+
+          max=1000
+
+          if [ "$added" -gt "$max" ] || [ "$deleted" -gt "$max" ]; then
+            echo "ERROR: Pull request exceeds the maximum allowed change size of $max added or deleted lines."
+            exit 1
+          fi
+
+          echo "Change-size limit check passed."
+
+      - name: Verify required repository structure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f index.html
+
+          echo "Required repository structure is present."
+
+      - name: Check basic HTML structure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -qi '<!doctype html' index.html
+          grep -qi '<html' index.html
+          grep -qi '<head' index.html
+          grep -qi '<body' index.html
+
+          echo "Basic HTML structure checks passed."
+
+      - name: Scan for dangerous JavaScript constructs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if grep -RInE \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --include='*.html' \
+            --include='*.js' \
+            --include='*.mjs' \
+            '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\(|document\.write[[:space:]]*\()' \
+            .; then
+
+            echo
+            echo "ERROR: Dangerous JavaScript construct detected."
+            exit 1
+          fi
+
+          echo "Dangerous JavaScript construct scan passed."
+
+      - name: Reject executable external scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if grep -RInE \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --include='*.html' \
+            '<script[^>]+src=["'\'']https?://' \
+            .; then
+
+            echo
+            echo "ERROR: External executable JavaScript detected."
+            echo "Use same-origin/local JavaScript assets instead."
+            exit 1
+          fi
+
+          echo "External executable script check passed."
+
+      - name: Check local asset references
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          root = Path(".").resolve()
+
+          files = [
+              p for p in root.rglob("*")
+              if p.is_file()
+              and ".git" not in p.parts
+              and "node_modules" not in p.parts
+              and p.suffix.lower() in {".html", ".css", ".js", ".mjs"}
+          ]
+
+          pattern = re.compile(
+              r'''(?:src|href|url)\s*=\s*["']([^"']+)["']'''
+              r'''|url\(\s*["']?([^)"']+)["']?\s*\)''',
+              re.IGNORECASE,
+          )
+
+          ignored_prefixes = (
+              "#",
+              "data:",
+              "mailto:",
+              "tel:",
+              "javascript:",
+              "http://",
+              "https://",
+              "//",
+          )
+
+          failures = []
+
+          for file in files:
+              try:
+                  text = file.read_text(encoding="utf-8")
+              except UnicodeDecodeError:
+                  continue
+
+              for match in pattern.finditer(text):
+                  reference = match.group(1) or match.group(2)
+
+                  if not reference:
+                      continue
+
+                  reference = reference.strip()
+
+                  if reference.startswith(ignored_prefixes):
+                      continue
+
+                  reference = reference.split("#", 1)[0].split("?", 1)[0]
+
+                  if not reference:
+                      continue
+
+                  if reference.startswith("/"):
+                      target = root / reference.lstrip("/")
+                  else:
+                      target = file.parent / reference
+
+                  if not target.exists():
+                      failures.append(
+                          f"{file.relative_to(root)} -> {reference}"
+                      )
+
+          if failures:
+              print("ERROR: Broken local asset references detected:")
+              for failure in failures:
+                  print(f"  {failure}")
+              sys.exit(1)
+
+          print("Local asset reference check passed.")
+          PY
+
+      - name: Secret scan
+        uses: trufflesecurity/trufflehog@v3.97.1
+        with:
+          path: ./
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+          extra_args: --results=verified,unknown
+          # Do NOT add --fail here.
+          # The TruffleHog action appends --fail internally.
+
+      - name: Install HTML validator
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 -m pip install --disable-pip-version-check html5validator
+
+      - name: Validate HTML, CSS, and SVG
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          html5validator \
+            --root . \
+            --also-check-css \
+            --also-check-svg
+
+      - name: Check Git whitespace errors
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git diff --check "${BASE_SHA}...${HEAD_SHA}"
+
+          echo "Git whitespace check passed."
+
+      - name: Write validation summary
+        if: always()
+        env:
+          CHANGED_COUNT: ${{ steps.changes.outputs.count }}
+        shell: bash
+        run: |
+          {
+            echo "## GoReallyBig validation"
+            echo
+            echo "- Files changed: ${CHANGED_COUNT}"
+            echo "- Workflow changes: blocked by policy"
+            echo "- Change-size limit: 1000 added/deleted lines"
+            echo "- Required repository structure: checked"
+            echo "- HTML structure: checked"
+            echo "- Dangerous JavaScript constructs: checked"
+            echo "- External executable scripts: checked"
+            echo "- Local asset references: checked"
+            echo "- TruffleHog OSS secret scan: checked"
+            echo "- HTML/CSS/SVG validation: checked"
+            echo "- Git whitespace errors: checked"
+          } >> "$GITHUB_STEP_SUMMARY"
