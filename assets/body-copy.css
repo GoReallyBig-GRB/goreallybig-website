@@ -1,6 +1,7 @@
 /* GoReallyBig body-copy readability refinement. Headings, navigation and buttons are intentionally excluded. */
 body{font-size:16px}
 .lead{font-size:19px}
+.lead span{color:var(--lime)}
 .problem-copy{font-size:19px}
 .q span,.service-card p,.feature p,.addon span:not(.item-icon),.journey-step p,.principle p,.triangle span,.process-card p,.showcase-copy,.makeover p,.offer-head>p,.offer-header p,.essential span:not(.item-icon),.growth-item span:not(.item-icon),.faq-a,.contact .lead,.contact-detail span,.form-note,.field small,.footer-brand p,.footer-contact-link strong{font-size:15px;line-height:1.65}
 .service-card p,.feature p,.addon span:not(.item-icon),.journey-step p,.principle p,.triangle span,.process-card p,.showcase-copy,.makeover p,.essential span:not(.item-icon),.growth-item span:not(.item-icon),.faq-a,.contact-detail span,.form-note,.field small{font-size:15px}
