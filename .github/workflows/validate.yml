@@ -1,3 +1,4 @@
+# Durable validation: keep checks focused on genuine regressions, not design choices.
 name: Validate
 
 on:
@@ -32,15 +33,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           git diff --name-status "${BASE_SHA}...${HEAD_SHA}" > /tmp/changed-files.txt
-
           echo "Base: $BASE_SHA"
           echo "Head: $HEAD_SHA"
           echo
           echo "Changed files:"
           cat /tmp/changed-files.txt
-
           echo "count=$(wc -l < /tmp/changed-files.txt)" >> "$GITHUB_OUTPUT"
 
       - name: Verify required repository structure
@@ -64,7 +62,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           if grep -RInE \
             --exclude-dir=.git \
             --exclude-dir=node_modules \
@@ -77,14 +74,12 @@ jobs:
             echo "ERROR: Dangerous JavaScript construct detected."
             exit 1
           fi
-
           echo "Dangerous JavaScript construct scan passed."
 
       - name: Reject executable external scripts
         shell: bash
         run: |
           set -euo pipefail
-
           if grep -RInE \
             --exclude-dir=.git \
             --exclude-dir=node_modules \
@@ -96,14 +91,12 @@ jobs:
             echo "Use same-origin/local JavaScript assets instead."
             exit 1
           fi
-
           echo "External executable script check passed."
 
       - name: Check local asset references
         shell: bash
         run: |
           set -euo pipefail
-
           python3 <<'PY'
           from pathlib import Path
           import re
@@ -117,7 +110,6 @@ jobs:
               and "node_modules" not in p.parts
               and p.suffix.lower() in {".html", ".css"}
           ]
-
           html_pattern = re.compile(r'''(?:src|href)\s*=\s*["']([^"']+)["']''', re.IGNORECASE)
           css_pattern = re.compile(r'''url\(\s*["']?([^\)"']+)["']?\s*\)''', re.IGNORECASE)
           ignored_prefixes = ("#", "data:", "mailto:", "tel:", "javascript:", "http://", "https://", "//")
@@ -128,18 +120,14 @@ jobs:
                   text = file.read_text(encoding="utf-8")
               except UnicodeDecodeError:
                   continue
-
               pattern = html_pattern if file.suffix.lower() == ".html" else css_pattern
-
               for match in pattern.finditer(text):
                   reference = match.group(1).strip()
                   if reference.startswith(ignored_prefixes):
                       continue
-
                   reference = reference.split("#", 1)[0].split("?", 1)[0]
                   if not reference:
                       continue
-
                   target = root / reference.lstrip("/") if reference.startswith("/") else file.parent / reference
                   if not target.exists():
                       failures.append(f"{file.relative_to(root)} -> {reference}")
@@ -149,7 +137,6 @@ jobs:
               for failure in failures:
                   print(f"  {failure}")
               sys.exit(1)
-
           print("Local asset reference check passed.")
           PY
 
@@ -168,17 +155,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           mapfile -t files < <(
             git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
             grep -Ei '\.html$' || true
           )
-
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No changed HTML files to validate."
             exit 0
           fi
-
           cat > /tmp/htmlvalidate.json <<'JSON'
           {
             "extends": [],
@@ -190,10 +174,8 @@ jobs:
             }
           }
           JSON
-
           printf 'Validating changed HTML files:\n'
           printf '  %s\n' "${files[@]}"
-
           npx --yes html-validate@11 --config /tmp/htmlvalidate.json "${files[@]}"
 
       - name: Validate changed CSS with modern CSS parser
@@ -203,24 +185,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           mapfile -t files < <(
             git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
             grep -Ei '\.css$' || true
           )
-
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No changed CSS files to validate."
             exit 0
           fi
-
           cat > /tmp/stylelint.config.mjs <<'JS'
           export default { rules: {} };
           JS
-
           printf 'Parsing changed CSS files:\n'
           printf '  %s\n' "${files[@]}"
-
           npx --yes stylelint@17 --config /tmp/stylelint.config.mjs "${files[@]}"
 
       - name: Validate changed SVG syntax
@@ -230,34 +207,28 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           mapfile -t files < <(
             git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
             grep -Ei '\.svg$' || true
           )
-
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No changed SVG files to validate."
             exit 0
           fi
-
           python3 - "${files[@]}" <<'PY'
           import sys
           import xml.etree.ElementTree as ET
-
           failures = []
           for filename in sys.argv[1:]:
               try:
                   ET.parse(filename)
               except ET.ParseError as exc:
                   failures.append(f"{filename}: {exc}")
-
           if failures:
               print("ERROR: Invalid SVG/XML syntax detected:")
               for failure in failures:
                   print(f"  {failure}")
               sys.exit(1)
-
           print("Changed SVG syntax checks passed.")
           PY
 
