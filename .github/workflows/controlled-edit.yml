@@ -4,131 +4,448 @@ on:
   workflow_dispatch:
     inputs:
       target_file:
-        description: Existing repository file to edit
+        description: "Repository-relative file to edit"
         required: true
         type: string
+
       expected_text:
-        description: Exact text expected to occur once
+        description: "Exact text that must occur exactly once"
         required: true
         type: string
+
       replacement_text:
-        description: Exact replacement text
+        description: "Replacement text"
         required: true
         type: string
 
 permissions:
   contents: write
 
+concurrency:
+  group: goreallybig-controlled-edit
+  cancel-in-progress: false
+
 jobs:
   controlled-edit:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Check out main
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - name: Apply guarded exact-match edit
+      - name: Validate inputs and target path
+        id: validate
         env:
           TARGET_FILE: ${{ inputs.target_file }}
           EXPECTED_TEXT: ${{ inputs.expected_text }}
           REPLACEMENT_TEXT: ${{ inputs.replacement_text }}
+        shell: bash
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import os
+          set -euo pipefail
 
-          target = Path(os.environ["TARGET_FILE"])
+          if [ -z "$TARGET_FILE" ]; then
+            echo "Blocked: target_file is empty."
+            exit 1
+          fi
+
+          if [ -z "$EXPECTED_TEXT" ]; then
+            echo "Blocked: expected_text is empty."
+            exit 1
+          fi
+
+          if [[ "$TARGET_FILE" = /* ]]; then
+            echo "Blocked: absolute paths are not allowed."
+            exit 1
+          fi
+
+          if [[ "$TARGET_FILE" == *".."* ]]; then
+            echo "Blocked: parent-directory traversal is not allowed."
+            exit 1
+          fi
+
+          if [[ "$TARGET_FILE" == ".git"/* ||
+                "$TARGET_FILE" == ".github/workflows"/* ||
+                "$TARGET_FILE" == ".github/workflows" ]]; then
+            echo "Blocked: protected repository paths cannot be edited."
+            exit 1
+          fi
+
+          if [ "${#EXPECTED_TEXT}" -gt 50000 ]; then
+            echo "Blocked: expected_text exceeds 50,000 characters."
+            exit 1
+          fi
+
+          if [ "${#REPLACEMENT_TEXT}" -gt 50000 ]; then
+            echo "Blocked: replacement_text exceeds 50,000 characters."
+            exit 1
+          fi
+
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          target = os.environ["TARGET_FILE"]
+          repo_root = Path.cwd().resolve()
+
+          resolved_target = (repo_root / target).resolve()
+
+          try:
+              resolved_target.relative_to(repo_root)
+          except ValueError:
+              raise SystemExit(
+                  "Blocked: target path resolves outside repository root."
+              )
+
+          current = repo_root
+
+          for part in Path(target).parts[:-1]:
+              current = current / part
+
+              if current.is_symlink():
+                  raise SystemExit(
+                      f"Blocked: symlink detected in target path: {current}"
+                  )
+
+          if resolved_target.is_symlink():
+              raise SystemExit(
+                  "Blocked: target file may not be a symlink."
+              )
+
+          if not resolved_target.exists():
+              raise SystemExit(
+                  f"Blocked: target file does not exist: {target}"
+              )
+
+          if not resolved_target.is_file():
+              raise SystemExit(
+                  f"Blocked: target is not a regular file: {target}"
+              )
+
+          print(f"Target: {target}")
+          print(f"Resolved target: {resolved_target}")
+          PY
+
+      - name: Perform exact controlled edit
+        id: edit
+        env:
+          TARGET_FILE: ${{ inputs.target_file }}
+          EXPECTED_TEXT: ${{ inputs.expected_text }}
+          REPLACEMENT_TEXT: ${{ inputs.replacement_text }}
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+
+          target = os.environ["TARGET_FILE"]
           expected = os.environ["EXPECTED_TEXT"]
           replacement = os.environ["REPLACEMENT_TEXT"]
 
-          if target.is_absolute() or ".." in target.parts:
-              raise SystemExit("Blocked: invalid target path.")
+          repo_root = Path.cwd().resolve()
+          resolved_target = (repo_root / target).resolve()
 
-          if target.parts and target.parts[0] == ".git":
-              raise SystemExit("Blocked: .git paths are not editable.")
-
-          if str(target).startswith(".github/workflows/"):
+          try:
+              resolved_target.relative_to(repo_root)
+          except ValueError:
               raise SystemExit(
-                  "Blocked: workflow files cannot be edited by this workflow."
+                  "Blocked: target resolves outside repository root."
               )
 
-          if not target.is_file():
-              raise SystemExit("Blocked: target file does not exist.")
-
-          if len(expected) > 50000 or len(replacement) > 50000:
-              raise SystemExit(
-                  "Blocked: edit payload exceeds 50,000 characters."
-              )
-
-          text = target.read_text(encoding="utf-8")
-          text = text.replace("\r\n", "\n").replace("\r", "\n")
-          expected = expected.replace("\r\n", "\n").replace("\r", "\n")
-          replacement = replacement.replace("\r\n", "\n").replace("\r", "\n")
-
-          count = text.count(expected)
-
-          if count != 1:
-              raise SystemExit(
-                  f"Blocked: expected text occurs {count} times; "
-                  "exactly once required."
-              )
-
-          updated = text.replace(expected, replacement, 1)
-
-          delta = (
-              len(updated.encode("utf-8"))
-              - len(text.encode("utf-8"))
-          )
-
-          if abs(delta) > 50 * 1024:
-              raise SystemExit(
-                  "Blocked: byte-size change exceeds 50 KB."
-              )
-
-          target.write_text(
-              updated,
+          with resolved_target.open(
+              "r",
               encoding="utf-8",
-              newline="\n"
+              newline=""
+          ) as fh:
+              raw = fh.read()
+
+          if "\x00" in raw:
+              raise SystemExit(
+                  "Blocked: binary/NUL-containing files are not supported."
+              )
+
+          if "\x00" in expected or "\x00" in replacement:
+              raise SystemExit(
+                  "Blocked: NUL characters are not allowed in edit payloads."
+              )
+
+          if len(expected) > 50000:
+              raise SystemExit(
+                  "Blocked: expected text exceeds 50,000 characters."
+              )
+
+          if len(replacement) > 50000:
+              raise SystemExit(
+                  "Blocked: replacement text exceeds 50,000 characters."
+              )
+
+          if expected == "":
+              raise SystemExit(
+                  "Blocked: expected text must not be empty."
+              )
+
+          # Normalize only line endings for matching.
+          normalized = raw.replace("\r\n", "\n").replace("\r", "\n")
+          normalized_expected = (
+              expected.replace("\r\n", "\n").replace("\r", "\n")
           )
 
-          print(
-              f"Controlled edit applied to {target}; "
-              f"byte delta={delta}."
+          occurrences = normalized.count(normalized_expected)
+
+          if occurrences == 0:
+              raise SystemExit(
+                  "Blocked: expected text was not found."
+              )
+
+          if occurrences != 1:
+              raise SystemExit(
+                  f"Blocked: expected text occurs {occurrences} times; "
+                  "exactly one occurrence is required."
+              )
+
+          # Locate the normalized match.
+          normalized_offset = normalized.find(normalized_expected)
+
+          # Map the normalized offset back to the original raw text.
+          raw_start = 0
+          normalized_index = 0
+
+          while normalized_index < normalized_offset:
+              if raw[raw_start:raw_start + 2] == "\r\n":
+                  raw_start += 2
+              else:
+                  raw_start += 1
+
+              normalized_index += 1
+
+          raw_end = raw_start
+          normalized_consumed = 0
+
+          while normalized_consumed < len(normalized_expected):
+              if raw[raw_end:raw_end + 2] == "\r\n":
+                  raw_end += 2
+              else:
+                  raw_end += 1
+
+              normalized_consumed += 1
+
+          original_segment = raw[raw_start:raw_end]
+
+          # Determine the file's dominant newline style from the
+          # entire file, not from the matched segment.
+          crlf_count = raw.count("\r\n")
+          lf_count = raw.count("\n") - crlf_count
+
+          if crlf_count > lf_count:
+              replacement_for_file = (
+                  replacement
+                  .replace("\r\n", "\n")
+                  .replace("\r", "\n")
+                  .replace("\n", "\r\n")
+              )
+          else:
+              replacement_for_file = (
+                  replacement
+                  .replace("\r\n", "\n")
+                  .replace("\r", "\n")
+              )
+
+          new_raw = (
+              raw[:raw_start]
+              + replacement_for_file
+              + raw[raw_end:]
           )
 
-      - name: Verify only target file changed
+          if new_raw == raw:
+              raise SystemExit(
+                  "Blocked: replacement would make no change."
+              )
+
+          byte_delta = (
+              len(replacement_for_file.encode("utf-8"))
+              - len(original_segment.encode("utf-8"))
+          )
+
+          if abs(byte_delta) > 50000:
+              raise SystemExit(
+                  "Blocked: replacement changes file size by more "
+                  "than 50,000 bytes."
+              )
+
+          # Write without automatic newline translation.
+          with resolved_target.open(
+              "w",
+              encoding="utf-8",
+              newline=""
+          ) as fh:
+              fh.write(new_raw)
+
+          with resolved_target.open("rb") as fh:
+              written_bytes = fh.read()
+
+          if b"\x00" in written_bytes:
+              raise SystemExit(
+                  "Blocked: resulting file contains NUL bytes."
+              )
+
+          print(f"Occurrences replaced: {occurrences}")
+          print(f"Byte delta: {byte_delta}")
+
+          output_file = os.environ["GITHUB_OUTPUT"]
+
+          with open(output_file, "a", encoding="utf-8") as out:
+              out.write(f"occurrences={occurrences}\n")
+              out.write(f"bytes_delta={byte_delta}\n")
+
+      - name: Verify only the target file changed
         env:
           TARGET_FILE: ${{ inputs.target_file }}
+        shell: bash
         run: |
+          set -euo pipefail
+
+          changed_files="$(git status --short)"
+
+          echo "$changed_files"
+
+          if [ -z "$changed_files" ]; then
+            echo "Blocked: no changes were produced."
+            exit 1
+          fi
+
+          unexpected="$(
+            git diff --name-only |
+            grep -v -x -F -- "$TARGET_FILE" || true
+          )"
+
+          if [ -n "$unexpected" ]; then
+            echo "Blocked: unexpected files changed:"
+            echo "$unexpected"
+            exit 1
+          fi
+
+          changed_count="$(git status --short | wc -l | tr -d ' ')"
+
+          if [ "$changed_count" -ne 1 ]; then
+            echo "Blocked: more than one file changed."
+            exit 1
+          fi
+
+      - name: Stage only target file
+        env:
+          TARGET_FILE: ${{ inputs.target_file }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
           git add -- "$TARGET_FILE"
 
-          changed="$(git diff --cached --name-only)"
+          staged_files="$(git diff --cached --name-only)"
 
-          test "$changed" = "$TARGET_FILE" || {
-            echo "Blocked: unexpected files changed:"
-            printf '%s\n' "$changed"
+          echo "$staged_files"
+
+          if [ "$staged_files" != "$TARGET_FILE" ]; then
+            echo "Blocked: staged content includes an unexpected file."
             exit 1
-          }
+          fi
+
+      - name: Check staged whitespace
+        shell: bash
+        run: |
+          set -euo pipefail
 
           git diff --cached --check
 
-      - name: Create isolated branch and commit
+      - name: Write audit summary
+        env:
+          TARGET_FILE: ${{ inputs.target_file }}
+          EDIT_OCCURRENCES: ${{ steps.edit.outputs.occurrences }}
+          EDIT_BYTES_DELTA: ${{ steps.edit.outputs.bytes_delta }}
+        shell: bash
         run: |
-          branch="grb/controlled-edit-${GITHUB_RUN_ID}"
+          set -euo pipefail
 
-          git switch -c "$branch"
+          {
+            echo "## GoReallyBig Controlled Edit"
+            echo
+            echo "- Target: \`$TARGET_FILE\`"
+            echo "- Occurrences replaced: $EDIT_OCCURRENCES"
+            echo "- Byte delta: $EDIT_BYTES_DELTA"
+            echo "- Destination: isolated branch"
+            echo "- Main branch modified: no"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create isolated branch
+        id: branch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BRANCH="grb/controlled-edit-${GITHUB_RUN_ID}"
+
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Blocked: generated branch already exists."
+            exit 1
+          fi
+
+          git switch -c "$BRANCH"
+
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Configure commit identity
+        shell: bash
+        run: |
+          set -euo pipefail
 
           git config user.name "github-actions[bot]"
           git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Commit controlled edit
+        env:
+          TARGET_FILE: ${{ inputs.target_file }}
+          EDIT_OCCURRENCES: ${{ steps.edit.outputs.occurrences }}
+          EDIT_BYTES_DELTA: ${{ steps.edit.outputs.bytes_delta }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
           git commit \
-            -m "Controlled edit: ${{ inputs.target_file }}"
+            -m "Controlled edit" \
+            -m "Target: ${TARGET_FILE}
+          Occurrences replaced: ${EDIT_OCCURRENCES}
+          Byte delta: ${EDIT_BYTES_DELTA}"
 
-          git push --set-upstream origin "$branch"
+      - name: Push isolated branch
+        env:
+          BRANCH: ${{ steps.branch.outputs.branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
 
-          echo "Created branch: $branch"
-          echo "Open a pull request into main for validation and review."
+          git push \
+            --set-upstream \
+            origin \
+            "$BRANCH"
+
+          echo "Controlled edit pushed to:"
+          echo "$BRANCH"
+
+      - name: Final summary
+        env:
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          TARGET_FILE: ${{ inputs.target_file }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          {
+            echo
+            echo "### Next step"
+            echo
+            echo "Open a pull request from \`$BRANCH\` into \`main\`."
+            echo
+            echo "The controlled-edit workflow never modifies \`main\` directly."
+          } >> "$GITHUB_STEP_SUMMARY"
