@@ -1,4 +1,4 @@
-# Durable validation: keep checks focused on genuine regressions, not design choices.
+# Durable validation: focus on genuine integrity, security, and syntax regressions.
 name: Validate
 
 on:
@@ -34,10 +34,6 @@ jobs:
         run: |
           set -euo pipefail
           git diff --name-status "${BASE_SHA}...${HEAD_SHA}" > /tmp/changed-files.txt
-          echo "Base: $BASE_SHA"
-          echo "Head: $HEAD_SHA"
-          echo
-          echo "Changed files:"
           cat /tmp/changed-files.txt
           echo "count=$(wc -l < /tmp/changed-files.txt)" >> "$GITHUB_OUTPUT"
 
@@ -62,15 +58,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RInE \
-            --exclude-dir=.git \
-            --exclude-dir=node_modules \
-            --include='*.html' \
-            --include='*.js' \
-            --include='*.mjs' \
-            '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\(|document\.write[[:space:]]*\()' \
-            .; then
-            echo
+          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' --include='*.js' --include='*.mjs' '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\(|document\.write[[:space:]]*\()' .; then
             echo "ERROR: Dangerous JavaScript construct detected."
             exit 1
           fi
@@ -80,15 +68,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RInE \
-            --exclude-dir=.git \
-            --exclude-dir=node_modules \
-            --include='*.html' \
-            '<script[^>]+src=["'\'']https?://' \
-            .; then
-            echo
+          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' '<script[^>]+src=["'\''']https?://' .; then
             echo "ERROR: External executable JavaScript detected."
-            echo "Use same-origin/local JavaScript assets instead."
             exit 1
           fi
           echo "External executable script check passed."
@@ -102,42 +83,36 @@ jobs:
           import re
           import sys
 
-          root = Path(".").resolve()
-          files = [
-              p for p in root.rglob("*")
-              if p.is_file()
-              and ".git" not in p.parts
-              and "node_modules" not in p.parts
-              and p.suffix.lower() in {".html", ".css"}
-          ]
+          root = Path('.').resolve()
+          files = [p for p in root.rglob('*') if p.is_file() and '.git' not in p.parts and 'node_modules' not in p.parts and p.suffix.lower() in {'.html', '.css'}]
           html_pattern = re.compile(r'''(?:src|href)\s*=\s*["']([^"']+)["']''', re.IGNORECASE)
           css_pattern = re.compile(r'''url\(\s*["']?([^\)"']+)["']?\s*\)''', re.IGNORECASE)
-          ignored_prefixes = ("#", "data:", "mailto:", "tel:", "javascript:", "http://", "https://", "//")
+          ignored = ('#', 'data:', 'mailto:', 'tel:', 'javascript:', 'http://', 'https://', '//')
           failures = []
 
           for file in files:
               try:
-                  text = file.read_text(encoding="utf-8")
+                  text = file.read_text(encoding='utf-8')
               except UnicodeDecodeError:
                   continue
-              pattern = html_pattern if file.suffix.lower() == ".html" else css_pattern
+              pattern = html_pattern if file.suffix.lower() == '.html' else css_pattern
               for match in pattern.finditer(text):
                   reference = match.group(1).strip()
-                  if reference.startswith(ignored_prefixes):
+                  if reference.startswith(ignored):
                       continue
-                  reference = reference.split("#", 1)[0].split("?", 1)[0]
+                  reference = reference.split('#', 1)[0].split('?', 1)[0]
                   if not reference:
                       continue
-                  target = root / reference.lstrip("/") if reference.startswith("/") else file.parent / reference
+                  target = root / reference.lstrip('/') if reference.startswith('/') else file.parent / reference
                   if not target.exists():
-                      failures.append(f"{file.relative_to(root)} -> {reference}")
+                      failures.append(f'{file.relative_to(root)} -> {reference}')
 
           if failures:
-              print("ERROR: Broken local asset references detected:")
+              print('ERROR: Broken local asset references detected:')
               for failure in failures:
-                  print(f"  {failure}")
+                  print(f'  {failure}')
               sys.exit(1)
-          print("Local asset reference check passed.")
+          print('Local asset reference check passed.')
           PY
 
       - name: Secret scan
@@ -148,17 +123,14 @@ jobs:
           head: ${{ github.event.pull_request.head.sha }}
           extra_args: --results=verified,unknown
 
-      - name: Validate changed HTML with current HTML5-aware tooling
+      - name: Validate changed HTML with html-validate
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(
-            git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
-            grep -Ei '\.html$' || true
-          )
+          mapfile -t files < <(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | grep -Ei '\.html$' || true)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No changed HTML files to validate."
             exit 0
@@ -168,9 +140,9 @@ jobs:
             "extends": [],
             "rules": {
               "close-order": "error",
-              "no-duplicate-attrs": "error",
+              "no-dup-attr": "error",
               "no-conditional-comment": "error",
-              "no-missing-doctype": "error"
+              "missing-doctype": "error"
             }
           }
           JSON
@@ -178,17 +150,14 @@ jobs:
           printf '  %s\n' "${files[@]}"
           npx --yes html-validate@11 --config /tmp/htmlvalidate.json "${files[@]}"
 
-      - name: Validate changed CSS with modern CSS parser
+      - name: Validate changed CSS with Stylelint
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(
-            git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
-            grep -Ei '\.css$' || true
-          )
+          mapfile -t files < <(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | grep -Ei '\.css$' || true)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No changed CSS files to validate."
             exit 0
@@ -196,8 +165,6 @@ jobs:
           cat > /tmp/stylelint.config.mjs <<'JS'
           export default { rules: {} };
           JS
-          printf 'Parsing changed CSS files:\n'
-          printf '  %s\n' "${files[@]}"
           npx --yes stylelint@17 --config /tmp/stylelint.config.mjs "${files[@]}"
 
       - name: Validate changed SVG syntax
@@ -207,10 +174,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(
-            git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
-            grep -Ei '\.svg$' || true
-          )
+          mapfile -t files < <(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | grep -Ei '\.svg$' || true)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No changed SVG files to validate."
             exit 0
@@ -223,13 +187,13 @@ jobs:
               try:
                   ET.parse(filename)
               except ET.ParseError as exc:
-                  failures.append(f"{filename}: {exc}")
+                  failures.append(f'{filename}: {exc}')
           if failures:
-              print("ERROR: Invalid SVG/XML syntax detected:")
+              print('ERROR: Invalid SVG/XML syntax detected:')
               for failure in failures:
-                  print(f"  {failure}")
+                  print(f'  {failure}')
               sys.exit(1)
-          print("Changed SVG syntax checks passed.")
+          print('Changed SVG syntax checks passed.')
           PY
 
       - name: Check Git whitespace errors
@@ -266,5 +230,4 @@ jobs:
             echo "No artificial PR size limit."
             echo "Workflow changes are permitted through normal pull requests."
             echo "No controlled-edit mechanism is used."
-            echo "Validation is scoped to genuine integrity/security/syntax failures rather than stylistic or obsolete-parser requirements."
           } >> "$GITHUB_STEP_SUMMARY"
