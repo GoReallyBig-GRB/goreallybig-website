@@ -1,0 +1,134 @@
+name: GoReallyBig Controlled Edit
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_file:
+        description: Existing repository file to edit
+        required: true
+        type: string
+      expected_text:
+        description: Exact text expected to occur once
+        required: true
+        type: string
+      replacement_text:
+        description: Exact replacement text
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-edit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Apply guarded exact-match edit
+        env:
+          TARGET_FILE: ${{ inputs.target_file }}
+          EXPECTED_TEXT: ${{ inputs.expected_text }}
+          REPLACEMENT_TEXT: ${{ inputs.replacement_text }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os
+
+          target = Path(os.environ["TARGET_FILE"])
+          expected = os.environ["EXPECTED_TEXT"]
+          replacement = os.environ["REPLACEMENT_TEXT"]
+
+          if target.is_absolute() or ".." in target.parts:
+              raise SystemExit("Blocked: invalid target path.")
+
+          if target.parts and target.parts[0] == ".git":
+              raise SystemExit("Blocked: .git paths are not editable.")
+
+          if str(target).startswith(".github/workflows/"):
+              raise SystemExit(
+                  "Blocked: workflow files cannot be edited by this workflow."
+              )
+
+          if not target.is_file():
+              raise SystemExit("Blocked: target file does not exist.")
+
+          if len(expected) > 50000 or len(replacement) > 50000:
+              raise SystemExit(
+                  "Blocked: edit payload exceeds 50,000 characters."
+              )
+
+          text = target.read_text(encoding="utf-8")
+          text = text.replace("\r\n", "\n").replace("\r", "\n")
+          expected = expected.replace("\r\n", "\n").replace("\r", "\n")
+          replacement = replacement.replace("\r\n", "\n").replace("\r", "\n")
+
+          count = text.count(expected)
+
+          if count != 1:
+              raise SystemExit(
+                  f"Blocked: expected text occurs {count} times; "
+                  "exactly once required."
+              )
+
+          updated = text.replace(expected, replacement, 1)
+
+          delta = (
+              len(updated.encode("utf-8"))
+              - len(text.encode("utf-8"))
+          )
+
+          if abs(delta) > 50 * 1024:
+              raise SystemExit(
+                  "Blocked: byte-size change exceeds 50 KB."
+              )
+
+          target.write_text(
+              updated,
+              encoding="utf-8",
+              newline="\n"
+          )
+
+          print(
+              f"Controlled edit applied to {target}; "
+              f"byte delta={delta}."
+          )
+
+      - name: Verify only target file changed
+        env:
+          TARGET_FILE: ${{ inputs.target_file }}
+        run: |
+          git add -- "$TARGET_FILE"
+
+          changed="$(git diff --cached --name-only)"
+
+          test "$changed" = "$TARGET_FILE" || {
+            echo "Blocked: unexpected files changed:"
+            printf '%s\n' "$changed"
+            exit 1
+          }
+
+          git diff --cached --check
+
+      - name: Create isolated branch and commit
+        run: |
+          branch="grb/controlled-edit-${GITHUB_RUN_ID}"
+
+          git switch -c "$branch"
+
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git commit \
+            -m "Controlled edit: ${{ inputs.target_file }}"
+
+          git push --set-upstream origin "$branch"
+
+          echo "Created branch: $branch"
+          echo "Open a pull request into main for validation and review."
