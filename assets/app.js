@@ -141,7 +141,6 @@ wireNeedButtons('[data-mneed]','modalSiteField','mneed');
 wireNeedButtons('[data-need]','siteField','need');
 document.querySelectorAll('#contactForm input,#contactForm textarea,#modalForm input,#modalForm textarea').forEach(el=>el.addEventListener('input',refreshWaLinks));
 
-
 // Production form submission to the GoReallyBig Google Apps Script web app.
 // The endpoint is public by design; no secret is stored in the frontend.
 // The request uses a simple URL-encoded POST so the browser does not require a CORS preflight.
@@ -438,3 +437,7 @@ document.querySelectorAll('.addon-expand').forEach(btn=>{
   });
 });
 
+
+/* ===== Runtime fallback for the hero caption accent ===== */
+const heroAccent=document.querySelector('.hero .lead span');
+if(heroAccent) heroAccent.style.color='var(--lime)';
