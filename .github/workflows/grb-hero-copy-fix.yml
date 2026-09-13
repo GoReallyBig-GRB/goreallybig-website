@@ -1,0 +1,29 @@
+name: GoReallyBig hero copy fix
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply exact hero copy and remove this workflow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<p class="lead">Start with a pro website built to make your business look credible, get found online and turn visitors into customers.</p>'
+          new = '<p class="lead">Start with a professional website that makes your business look credible, gets you found online, and turns visitors into customers. At <strong>GoReallyBig</strong>, our job is to make your website make money for you.</p>'
+          if old not in s:
+              raise SystemExit('Expected hero copy was not found; no change made.')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+          rm -f .github/workflows/grb-hero-copy-fix.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/grb-hero-copy-fix.yml
+          git commit -m "Update hero copy for conversion focus"
+          git push
