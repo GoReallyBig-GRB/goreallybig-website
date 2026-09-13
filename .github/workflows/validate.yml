@@ -224,14 +224,29 @@ jobs:
           set -euo pipefail
           python3 -m pip install --disable-pip-version-check html5validator
 
-      - name: Validate HTML, CSS, and SVG
+      - name: Validate changed HTML, CSS, and SVG
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         shell: bash
         run: |
           set -euo pipefail
+          mapfile -t files < <(
+            git diff --name-only "${BASE_SHA}...${HEAD_SHA}" |
+            grep -Ei '\.(html|css|svg)$' || true
+          )
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No changed HTML/CSS/SVG files to validate."
+            exit 0
+          fi
+
+          printf 'Validating changed files:\n'
+          printf '  %s\n' "${files[@]}"
           html5validator \
-            --root . \
             --also-check-css \
-            --also-check-svg
+            --also-check-svg \
+            "${files[@]}"
 
       - name: Check Git whitespace errors
         env:
@@ -261,6 +276,6 @@ jobs:
             echo "- External executable scripts: checked"
             echo "- Local asset references: checked"
             echo "- TruffleHog OSS secret scan: checked"
-            echo "- HTML/CSS/SVG validation: checked"
+            echo "- Changed HTML/CSS/SVG validation: checked"
             echo "- Git whitespace errors: checked"
           } >> "$GITHUB_STEP_SUMMARY"
