@@ -68,7 +68,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' '<script[^>]+src=["'\''']https?://' .; then
+          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' "<script[^>]+src=[\"']https?://" .; then
             echo "ERROR: External executable JavaScript detected."
             exit 1
           fi
