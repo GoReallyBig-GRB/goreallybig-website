@@ -1,4 +1,5 @@
 # Durable validation: focus on genuine integrity, security, and syntax regressions.
+# Validation trigger refresh.
 name: Validate
 
 on:
