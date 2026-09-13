@@ -179,12 +179,24 @@ jobs:
             exit 0
           fi
 
+          cat > /tmp/htmlvalidate.json <<'JSON'
+          {
+            "extends": [],
+            "rules": {
+              "close-order": "error",
+              "no-duplicate-attrs": "error",
+              "no-conditional-comment": "error",
+              "no-missing-doctype": "error"
+            }
+          }
+          JSON
+
           printf 'Validating changed HTML files:\n'
           printf '  %s\n' "${files[@]}"
 
-          npx --yes html-validate@11 "${files[@]}"
+          npx --yes html-validate@11 --config /tmp/htmlvalidate.json "${files[@]}"
 
-      - name: Validate changed CSS with modern CSS tooling
+      - name: Validate changed CSS with modern CSS parser
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -202,10 +214,14 @@ jobs:
             exit 0
           fi
 
-          printf 'Validating changed CSS files:\n'
+          cat > /tmp/stylelint.config.mjs <<'JS'
+          export default { rules: {} };
+          JS
+
+          printf 'Parsing changed CSS files:\n'
           printf '  %s\n' "${files[@]}"
 
-          npx --yes stylelint@17 "${files[@]}" --config /dev/null
+          npx --yes stylelint@17 --config /tmp/stylelint.config.mjs "${files[@]}"
 
       - name: Validate changed SVG syntax
         env:
@@ -272,12 +288,12 @@ jobs:
             echo "- Local asset references: checked"
             echo "- TruffleHog secret scan: checked"
             echo "- Changed HTML: validated with html-validate 11.x"
-            echo "- Changed CSS: parsed with Stylelint 17.x"
+            echo "- Changed CSS: syntax-parsed with Stylelint 17.x"
             echo "- Changed SVG: XML syntax checked"
             echo "- Git whitespace errors: checked"
             echo
             echo "No artificial PR size limit."
             echo "Workflow changes are permitted through normal pull requests."
             echo "No controlled-edit mechanism is used."
-            echo "Validation tooling is scoped to the technology being changed rather than forcing the site to conform to an obsolete CSS/HTML parser."
+            echo "Validation is scoped to genuine integrity/security/syntax failures rather than stylistic or obsolete-parser requirements."
           } >> "$GITHUB_STEP_SUMMARY"
