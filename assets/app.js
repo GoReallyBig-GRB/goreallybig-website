@@ -3,11 +3,10 @@
 (function(){
   const applyHeroAccent=function(){
     document.querySelectorAll('.hero h1 span,.hero .lead span').forEach(function(el){
-      el.style.setProperty('color','#A8E600','important');
+      el.style.setProperty('color','#155EEF','important');
     });
     document.querySelectorAll('.hero .lead span').forEach(function(el){
       el.style.setProperty('font-weight','700','important');
-      el.style.setProperty('text-shadow','0 1px 2px rgba(0,0,0,.24)','important');
     });
   };
 
