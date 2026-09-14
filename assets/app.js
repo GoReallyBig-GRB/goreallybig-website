@@ -1,6 +1,10 @@
-/* Runtime bootstrap for the production mobile-navigation refinement.
-   The original application is preserved in assets/app-core.js. */
+/* Runtime bootstrap for the production mobile-navigation refinement. */
 (function(){
+  const heroStyles=document.createElement('link');
+  heroStyles.rel='stylesheet';
+  heroStyles.href='assets/hero-composition-v2.css?v=20260914-2';
+  document.head.appendChild(heroStyles);
+
   const mergeHeroLead=function(){
     const hero=document.querySelector('.hero');
     const heroCopy=document.querySelector('.hero-grid > div:first-child');
@@ -30,10 +34,10 @@
   const applyHeroAccent=function(){
     mergeHeroLead();
     document.querySelectorAll('.hero h1 span').forEach(function(el){
-      el.style.setProperty('color','#A8E600','important');
+      el.style.setProperty('color','#B7F000','important');
     });
     document.querySelectorAll('.hero .lead span').forEach(function(el){
-      el.style.setProperty('color','#000e4d','important');
+      el.style.setProperty('color','#0B1F3A','important');
       el.style.setProperty('font-weight','700','important');
     });
   };
