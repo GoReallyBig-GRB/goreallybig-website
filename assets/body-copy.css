@@ -12,24 +12,6 @@ body{font-size:16px}
   .q span,.service-card p,.feature p,.addon span:not(.item-icon),.journey-step p,.principle p,.triangle span,.process-card p,.showcase-copy,.makeover p,.offer-head>p,.offer-header p,.essential span:not(.item-icon),.growth-item span:not(.item-icon),.faq-a,.contact .lead,.contact-detail span,.form-note,.field small,.footer-brand p,.footer-contact-link strong{font-size:14px;line-height:1.6}
 }
 
-/* === HERO BALANCE REFINEMENT
-   Give the headline enough horizontal room to resolve naturally into three lines,
-   while allowing the visual to occupy slightly more of the hero without enlarging it aggressively. */
-@media(min-width:901px){
-  .hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px}
-  .hero h1{max-width:590px}
-  .hero-visual{transform:scale(1.045);transform-origin:center center}
-}
-@media(min-width:901px) and (max-width:1100px){
-  .hero-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:34px}
-  .hero h1{max-width:570px}
-  .hero-visual{transform:scale(1.035);}
-}
-@media(max-width:900px){
-  .hero h1{max-width:100%}
-  .hero-visual{transform:none}
-}
-
 /* === MOBILE MENU REFINEMENT
    The existing menu script updates aria-expanded, so the open state can
    visibly become a close control without shifting the header layout. */
