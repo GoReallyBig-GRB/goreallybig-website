@@ -1,18 +1,18 @@
-/* HERO V2 — desktop only. Mobile rules remain owned by the production stylesheet. */
+/* HERO V3 — desktop composition only. Mobile remains owned by production CSS. */
 @media (min-width:901px){
   .hero-grid{
     width:min(1380px,100%) !important;
     max-width:1380px !important;
     margin:0 auto !important;
     display:grid !important;
-    grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr) !important;
+    grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr) !important;
     gap:0 !important;
     align-items:center !important;
   }
 
   .hero-grid > div:first-child{
     min-width:0 !important;
-    padding-right:52px !important;
+    padding-right:118px !important;
   }
 
   .hero h1{
@@ -26,33 +26,36 @@
     color:var(--lime) !important;
   }
 
+  .hero .lead{
+    visibility:visible !important;
+    font-size:17px !important;
+    line-height:1.7 !important;
+    max-width:620px !important;
+    margin-top:22px !important;
+  }
+
   .hero-visual{
     min-width:0 !important;
     background:transparent !important;
     border:0 !important;
     border-radius:0 !important;
     box-shadow:none !important;
-    padding:0 0 0 46px !important;
+    padding:0 !important;
     transform:none !important;
     position:relative !important;
   }
 
   .hero-visual::before{
-    content:"";
-    position:absolute;
-    left:0;
-    top:7%;
-    bottom:7%;
-    width:1px;
-    background:#dce3ec;
+    display:none !important;
+    content:none !important;
   }
 
   .hero-visual img{
     display:block !important;
     width:100% !important;
-    max-width:590px !important;
+    max-width:none !important;
     height:auto !important;
-    margin:0 auto !important;
+    margin:0 !important;
     box-shadow:none !important;
     border-radius:0 !important;
   }
@@ -60,9 +63,8 @@
 
 @media (min-width:901px) and (max-width:1200px){
   .hero-grid{
-    grid-template-columns:minmax(0,1.14fr) minmax(0,.86fr) !important;
+    grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr) !important;
   }
-  .hero-grid > div:first-child{padding-right:38px !important}
-  .hero-visual{padding-left:34px !important}
+  .hero-grid > div:first-child{padding-right:72px !important}
   .hero h1{font-size:clamp(50px,4.4vw,64px) !important}
 }
