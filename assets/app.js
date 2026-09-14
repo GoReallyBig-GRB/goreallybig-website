@@ -4,6 +4,7 @@
   const applyHeroAccent=function(){
     document.querySelectorAll('.hero .lead span').forEach(function(el){
       el.style.setProperty('color','var(--lime)','important');
+      el.style.setProperty('font-weight','700','important');
     });
   };
 
