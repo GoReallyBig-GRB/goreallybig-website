@@ -65,7 +65,15 @@ body{font-size:16px}
   .hero.hero-heading-ready h1{visibility:visible}
   .hero h1 .hero-line{display:block;white-space:nowrap;color:var(--navy)}
   .hero h1 .hero-line > span{color:var(--lime)}
-  .hero .lead{max-width:none;visibility:hidden}
+
+  /* Caption styling borrowed from the original HTML package's hero lead. */
+  .hero .lead{
+    font-size:17px;
+    line-height:1.7;
+    max-width:620px;
+    margin-top:22px;
+    visibility:hidden;
+  }
   .hero.hero-lead-ready .lead{visibility:visible}
   .hero-visual{transform:none}
 }
@@ -83,6 +91,11 @@ body{font-size:16px}
   .hero h1 .hero-line{display:inline;color:inherit}
   .hero h1 .hero-line:not(:last-child)::after{content:' '}
   .hero h1 .hero-line > span{color:var(--lime)}
-  .hero .lead{max-width:100%}
+  .hero .lead{
+    font-size:15px;
+    line-height:1.7;
+    max-width:100%;
+    margin-top:22px;
+  }
   .hero-visual{transform:none}
 }
