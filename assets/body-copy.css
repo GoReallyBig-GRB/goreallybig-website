@@ -45,32 +45,33 @@ body{font-size:16px}
 }
 
 /* === HERO COMPOSITION REFINEMENT
-   Use the full desktop composition width so the eyebrow and headline share
-   the intended left edge, while giving the headline enough room to resolve
-   naturally into the reference three-line layout. */
+   The approved hero uses the available desktop width, with the eyebrow,
+   headline and supporting copy sharing the same left edge. The wider copy
+   column lets the headline resolve naturally into exactly three lines. */
 @media(min-width:901px){
   .hero-grid{
-    width:calc(100% - 48px);
-    max-width:1502px;
-    margin-left:auto;
-    margin-right:auto;
-    grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
-    gap:64px;
+    width:100%;
+    max-width:none;
+    margin-left:0;
+    margin-right:0;
+    grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+    gap:40px;
   }
-  .hero h1{max-width:650px}
-  .hero-visual{transform:scale(1.045);transform-origin:center center}
+  .hero h1{max-width:760px}
+  .hero .lead{max-width:none}
+  .hero-visual{transform:none}
 }
 @media(min-width:901px) and (max-width:1100px){
   .hero-grid{
-    width:calc(100% - 48px);
+    width:100%;
     grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
-    gap:34px;
+    gap:30px;
   }
-  .hero h1{max-width:570px}
-  .hero-visual{transform:scale(1.035);}
+  .hero h1{max-width:620px}
 }
 @media(max-width:900px){
   .hero-grid{width:auto}
   .hero h1{max-width:100%}
+  .hero .lead{max-width:100%}
   .hero-visual{transform:none}
 }
