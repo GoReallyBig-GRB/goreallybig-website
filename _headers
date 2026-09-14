@@ -13,3 +13,6 @@
 
 /assets/body-copy.css
   Cache-Control: public, max-age=0, must-revalidate
+
+/assets/app.js
+  Cache-Control: public, max-age=0, must-revalidate

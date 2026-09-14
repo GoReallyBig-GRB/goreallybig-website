@@ -1,440 +1,66 @@
-/* ===== Inline script block 1 from original index.html ===== */
-const body=document.body;
-const modal=document.getElementById('modalBackdrop');
-const modalPanel=modal.querySelector('.modal');
-const modalClose=document.getElementById('modalClose');
-let previousY=0, opener=null, modalNeed='';
+/* Runtime bootstrap for the production mobile-navigation refinement.
+   The original application is preserved in assets/app-core.js. */
+(function(){
+  const core=document.createElement('script');
+  core.src='assets/app-core.js';
+  core.onload=function(){
+    const menu=document.querySelector('.menu');
+    const panel=document.getElementById('mobilePanel');
+    if(!menu||!panel) return;
 
-function openModal(source){
-  previousY=window.scrollY; opener=document.activeElement;
-  modal.classList.add('show'); body.style.overflow='hidden';
-  document.getElementById('modalTitle').textContent=source==='Get My Offer'?'Get My Offer':source==='Get Your Free Website Audit'?'Get Your Free Website Audit':'Let’s get your business moving.';
-  const modalFormEl=document.getElementById('modalForm');
-  modalFormEl.classList.remove('hidden');
-  document.getElementById('modalSuccess').classList.add('hidden');
-  modalFormEl.querySelector('.submit-status')?.remove();
-  setSubmitState(modalFormEl,'reset');
-  refreshWaLinks();
-  setTimeout(()=>document.getElementById('mName').focus(),30);
-}
-function closeModal(){
-  modal.classList.remove('show'); body.style.overflow=''; window.scrollTo({top:previousY,behavior:'auto'});
-  if(opener && typeof opener.focus==='function') setTimeout(()=>opener.focus(),0);
-}
-document.querySelectorAll('[data-modal]').forEach(b=>b.addEventListener('click',()=>openModal(b.dataset.modal)));
-modalClose.addEventListener('click',closeModal);
-modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
-document.addEventListener('keydown',e=>{
-  if(!modal.classList.contains('show')) return;
-  if(e.key==='Escape'){e.preventDefault();closeModal();return;}
-  if(e.key==='Tab'){
-    const focusables=[...modalPanel.querySelectorAll('button,input,textarea,[href]')].filter(x=>!x.disabled && x.offsetParent!==null);
-    if(!focusables.length) return;
-    const first=focusables[0],last=focusables[focusables.length-1];
-    if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
-    else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+    const style=document.createElement('style');
+    style.textContent=`
+@media(max-width:900px){
+  .menu.grb-mobile-runtime[aria-expanded="true"]{font-size:30px!important}
+  .menu.grb-mobile-runtime::before{content:none!important;display:none!important}
+  .mobile-panel>a.grb-mobile-wa{
+    display:flex!important;
+    align-items:center;
+    gap:10px;
+    font-size:16px!important;
+    color:var(--navy)!important;
   }
-});
+  .mobile-panel>a.grb-mobile-wa::before,
+  .mobile-panel>a.grb-mobile-wa::after{
+    content:none!important;
+    display:none!important;
+  }
+  .grb-wa-icon{
+    width:24px;
+    height:24px;
+    flex:0 0 24px;
+    display:block;
+  }
+}`;
+    document.head.appendChild(style);
 
-// FAQ state + accessible relationships.
-document.querySelectorAll('.faq-q').forEach((q,i)=>{
-  if(!q.id) q.id=`faq-q-${i+1}`;
-  const a=q.nextElementSibling; if(a){a.id=a.id||`faq-a-${i+1}`; a.setAttribute('role','region'); a.setAttribute('aria-labelledby',q.id); q.setAttribute('aria-controls',a.id); q.setAttribute('aria-expanded','false');}
-  q.addEventListener('click',()=>{
-    const item=q.parentElement, open=item.classList.toggle('open');
-    q.setAttribute('aria-expanded',String(open));
-    q.querySelector('span').textContent=open?'−':'+';
-  });
-});
+    menu.classList.add('grb-mobile-runtime');
+    const wa=panel.querySelector('a[href^="https://wa.me/"]');
+    if(wa){
+      wa.classList.add('grb-mobile-wa');
+      wa.textContent='';
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('class','grb-wa-icon');
+      svg.setAttribute('viewBox','0 0 24 24');
+      svg.setAttribute('aria-hidden','true');
+      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx','12'); circle.setAttribute('cy','12'); circle.setAttribute('r','12'); circle.setAttribute('fill','#25D366');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('fill','#fff');
+      path.setAttribute('d','M17.5 6.5A7.75 7.75 0 0 0 5.27 15.84L4.5 19.5l3.74-.98A7.75 7.75 0 0 0 17.5 6.5Zm-5.48 11.02a6.42 6.42 0 0 1-3.27-.9l-.23-.14-2.22.58.59-2.16-.15-.23a6.43 6.43 0 1 1 5.28 2.85Zm3.52-4.83c-.19-.1-1.12-.55-1.29-.61-.17-.06-.3-.1-.43.1-.13.19-.49.61-.6.73-.11.13-.22.14-.41.05-.19-.1-.79-.29-1.51-.92-.56-.5-.93-1.11-1.04-1.3-.11-.19-.01-.29.08-.39.08-.08.19-.22.29-.33.1-.11.13-.19.19-.32.06-.13.03-.24-.02-.34-.05-.1-.43-1.03-.59-1.41-.16-.37-.31-.32-.43-.33h-.37c-.13 0-.34.05-.52.24-.18.19-.68.66-.68 1.61s.7 1.87.79 2c.1.13 1.37 2.09 3.32 2.93.46.2.82.32 1.1.41.46.15.88.13 1.21.08.37-.06 1.12-.46 1.28-.9.16-.44.16-.82.11-.9-.05-.08-.17-.13-.36-.23Z');
+      svg.append(circle,path);
+      const label=document.createElement('span');
+      label.textContent='0701 728 5626';
+      wa.append(svg,label);
+    }
 
-// Work tabs.
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-
-  const mockups={
-    'Private Schools':'school',
-    'Professional Services':'professional',
-    'Hospitality':'hospitality',
-    'Local Businesses':'local'
+    const sync=function(){
+      const open=menu.getAttribute('aria-expanded')==='true';
+      menu.textContent=open?'×':'☰';
+    };
+    menu.addEventListener('click',sync);
+    panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setTimeout(sync,0)));
+    sync();
   };
-  const key=mockups[t.textContent.trim()];
-  document.querySelectorAll('.work-mockup').forEach(img=>{
-    const active=img.dataset.work===key;
-    img.classList.toggle('active',active);
-    const picture=img.closest('.grb-picture');
-    if(picture) picture.classList.toggle('active',active);
-  });
-  document.getElementById('workCopy').textContent=t.dataset.copy;
-}));
-
-// Lightweight contextual WhatsApp links. Messages stay short and are built from the form state.
-const WA_NUMBER='2347017285626';
-function waUrl(message){return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;}
-function selectedNeed(formType){
-  const el=document.getElementById(formType==='modal'?'modalNeed':'contactNeed');
-  return el ? String(el.value||'').trim() : '';
-}
-function buildWaMessage(context, formType){
-  const need=selectedNeed(formType);
-  const business=(document.getElementById(formType==='modal'?'mBusiness':'business')?.value||'').trim();
-  const name=(document.getElementById(formType==='modal'?'mName':'name')?.value||'').trim();
-  if(context==='hero') return 'Hi GoReallyBig, I\'d like to get started with a website for my business.';
-  if(context==='header') return 'Hi GoReallyBig, I\'d like to talk about a website for my business.';
-  if(context==='offer') return 'Hi GoReallyBig, I\'d like to discuss the right website package for my business.';
-  if(context==='promise') return 'Hi GoReallyBig, I\'d like to discuss a website that can help my business get found, build trust and win more business.';
-  if(context==='commercial') return 'Hi GoReallyBig, I\'d like to talk about making sure my business is ready when people look me up online.';
-  if(context==='approach') return 'Hi GoReallyBig, I\'d like to talk about a website built around my business, customers and goals.';
-  if(context==='process') return 'Hi GoReallyBig, I\'d like to talk through getting my business from idea to online.';
-  if(context==='work') return 'Hi GoReallyBig, I\'d like to discuss what my business website could look like.';
-  if(context==='faq') return 'Hi GoReallyBig, I have a few questions about getting a website for my business.';
-  let msg='Hi GoReallyBig, I\'d like to discuss my website needs.';
-  if(need) msg+=` I\'m looking for: ${need}.`;
-  if(business) msg+=` Business: ${business}.`;
-  if(name) msg+=` My name is ${name}.`;
-  return msg;
-}
-function refreshWaLinks(){
-  document.querySelectorAll('[data-wa-context]').forEach(a=>a.href=waUrl(buildWaMessage(a.dataset.waContext,'contact')));
-  document.querySelectorAll('[data-wa-form]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waForm)));
-  document.querySelectorAll('[data-wa-success]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waSuccess)));
-}
-refreshWaLinks();
-
-// Need selectors: site URL only appears for a makeover.
-function wireNeedButtons(selector, fieldId, attr){
-  document.querySelectorAll(selector).forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll(selector).forEach(x=>x.classList.remove('selected'));
-    b.classList.add('selected');
-    const need=b.dataset[attr];
-    if(fieldId==='modalSiteField'){
-      const hidden=document.getElementById('modalNeed');
-      const url=document.getElementById('mSite');
-      if(hidden) hidden.value=need;
-      if(url){
-        const makeover=need==='Website makeover';
-        url.required=makeover;
-        url.setAttribute('aria-required',String(makeover));
-        const label=url.closest('.field')?.querySelector('label');
-        if(label) label.classList.toggle('required-field',makeover);
-        if(!makeover) url.removeAttribute('aria-invalid');
-      }
-    }
-    if(fieldId==='siteField'){
-      const hidden=document.getElementById('contactNeed');
-      const url=document.getElementById('site');
-      if(hidden) hidden.value=need;
-      if(url){
-        const makeover=need==='Website makeover';
-        url.required=makeover;
-        url.setAttribute('aria-required',String(makeover));
-        const label=url.closest('.field')?.querySelector('label');
-        if(label) label.classList.toggle('required-field',makeover);
-        if(!makeover) url.removeAttribute('aria-invalid');
-      }
-    }
-    if(fieldId) document.getElementById(fieldId).classList.toggle('hidden',need!=='Website makeover');
-    return need;
-  }));
-}
-wireNeedButtons('[data-mneed]','modalSiteField','mneed');
-wireNeedButtons('[data-need]','siteField','need');
-document.querySelectorAll('#contactForm input,#contactForm textarea,#modalForm input,#modalForm textarea').forEach(el=>el.addEventListener('input',refreshWaLinks));
-
-
-// Production form submission to the GoReallyBig Google Apps Script web app.
-// The endpoint is public by design; no secret is stored in the frontend.
-// The request uses a simple URL-encoded POST so the browser does not require a CORS preflight.
-const LEAD_CAPTURE_URL='https://script.google.com/macros/s/AKfycbwisgNDtbntSx9usZlwnQoYZZDF37n_Y7rMdwMxtCWES6NcRqS5Yy9m71eGiOK8uFBS/exec';
-
-function formPayload(formType){
-  const modalForm=formType==='modal';
-  const get=id=>document.getElementById(id);
-  const name=(get(modalForm?'mName':'name')?.value||'').trim();
-  const business=(get(modalForm?'mBusiness':'business')?.value||'').trim();
-  const email=(get(modalForm?'mEmail':'email')?.value||'').trim();
-  const phone=(get(modalForm?'mPhone':'phone')?.value||'').trim();
-  const need=(get(modalForm?'modalNeed':'contactNeed')?.value||'').trim();
-  const site=(get(modalForm?'mSite':'site')?.value||'').trim();
-  const message=(get(modalForm?'mContext':'message')?.value||'').trim();
-
-  const data=new URLSearchParams();
-  data.set('name',name);
-  data.set('business',business);
-  data.set('email',email);
-  data.set('phone',phone);
-  data.set('need',need);
-  data.set('requestType',need);
-  data.set('site',site);
-  data.set('website',site);
-  data.set('websiteUrl',site);
-  data.set('message',message);
-  data.set('source',modalForm?'modal':'contact');
-  return data;
-}
-
-function setSubmitState(form,state){
-  const button=form?.querySelector('button[type="submit"]');
-  if(!button) return;
-
-  if(state==='sending'){
-    if(!button.dataset.originalText) button.dataset.originalText=button.textContent.trim();
-    button.disabled=true;
-    button.setAttribute('aria-busy','true');
-    button.classList.add('is-submitting');
-    button.innerHTML='<span class="submit-spinner" aria-hidden="true"></span><span>Sending...</span>';
-  }else if(state==='success'){
-    button.disabled=true;
-    button.setAttribute('aria-busy','false');
-    button.classList.remove('is-submitting');
-    button.classList.add('is-submitted');
-    button.innerHTML='<span aria-hidden="true">✓</span><span>Request sent</span>';
-  }else if(state==='error'){
-    button.disabled=false;
-    button.setAttribute('aria-busy','false');
-    button.classList.remove('is-submitting','is-submitted');
-    button.innerHTML='<span>Try again</span>';
-  }else{
-    button.disabled=false;
-    button.removeAttribute('aria-busy');
-    button.classList.remove('is-submitting','is-submitted');
-    button.textContent=button.dataset.originalText||"Let's GoReallyBig";
-  }
-}
-
-async function submitLead(form,formType){
-  setSubmitState(form,'sending');
-
-  try{
-    // no-cors responses are intentionally opaque. We only use completion/failure
-    // of the browser request for UX feedback; the backend remains authoritative.
-    const timeout=new Promise((_,reject)=>
-      setTimeout(()=>reject(new Error('Submission timed out')),15000)
-    );
-
-    await Promise.race([
-      fetch(LEAD_CAPTURE_URL,{
-        method:'POST',
-        mode:'no-cors',
-        body:formPayload(formType),
-        keepalive:true
-      }),
-      timeout
-    ]);
-
-    setSubmitState(form,'success');
-    return true;
-  }catch(err){
-    console.error('GoReallyBig lead submission failed.',err);
-
-    const note=form.querySelector('.form-note') ||
-      form.querySelector('.form-actions');
-    if(note){
-      let status=form.querySelector('.submit-status');
-      if(!status){
-        status=document.createElement('div');
-        status.className='submit-status';
-        status.setAttribute('role','status');
-        status.setAttribute('aria-live','polite');
-        note.appendChild(status);
-      }
-      status.textContent='We’re taking longer than expected. Please try again if you did not receive a confirmation email.';
-    }
-
-    setSubmitState(form,'error');
-    return false;
-  }
-}
-
-document.getElementById('modalForm').addEventListener('submit',async e=>{
-  e.preventDefault();
-  const form=e.currentTarget;
-  if(!form.checkValidity()){form.reportValidity();return;}
-  const sent=await submitLead(form,'modal');
-  if(!sent) return;
-  form.classList.add('hidden');
-  const modalSuccess=document.getElementById('modalSuccess');
-  modalSuccess.querySelector('p').textContent=`Request type: ${document.getElementById('modalNeed').value}. Your request has been captured. We'll take it from here.`;
-  modalSuccess.classList.remove('hidden');
-  refreshWaLinks();
-});
-
-const contactForm=document.getElementById('contactForm');
-contactForm.addEventListener('submit',async e=>{
-  e.preventDefault();
-  if(!contactForm.checkValidity()){contactForm.reportValidity();return;}
-  const sent=await submitLead(contactForm,'contact');
-  if(!sent) return;
-  let success=document.getElementById('contactSuccess');
-  if(!success){
-    success=document.createElement('div');
-    success.id='contactSuccess';
-    success.className='success';
-    const strong=document.createElement('strong');
-    strong.textContent='Thanks. We’ve got it.';
-    const p=document.createElement('p');
-    const wa=document.createElement('a');
-    wa.className='wa-link';
-    wa.href='https://wa.me/2347017285626';
-    wa.target='_blank';
-    wa.rel='noopener noreferrer';
-    wa.dataset.waSuccess='contact';
-    const dot=document.createElement('span');
-    dot.className='wa-dot';
-    dot.textContent='WA';
-    wa.append(dot,document.createTextNode('Continue on WhatsApp'));
-    success.append(strong,p,wa);
-    contactForm.appendChild(success);
-  }
-  success.querySelector('p').textContent=`Request type: ${document.getElementById('contactNeed').value}. Your request has been captured. We'll take it from here.`;
-  refreshWaLinks();
-  success.scrollIntoView({block:'nearest'});
-});
-
-// Mobile menu.
-const menu=document.querySelector('.menu'),panel=document.getElementById('mobilePanel');
-menu.addEventListener('click',()=>{const open=panel.classList.toggle('show');menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu')});
-panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{panel.classList.remove('show');menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Open menu')}));
-
-// Section-aware nav highlighting.
-const navLinks=[...document.querySelectorAll('.links a')];
-const targets=navLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
-const io=new IntersectionObserver(entries=>entries.forEach(en=>{if(en.isIntersecting){navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+en.target.id))}}),{rootMargin:'-42% 0px -48% 0px',threshold:0});
-targets.forEach(t=>io.observe(t));
-navLinks.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-82,behavior:'auto'});history.replaceState(null,'',a.getAttribute('href'))}));
-
-// Form validation: email is optional; phone and need are compulsory.
-// A current website URL becomes compulsory only when Makeover is selected.
-function validWebsiteUrl(value){
-  const v=String(value||'').trim();
-  return /^(https?:\/\/|www\.)[^\s]+$/i.test(v);
-}
-
-['contactForm','modalForm'].forEach(id=>{
-  const form=document.getElementById(id);
-  if(!form) return;
-  form.addEventListener('submit',e=>{
-    const url=form.id==='modalForm'?document.getElementById('mSite'):document.getElementById('site');
-    const need=form.id==='modalForm'?document.getElementById('modalNeed'):document.getElementById('contactNeed');
-    if(url && need && need.value==='Website makeover' && !validWebsiteUrl(url.value)){
-      e.preventDefault();
-      url.setCustomValidity('Enter a valid website URL starting with https:// or www.');
-      url.reportValidity();
-      url.addEventListener('input',()=>url.setCustomValidity(''),{once:true});
-    }else if(url){
-      url.setCustomValidity('');
-    }
-  },true);
-});
-
-
-/* ===== Inline script block 2 from original index.html ===== */
-/* Consistent required-field UX across browsers. */
-function validateRequiredUX(form){
-  if(!form) return true;
-  const required=[...form.querySelectorAll('[required]')].filter(el=>el.offsetParent!==null || el.type==='hidden');
-  const missing=required.filter(el=>!String(el.value||'').trim());
-  form.querySelector('.required-error')?.remove();
-  if(!missing.length) return true;
-
-  const error=document.createElement('div');
-  error.className='required-error';
-  error.setAttribute('role','alert');
-  error.style.cssText='margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;font-weight:600;';
-  error.textContent='Please complete the required fields marked with *.';
-  form.insertBefore(error,form.firstElementChild);
-
-  const first=missing[0];
-  first.focus();
-  first.setAttribute('aria-invalid','true');
-  first.addEventListener('input',()=>first.removeAttribute('aria-invalid'),{once:true});
-  return false;
-}
-
-document.querySelectorAll('form').forEach(form=>{
-  form.addEventListener('submit',e=>{
-    if(!validateRequiredUX(form)){ e.preventDefault(); }
-  }, true);
-});
-
-
-/* ===== Inline script block 3 from original index.html ===== */
-(function(){
-  document.querySelectorAll('.offer-expand').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const target=btn.dataset.expandTarget;
-      const scope=target==='core'?document.querySelector('.offer-core'):document.querySelector('.offer-growth');
-      if(!scope) return;
-      const hidden=scope.querySelectorAll('.offer-item-hidden');
-      const open=btn.getAttribute('aria-expanded')==='true';
-      hidden.forEach(el=>{
-        el.style.display=open?'none':'grid';
-      });
-      btn.setAttribute('aria-expanded',String(!open));
-      const count=target==='core'?7:6;
-      btn.querySelector('span').textContent=open
-        ? `View all ${count} ${target==='core'?'essentials':'additions'}`
-        : 'Show less';
-    });
-  });
+  document.head.appendChild(core);
 })();
-
-
-/* ===== Inline script block 4 from original index.html ===== */
-(function(){
-  const panel=document.querySelector('.services-panel');
-  const toggle=document.querySelector('.services-toggle');
-  if(!panel||!toggle) return;
-  toggle.addEventListener('click',()=>{
-    const collapsed=panel.classList.toggle('is-collapsed');
-    toggle.setAttribute('aria-expanded',String(!collapsed));
-    const icon=toggle.querySelector('.services-toggle-icon');
-    if(icon) icon.textContent=collapsed?'+':'−';
-  });
-})();
-
-
-/* ===== Inline script block 5 from original index.html ===== */
-/* What's Included compact expand controls. */
-document.querySelectorAll('.service-expand').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const panel=btn.closest('.services-panel');
-    const expanded=btn.getAttribute('aria-expanded')==='true';
-    panel.classList.toggle('is-expanded',!expanded);
-    btn.setAttribute('aria-expanded',String(!expanded));
-    const label=btn.querySelector('span');
-    if(label) label.textContent=expanded?'View all 7 essentials':'Show less';
-  });
-});
-document.querySelectorAll('.addon-expand').forEach(btn=>{
-  const box=btn.closest('.addons');
-  const label=btn.querySelector('span');
-  const mobile=()=>window.matchMedia('(max-width: 560px)').matches;
-
-  // Desktop: all 6 visible by default and can be collapsed. Mobile: first 3 visible by default and can be expanded.
-  function syncAddonState(){
-    if(mobile()){
-      const expanded=box.classList.contains('is-expanded');
-      box.classList.remove('is-collapsed');
-      btn.setAttribute('aria-expanded',String(expanded));
-      if(label) label.textContent=expanded?'Show less':'View all 6 additions';
-    }else{
-      const collapsed=box.classList.contains('is-collapsed');
-      box.classList.remove('is-expanded');
-      btn.setAttribute('aria-expanded',String(!collapsed));
-      if(label) label.textContent=collapsed?'View all 6 additions':'Show less';
-    }
-  }
-  syncAddonState();
-  window.addEventListener('resize',syncAddonState);
-
-  btn.addEventListener('click',()=>{
-    if(mobile()){
-      box.classList.toggle('is-expanded');
-    }else{
-      box.classList.toggle('is-collapsed');
-    }
-    syncAddonState();
-  });
-});
-
