@@ -2,16 +2,29 @@
    The original application is preserved in assets/app-core.js. */
 (function(){
   const mergeHeroLead=function(){
+    const hero=document.querySelector('.hero');
     const heroCopy=document.querySelector('.hero-grid > div:first-child');
-    if(!heroCopy) return;
-    const leads=heroCopy.querySelectorAll('.lead');
-    if(leads.length<2) return;
+    if(!hero||!heroCopy) return;
+
+    const leads=[...heroCopy.querySelectorAll('.lead')];
+    if(!leads.length) return;
 
     const first=leads[0];
-    const second=leads[1];
-    first.appendChild(document.createTextNode(' '));
-    while(second.firstChild) first.appendChild(second.firstChild);
-    second.remove();
+    first.replaceChildren();
+    first.appendChild(document.createTextNode('Start with a professional website that makes your business look credible, gets you found online, and turns your visitors into customers. '));
+
+    const brand=document.createElement('strong');
+    brand.textContent='GoReallyBig';
+    first.appendChild(document.createTextNode('At '));
+    first.appendChild(brand);
+    first.appendChild(document.createTextNode(', our job is to make your website '));
+
+    const payoff=document.createElement('span');
+    payoff.textContent='make money for you.';
+    first.appendChild(payoff);
+
+    leads.slice(1).forEach(function(lead){lead.remove();});
+    hero.classList.add('hero-lead-ready');
   };
 
   const applyHeroAccent=function(){
