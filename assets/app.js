@@ -1,6 +1,18 @@
 /* Runtime bootstrap for the production mobile-navigation refinement.
    The original application is preserved in assets/app-core.js. */
 (function(){
+  const applyHeroAccent=function(){
+    document.querySelectorAll('.hero .lead span').forEach(function(el){
+      el.style.setProperty('color','var(--lime)','important');
+    });
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',applyHeroAccent,{once:true});
+  }else{
+    applyHeroAccent();
+  }
+
   const core=document.createElement('script');
   core.src='assets/app-core.js';
   core.onload=function(){
@@ -31,9 +43,7 @@
     flex:0 0 24px;
     display:block;
   }
-}
-.hero .lead span{color:var(--lime)!important}
-`;
+}`;
     document.head.appendChild(style);
 
     menu.classList.add('grb-mobile-runtime');
