@@ -2,10 +2,11 @@
    The original application is preserved in assets/app-core.js. */
 (function(){
   const applyHeroAccent=function(){
-    document.querySelectorAll('.hero h1 span,.hero .lead span').forEach(function(el){
-      el.style.setProperty('color','#155EEF','important');
+    document.querySelectorAll('.hero h1 span').forEach(function(el){
+      el.style.setProperty('color','#A8E600','important');
     });
     document.querySelectorAll('.hero .lead span').forEach(function(el){
+      el.style.setProperty('color','#155EEF','important');
       el.style.setProperty('font-weight','700','important');
     });
   };
