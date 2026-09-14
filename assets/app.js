@@ -1,35 +1,9 @@
-/* Runtime bootstrap for the production mobile-navigation refinement.
-   The original application is preserved in assets/app-core.js. */
+/* Runtime bootstrap for the production mobile-navigation refinement. */
 (function(){
-  const mergeHeroLead=function(){
-    const heroCopy=document.querySelector('.hero-grid > div:first-child');
-    if(!heroCopy) return;
-    const leads=heroCopy.querySelectorAll('.lead');
-    if(leads.length<2) return;
-
-    const first=leads[0];
-    const second=leads[1];
-    first.appendChild(document.createTextNode(' '));
-    while(second.firstChild) first.appendChild(second.firstChild);
-    second.remove();
-  };
-
-  const applyHeroAccent=function(){
-    mergeHeroLead();
-    document.querySelectorAll('.hero h1 span').forEach(function(el){
-      el.style.setProperty('color','#A8E600','important');
-    });
-    document.querySelectorAll('.hero .lead span').forEach(function(el){
-      el.style.setProperty('color','#000e4d','important');
-      el.style.setProperty('font-weight','700','important');
-    });
-  };
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',applyHeroAccent,{once:true});
-  }else{
-    applyHeroAccent();
-  }
+  const heroStyles=document.createElement('link');
+  heroStyles.rel='stylesheet';
+  heroStyles.href='assets/hero-composition-v2.css?v=20260915-3';
+  document.head.appendChild(heroStyles);
 
   const core=document.createElement('script');
   core.src='assets/app-core.js';
@@ -77,7 +51,7 @@
       circle.setAttribute('cx','12'); circle.setAttribute('cy','12'); circle.setAttribute('r','12'); circle.setAttribute('fill','#25D366');
       const path=document.createElementNS('http://www.w3.org/2000/svg','path');
       path.setAttribute('fill','#fff');
-      path.setAttribute('d','M17.5 6.5A7.75 7.75 0 0 0 5.27 15.84L4.5 19.5l3.74-.98A7.75 7.75 0 0 0 17.5 6.5Zm-5.48 11.02a6.42 6.42 0 0 1-3.27-.9l-.23-.14-2.22.58.59-2.16-.15-.23a6.43 6.43 0 1 1 5.28 2.85Zm3.52-4.83c-.19-.1-1.12-.55-1.29-.61-.17-.06-.3-.1-.43.1-.13.19-.49.61-.6.73-.11.13-.22.14-.41.05-.19-.1-.79-.29-1.51-.92-.56-.5-.93-1.11-1.04-1.3-.11-.19-.01-.29.08-.39.08-.08.19-.22.29-.33.1-.11.13-.19.19-.32.06-.13.03-.24-.02-.34-.05-.1-.43-1.03-.59-1.41-.16-.37-.31-.32-.43-.33h-.37c-.13 0-.34.05-.52.24-.18.19-.68.66-.68 1.61s.7 1.87.79 2c.1.13 1.37 2.09 3.32 2.93.46.2.82.32 1.1.41.46.15.88.13 1.21.08.37-.06 1.12-.46 1.28-.9.16-.44.16-.82.11-.9-.05-.08-.17-.13-.36-.23Z');
+      path.setAttribute('d','M17.5 6.5A7.75 7.75 0 0 0 5.27 15.84L4.5 19.5l3.74-.98A7.75 7.75 0 0 0 17.5 6.5Zm-5.48 11.02a6.42 6.42 0 0 1-3.27-.9l-.23-.14-2.22.58-2.16.59a6.43 6.43 0 1 1 5.28 2.85Zm3.52-4.83c-.19-.1-1.12-.55-1.29-.61-.17-.06-.3-.1-.43.1-.13.19-.49.61-.6.73-.11.13-.22.14-.41.05-.19-.1-.79-.29-1.51-.92-.56-.5-.93-1.11-1.04-1.3-.11-.19-.01-.29.08-.39.08-.08.19-.22.29-.33.1-.11.13-.19.19-.32.06-.13.03-.24-.02-.34-.05-.1-.43-1.03-.59-1.41-.16-.37-.31-.32-.43-.33h-.37c-.13 0-.34.05-.52.24-.18.19-.68.66-.68 1.61s.7 1.87.79 2c.1.13 1.37 2.09 3.32 2.93.46.2.82.32 1.1.41.46.15.88.13 1.21.08.37-.06 1.12-.46 1.28-.9.16-.44.16-.82.11-.9-.05-.08-.17-.13-.36-.23Z');
       svg.append(circle,path);
       const label=document.createElement('span');
       label.textContent='0701 728 5626';
