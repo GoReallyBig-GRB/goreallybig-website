@@ -1,7 +1,21 @@
 /* Runtime bootstrap for the production mobile-navigation refinement.
    The original application is preserved in assets/app-core.js. */
 (function(){
+  const mergeHeroLead=function(){
+    const heroCopy=document.querySelector('.hero-grid > div:first-child');
+    if(!heroCopy) return;
+    const leads=heroCopy.querySelectorAll('.lead');
+    if(leads.length<2) return;
+
+    const first=leads[0];
+    const second=leads[1];
+    first.appendChild(document.createTextNode(' '));
+    while(second.firstChild) first.appendChild(second.firstChild);
+    second.remove();
+  };
+
   const applyHeroAccent=function(){
+    mergeHeroLead();
     document.querySelectorAll('.hero h1 span').forEach(function(el){
       el.style.setProperty('color','#A8E600','important');
     });
