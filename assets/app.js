@@ -1,6 +1,31 @@
 /* Runtime bootstrap for the production mobile-navigation refinement.
    The original application is preserved in assets/app-core.js. */
 (function(){
+  const setHeroHeading=function(){
+    const heading=document.querySelector('.hero h1');
+    if(!heading) return;
+
+    heading.replaceChildren();
+
+    const line1=document.createElement('span');
+    line1.className='hero-line';
+    line1.textContent='Your Business';
+
+    const line2=document.createElement('span');
+    line2.className='hero-line';
+    line2.textContent='Is Ready To Go';
+
+    const line3=document.createElement('span');
+    line3.className='hero-line';
+    line3.appendChild(document.createTextNode('Really '));
+
+    const big=document.createElement('span');
+    big.textContent='Big.';
+    line3.appendChild(big);
+
+    heading.append(line1,line2,line3);
+  };
+
   const mergeHeroLead=function(){
     const hero=document.querySelector('.hero');
     const heroCopy=document.querySelector('.hero-grid > div:first-child');
@@ -28,8 +53,9 @@
   };
 
   const applyHeroAccent=function(){
+    setHeroHeading();
     mergeHeroLead();
-    document.querySelectorAll('.hero h1 span').forEach(function(el){
+    document.querySelectorAll('.hero h1 span span').forEach(function(el){
       el.style.setProperty('color','#A8E600','important');
     });
     document.querySelectorAll('.hero .lead span').forEach(function(el){
