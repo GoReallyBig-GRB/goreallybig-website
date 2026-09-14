@@ -31,7 +31,9 @@
     flex:0 0 24px;
     display:block;
   }
-}`;
+}
+.hero .lead span{color:var(--lime)!important}
+`;
     document.head.appendChild(style);
 
     menu.classList.add('grb-mobile-runtime');
