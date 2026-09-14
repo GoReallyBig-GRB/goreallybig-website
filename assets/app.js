@@ -2,8 +2,9 @@
    The original application is preserved in assets/app-core.js. */
 (function(){
   const setHeroHeading=function(){
+    const hero=document.querySelector('.hero');
     const heading=document.querySelector('.hero h1');
-    if(!heading) return;
+    if(!hero||!heading) return;
 
     heading.replaceChildren();
 
@@ -24,6 +25,7 @@
     line3.appendChild(big);
 
     heading.append(line1,line2,line3);
+    hero.classList.add('hero-heading-ready');
   };
 
   const mergeHeroLead=function(){
