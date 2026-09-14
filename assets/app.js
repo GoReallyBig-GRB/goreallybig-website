@@ -11,10 +11,31 @@
     });
   };
 
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',applyHeroAccent,{once:true});
-  }else{
+  const cleanHeroLayout=function(){
+    const grid=document.querySelector('.hero .hero-grid');
+    const copy=grid&&grid.firstElementChild;
+    if(!grid||!copy) return;
+
+    const leads=copy.querySelectorAll('.lead');
+    if(leads.length>1) leads[0].remove();
+
+    grid.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');
+    grid.style.setProperty('gap','56px','important');
+    copy.style.setProperty('max-width','760px','important');
+
+    const h1=copy.querySelector('h1');
+    if(h1) h1.style.setProperty('max-width','760px','important');
+  };
+
+  const applyHero=function(){
     applyHeroAccent();
+    cleanHeroLayout();
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',applyHero,{once:true});
+  }else{
+    applyHero();
   }
 
   const core=document.createElement('script');
