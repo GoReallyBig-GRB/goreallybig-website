@@ -6,7 +6,7 @@
       el.style.setProperty('color','#A8E600','important');
     });
     document.querySelectorAll('.hero .lead span').forEach(function(el){
-      el.style.setProperty('color','#155EEF','important');
+      el.style.setProperty('color','#000e4d','important');
       el.style.setProperty('font-weight','700','important');
     });
   };
