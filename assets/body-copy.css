@@ -4,7 +4,7 @@ body{font-size:16px}
 .lead span{color:var(--lime);font-weight:700}
 .problem-copy{font-size:19px}
 .q span,.service-card p,.feature p,.addon span:not(.item-icon),.journey-step p,.principle p,.triangle span,.process-card p,.showcase-copy,.makeover p,.offer-head>p,.offer-header p,.essential span:not(.item-icon),.growth-item span:not(.item-icon),.faq-a,.contact .lead,.contact-detail span,.form-note,.field small,.footer-brand p,.footer-contact-link strong{font-size:15px;line-height:1.65}
-.service-card p,.feature p,.addon span:not(.item-icon),.journey-step p,.principle p,.triangle span,.process-card p,.showcase-copy,.makeover p,.essential span:not(.item-icon),.growth-item span:not(.item-icon),.faq-a,.contact-detail span,.form-note,.field small{font-size:15px}
+.service-card p,.feature p,.addon span:not(.item-icon),.journey-step p,.principle p,.process-card p,.showcase-copy,.makeover p,.essential span:not(.item-icon),.growth-item span:not(.item-icon),.faq-a,.contact-detail span,.form-note,.field small{font-size:15px}
 .q strong,.service-card h3,.feature h3,.principle h3,.process-card h3,.makeover h3,.offer-header h3,.growth-item b,.essential b{line-height:1.3}
 @media(max-width:560px){
   body{font-size:15px}
@@ -45,9 +45,10 @@ body{font-size:16px}
 }
 
 /* === HERO COMPOSITION REFINEMENT
-   The approved desktop hero uses a deterministic three-line headline:
-   Your Business / Is Ready To Go / Really Big. The line wrappers prevent
-   browser-dependent wrapping while remaining fluid on smaller screens. */
+   Desktop H1 is intentionally unconstrained inside Column A. The grid
+   defines the available copy width; the headline is allowed to use it all,
+   so the browser can make the natural three-line composition without JS or
+   artificial line wrappers. Mobile rules are unchanged. */
 @media(min-width:901px){
   .hero-grid{
     width:100%;
@@ -58,15 +59,11 @@ body{font-size:16px}
     gap:40px;
   }
   .hero h1{
-    max-width:760px;
-    font-size:clamp(48px,5.5vw,78px);
-    visibility:hidden;
+    width:100%;
+    max-width:none;
+    font-size:clamp(46px,5.15vw,76px);
   }
-  .hero.hero-heading-ready h1{visibility:visible}
-  .hero h1 .hero-line{display:block;white-space:nowrap;color:var(--navy)}
-  .hero h1 .hero-line > span{color:var(--lime)}
-
-  /* Caption styling borrowed from the original HTML package's hero lead. */
+  .hero h1 span{color:var(--lime)!important}
   .hero .lead{
     font-size:17px;
     line-height:1.7;
@@ -83,14 +80,15 @@ body{font-size:16px}
     grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
     gap:30px;
   }
-  .hero h1{max-width:620px}
+  .hero h1{
+    width:100%;
+    max-width:none;
+    font-size:clamp(46px,5.15vw,72px);
+  }
 }
 @media(max-width:900px){
   .hero-grid{width:auto}
   .hero h1{max-width:100%}
-  .hero h1 .hero-line{display:inline;color:inherit}
-  .hero h1 .hero-line:not(:last-child)::after{content:' '}
-  .hero h1 .hero-line > span{color:var(--lime)}
   .hero .lead{
     font-size:15px;
     line-height:1.7;
