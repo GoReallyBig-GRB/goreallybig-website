@@ -43,3 +43,34 @@ body{font-size:16px}
     line-height:1.4;
   }
 }
+
+/* === HERO COMPOSITION REFINEMENT
+   Use the full desktop composition width so the eyebrow and headline share
+   the intended left edge, while giving the headline enough room to resolve
+   naturally into the reference three-line layout. */
+@media(min-width:901px){
+  .hero-grid{
+    width:calc(100% - 48px);
+    max-width:1502px;
+    margin-left:auto;
+    margin-right:auto;
+    grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
+    gap:64px;
+  }
+  .hero h1{max-width:650px}
+  .hero-visual{transform:scale(1.045);transform-origin:center center}
+}
+@media(min-width:901px) and (max-width:1100px){
+  .hero-grid{
+    width:calc(100% - 48px);
+    grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
+    gap:34px;
+  }
+  .hero h1{max-width:570px}
+  .hero-visual{transform:scale(1.035);}
+}
+@media(max-width:900px){
+  .hero-grid{width:auto}
+  .hero h1{max-width:100%}
+  .hero-visual{transform:none}
+}
