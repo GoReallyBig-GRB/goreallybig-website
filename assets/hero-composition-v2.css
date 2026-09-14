@@ -1,4 +1,4 @@
-/* HERO V5 — desktop composition refinement. Mobile remains owned by production CSS. */
+/* HERO V6 — desktop composition refinement. Mobile remains owned by production CSS. */
 @media (min-width:901px){
   .hero-grid{
     width:min(1380px,100%) !important;
@@ -18,7 +18,7 @@
   .hero h1{
     width:100% !important;
     max-width:none !important;
-    font-size:clamp(52px,4.8vw,78px) !important;
+    font-size:clamp(52px,4.8vw,80px) !important;
     line-height:1.08 !important;
   }
 
@@ -66,5 +66,5 @@
     grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr) !important;
   }
   .hero-grid > div:first-child{padding-right:0 !important}
-  .hero h1{font-size:clamp(50px,4.85vw,68px) !important}
+  .hero h1{font-size:clamp(50px,4.85vw,80px) !important}
 }
