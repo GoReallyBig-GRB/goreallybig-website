@@ -7,6 +7,7 @@
     });
     document.querySelectorAll('.hero .lead span').forEach(function(el){
       el.style.setProperty('font-weight','700','important');
+      el.style.setProperty('text-shadow','0 1px 2px rgba(0,0,0,.24)','important');
     });
   };
 
