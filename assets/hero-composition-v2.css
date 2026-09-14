@@ -1,18 +1,18 @@
-/* HERO V3 — desktop composition only. Mobile remains owned by production CSS. */
+/* HERO V4 — desktop composition refinement. Mobile rules remain owned by production CSS. */
 @media (min-width:901px){
   .hero-grid{
     width:min(1380px,100%) !important;
     max-width:1380px !important;
     margin:0 auto !important;
     display:grid !important;
-    grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr) !important;
+    grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr) !important;
     gap:0 !important;
     align-items:center !important;
   }
 
   .hero-grid > div:first-child{
     min-width:0 !important;
-    padding-right:118px !important;
+    padding-right:0 !important;
   }
 
   .hero h1{
@@ -63,8 +63,8 @@
 
 @media (min-width:901px) and (max-width:1200px){
   .hero-grid{
-    grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr) !important;
+    grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr) !important;
   }
-  .hero-grid > div:first-child{padding-right:72px !important}
+  .hero-grid > div:first-child{padding-right:0 !important}
   .hero h1{font-size:clamp(50px,4.4vw,64px) !important}
 }
