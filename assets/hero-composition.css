@@ -2,9 +2,9 @@
 @media (min-width:901px){
   .hero-grid{
     width:100% !important;
-    max-width:none !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
+    max-width:1180px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
     display:grid !important;
     grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
     gap:40px !important;
