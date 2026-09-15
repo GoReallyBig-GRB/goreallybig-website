@@ -43,11 +43,3 @@
   .hero h1{font-size:clamp(44px,4.65vw,66px) !important}
   .hero-visual{transform:scale(1.08) !important}
 }
-
-/* Mobile-only hero payoff treatment. The existing markup stays untouched. */
-@media (max-width:900px){
-  .hero .lead span{
-    color:#0B1F3A !important;
-    font-weight:800 !important;
-  }
-}
