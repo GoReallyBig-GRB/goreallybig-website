@@ -2,7 +2,7 @@
 (function(){
   const heroStyles=document.createElement('link');
   heroStyles.rel='stylesheet';
-  heroStyles.href='assets/hero-composition-v2.css?v=20260915-3';
+  heroStyles.href='assets/hero-composition.css?v=20260916';
   document.head.appendChild(heroStyles);
 
   const core=document.createElement('script');
