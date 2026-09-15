@@ -32,14 +32,13 @@
   .hero-visual::before{display:none !important;content:none !important}
   .hero-visual img{
     display:block !important;
-    width:100% !important;
+    width:105% !important;
     max-width:none !important;
     height:auto !important;
     margin:0 !important;
     box-shadow:none !important;
     border-radius:0 !important;
-    transform:scale(1.05) !important;
-    transform-origin:center center !important;
+    transform:none !important;
   }
 }
 @media (min-width:901px) and (max-width:1100px){
