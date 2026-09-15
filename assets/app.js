@@ -1,5 +1,10 @@
 /* Runtime bootstrap for the production mobile-navigation refinement. */
 (function(){
+  const heroStyles=document.createElement('link');
+  heroStyles.rel='stylesheet';
+  heroStyles.href='assets/hero-composition.css?v=20260916';
+  document.head.appendChild(heroStyles);
+
   const core=document.createElement('script');
   core.src='assets/app-core.js';
   core.onload=function(){
