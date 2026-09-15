@@ -1,16 +1,21 @@
-/* Final hero composition — loaded with the page so the browser does not flash the legacy layout. */
+/* Final hero composition — deterministic desktop geometry so the heading keeps its intended three-line composition after the hero image loads. */
 @media (min-width:901px){
   .hero-grid{
     width:min(1300px,calc(100% - 48px)) !important;
     max-width:1300px !important;
     margin:0 auto !important;
     display:grid !important;
-    grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr) !important;
-    gap:0 !important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+    gap:32px !important;
     align-items:center !important;
   }
   .hero-grid > div:first-child{min-width:0 !important;padding-right:0 !important}
-  .hero h1{width:100% !important;max-width:none !important;font-size:clamp(52px,4.8vw,96px) !important;line-height:1.08 !important}
+  .hero h1{
+    width:100% !important;
+    max-width:650px !important;
+    font-size:clamp(50px,4.45vw,72px) !important;
+    line-height:1.08 !important;
+  }
   .hero h1 span{color:var(--lime) !important}
   .hero .lead{visibility:visible !important;font-size:17px !important;line-height:1.7 !important;max-width:620px !important;margin-top:22px !important}
   .hero-visual{min-width:0 !important;background:transparent !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;padding:0 !important;transform:none !important;position:relative !important}
@@ -18,7 +23,7 @@
   .hero-visual img{display:block !important;width:100% !important;max-width:none !important;height:auto !important;margin:0 !important;box-shadow:none !important;border-radius:0 !important;transform:scale(1.05) !important;transform-origin:center center !important}
 }
 @media (min-width:901px) and (max-width:1200px){
-  .hero-grid{width:min(1300px,calc(100% - 48px)) !important;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr) !important}
+  .hero-grid{width:min(1300px,calc(100% - 48px)) !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;gap:28px !important}
   .hero-grid > div:first-child{padding-right:0 !important}
-  .hero h1{font-size:clamp(50px,4.85vw,96px) !important}
+  .hero h1{font-size:clamp(48px,4.55vw,62px) !important;max-width:620px !important}
 }
