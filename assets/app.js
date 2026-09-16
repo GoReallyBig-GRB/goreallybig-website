@@ -1,8 +1,8 @@
-/* Runtime bootstrap for the production mobile-navigation refinement. */
+/* Consolidated runtime bootstrap for hero, navigation, and WhatsApp refinements. */
 (function(){
   const heroStyles=document.createElement('link');
   heroStyles.rel='stylesheet';
-  heroStyles.href='assets/hero-composition-v2.css?v=20260915-3';
+  heroStyles.href='assets/hero-composition-v2.css?v=20260916-1';
   document.head.appendChild(heroStyles);
 
   const core=document.createElement('script');
@@ -10,61 +10,131 @@
   core.onload=function(){
     const menu=document.querySelector('.menu');
     const panel=document.getElementById('mobilePanel');
-    if(!menu||!panel) return;
+    const WA_NUMBER='2347017285626';
+    const DISPLAY_NUMBER='+234 701 728 5626';
+    const WA_URL='https://wa.me/'+WA_NUMBER;
+    const MOBILE_WA_MESSAGE='Hi GoReallyBig, I\'d like to talk about a website for my business.';
+    const MOBILE_WA_URL=WA_URL+'?text='+encodeURIComponent(MOBILE_WA_MESSAGE);
+
+    const makeWaIcon=function(className){
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','0 0 32 32');
+      svg.setAttribute('aria-hidden','true');
+      svg.setAttribute('focusable','false');
+      if(className)svg.setAttribute('class',className);
+      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx','16');circle.setAttribute('cy','16');circle.setAttribute('r','15');circle.setAttribute('fill','#fff');circle.setAttribute('stroke','#25D366');circle.setAttribute('stroke-width','2');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('fill','#25D366');
+      path.setAttribute('d','M23.6 8.4A10.8 10.8 0 0 0 7 21.4L5.8 26l4.7-1.2A10.8 10.8 0 0 0 23.6 8.4Zm-7.7 15.1a9 9 0 0 1-4.5-1.2l-.3-.2-2.8.7.7-2.7-.2-.3a9 9 0 1 1 7.1 3.7Zm4.9-6.7c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.2-1.4-.8-.7-1.3-1.6-1.5-1.9-.2-.3 0-.5.1-.6l.5-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.9-2-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.8 4.3.7.3 1.2.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.1-1.3-.1-.2-.3-.3-.6-.5Z');
+      svg.append(circle,path);return svg;
+    };
+
+    const makeSocialIcon=function(name){
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');svg.classList.add('grb-social-icon');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('fill','currentColor');
+      if(name==='Facebook')path.setAttribute('d','M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.8V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7.2v3H10v8h3.5Z');
+      else if(name==='Instagram'){
+        path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','2');path.setAttribute('d','M7.2 3.5h9.6a3.7 3.7 0 0 1 3.7 3.7v9.6a3.7 3.7 0 0 1-3.7 3.7H7.2a3.7 3.7 0 0 1-3.7-3.7V7.2a3.7 3.7 0 0 1 3.7-3.7Z');
+        const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');circle.setAttribute('cx','12');circle.setAttribute('cy','12');circle.setAttribute('r','4.1');circle.setAttribute('fill','none');circle.setAttribute('stroke','currentColor');circle.setAttribute('stroke-width','2');
+        const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('cx','17.4');dot.setAttribute('cy','6.7');dot.setAttribute('r','1.1');dot.setAttribute('fill','currentColor');svg.append(path,circle,dot);return svg;
+      }else if(name==='TikTok')path.setAttribute('d','M15.1 3h3.1c.3 1.8 1.3 3.2 3 4v3.2c-1.2-.1-2.3-.5-3.3-1.1v6.1c0 3.9-2.7 6.8-6.5 6.8-3.1 0-5.5-2.3-5.5-5.3 0-3.4 2.8-5.8 6.2-5.5v3.3c-1.6-.2-2.9.7-2.9 2.2 0 1.1.9 2 2.1 2 1.4 0 2.8-1 2.8-3.2V3h1Z');
+      else if(name==='X')path.setAttribute('d','M4.2 3.5h4.2l4.1 5.6 4.9-5.6h2.4l-6.2 7.1 6.6 9.9H16l-4.6-6.7-5.9 6.7H3.1l7.2-8.2-6.1-8.8Zm3.1 2 9.2 13h1.7l-9.2-13H7.3Z');
+      svg.appendChild(path);return svg;
+    };
+
+    const replaceWaBadge=function(element,className){if(!element)return;element.textContent='';element.appendChild(makeWaIcon(className));};
 
     const style=document.createElement('style');
     style.textContent=`
 @media(max-width:900px){
   .menu.grb-mobile-runtime[aria-expanded="true"]{font-size:30px!important}
   .menu.grb-mobile-runtime::before{content:none!important;display:none!important}
-  .mobile-panel>a.grb-mobile-wa{
-    display:flex!important;
-    align-items:center;
-    gap:10px;
-    font-size:16px!important;
-    color:var(--navy)!important;
-  }
-  .mobile-panel>a.grb-mobile-wa::before,
-  .mobile-panel>a.grb-mobile-wa::after{
-    content:none!important;
-    display:none!important;
-  }
-  .grb-wa-icon{
-    width:24px;
-    height:24px;
-    flex:0 0 24px;
-    display:block;
-  }
-}`;
+  .mobile-panel>a.grb-mobile-wa{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;font-size:16px!important;color:var(--navy)!important;padding-top:16px!important;padding-bottom:16px!important}
+  .mobile-panel>a.grb-mobile-wa::before,.mobile-panel>a.grb-mobile-wa::after{content:none!important;display:none!important}
+  .grb-wa-icon{width:28px;height:28px;display:block;flex:0 0 28px;order:2}
+  .grb-header-wa-icon{width:31px;height:31px;display:block}
+  .hero .lead span{font-weight:800!important;color:var(--navy)!important}
+}
+@media(min-width:901px){
+  .grb-header-wa-icon{width:31px;height:31px;display:block}
+}
+.grb-wa-dot-icon{width:24px;height:24px;display:block;flex:0 0 24px}
+.footer-socials a{width:42px!important;height:42px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:50%!important;background:rgba(255,255,255,.04)!important;color:#fff!important;transition:transform .2s ease,border-color .2s ease,background .2s ease!important}
+.footer-socials a:hover{transform:translateY(-2px)!important;border-color:var(--lime)!important;background:rgba(183,240,0,.08)!important;color:#fff!important}
+.footer-socials .grb-social-icon{width:20px;height:20px;display:block}
+.footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
+.contact-detail a:hover,.footer-contact-link:hover strong{color:var(--lime)!important}
+.hero .lead span{font-weight:800!important;color:var(--navy)!important}
+.hero h1{font-size:clamp(52px,6.8vw,96px)!important}
+`;
     document.head.appendChild(style);
 
-    menu.classList.add('grb-mobile-runtime');
-    const wa=panel.querySelector('a[href^="https://wa.me/"]');
-    if(wa){
-      wa.classList.add('grb-mobile-wa');
-      wa.textContent='';
-      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-      svg.setAttribute('class','grb-wa-icon');
-      svg.setAttribute('viewBox','0 0 24 24');
-      svg.setAttribute('aria-hidden','true');
-      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      circle.setAttribute('cx','12'); circle.setAttribute('cy','12'); circle.setAttribute('r','12'); circle.setAttribute('fill','#25D366');
-      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-      path.setAttribute('fill','#fff');
-      path.setAttribute('d','M17.5 6.5A7.75 7.75 0 0 0 5.27 15.84L4.5 19.5l3.74-.98A7.75 7.75 0 0 0 17.5 6.5Zm-5.48 11.02a6.42 6.42 0 0 1-3.27-.9l-.23-.14-2.22.58-2.16.59a6.43 6.43 0 1 1 5.28 2.85Zm3.52-4.83c-.19-.1-1.12-.55-1.29-.61-.17-.06-.3-.1-.43.1-.13.19-.49.61-.6.73-.11.13-.22.14-.41.05-.19-.1-.79-.29-1.51-.92-.56-.5-.93-1.11-1.04-1.3-.11-.19-.01-.29.08-.39.08-.08.19-.22.29-.33.1-.11.13-.19.19-.32.06-.13.03-.24-.02-.34-.05-.1-.43-1.03-.59-1.41-.16-.37-.31-.32-.43-.33h-.37c-.13 0-.34.05-.52.24-.18.19-.68.66-.68 1.61s.7 1.87.79 2c.1.13 1.37 2.09 3.32 2.93.46.2.82.32 1.1.41.46.15.88.13 1.21.08.37-.06 1.12-.46 1.28-.9.16-.44.16-.82.11-.9-.05-.08-.17-.13-.36-.23Z');
-      svg.append(circle,path);
-      const label=document.createElement('span');
-      label.textContent='0701 728 5626';
-      wa.append(svg,label);
+    const hero=document.querySelector('.hero');
+    const heroH1=hero?.querySelector('h1');
+    if(heroH1&&!heroH1.querySelector('.grb-h1-break')){
+      const walker=document.createTreeWalker(heroH1,NodeFilter.SHOW_TEXT);
+      let node;
+      while(node=walker.nextNode()){
+        const match=node.nodeValue.match(/\s+Is\s+/);
+        if(match){
+          const before=node.nodeValue.slice(0,match.index);
+          const after=node.nodeValue.slice(match.index+match[0].length);
+          const fragment=document.createDocumentFragment();
+          if(before)fragment.appendChild(document.createTextNode(before));
+          const br=document.createElement('br');br.className='grb-h1-break';
+          fragment.appendChild(br);fragment.appendChild(document.createTextNode('Is '+after));
+          node.parentNode.replaceChild(fragment,node);break;
+        }
+      }
     }
 
-    const sync=function(){
-      const open=menu.getAttribute('aria-expanded')==='true';
-      menu.textContent=open?'×':'☰';
-    };
-    menu.addEventListener('click',sync);
-    panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setTimeout(sync,0)));
-    sync();
+    if(hero){
+      const leads=hero.querySelectorAll('.lead');
+      if(leads.length){
+        const lead=leads[0];
+        lead.textContent='Start with a professional website that makes your business look credible, gets you found online, and turns your visitors into customers. At ';
+        const brand=document.createElement('strong');brand.textContent='GoReallyBig';
+        const middle=document.createTextNode(', our job is to make your website ');
+        const payoff=document.createElement('span');payoff.textContent='make money for you.';
+        lead.append(brand,middle,payoff);
+        for(let i=1;i<leads.length;i++)leads[i].remove();
+      }
+    }
+
+    if(menu&&panel){
+      menu.classList.add('grb-mobile-runtime');
+      const wa=panel.querySelector('a[href^="https://wa.me/"]');
+      if(wa){
+        wa.classList.add('grb-mobile-wa');wa.textContent='';
+        const label=document.createElement('span');label.textContent=DISPLAY_NUMBER;
+        wa.appendChild(label);wa.appendChild(makeWaIcon('grb-wa-icon'));wa.href=MOBILE_WA_URL;
+        wa.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER+' with a prefilled message');
+      }
+      const sync=function(){const open=menu.getAttribute('aria-expanded')==='true';menu.textContent=open?'×':'☰';};
+      menu.addEventListener('click',sync);
+      panel.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setTimeout(sync,0)});});
+      sync();
+    }
+
+    const headerWa=document.querySelector('.contact-mini[data-wa-context="header"]');
+    if(headerWa){
+      const number=headerWa.querySelector('span:last-child');
+      if(number){number.textContent=DISPLAY_NUMBER;number.style.fontSize='13px';number.style.letterSpacing='-.01em';}
+      headerWa.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER);headerWa.style.fontSize='13px';headerWa.style.gap='7px';replaceWaBadge(headerWa.querySelector('.wa'),'grb-header-wa-icon');
+    }
+
+    document.querySelectorAll('.links a[data-nav="faq"], .links a[href="#faq"]').forEach(function(link){link.remove();});
+    document.querySelectorAll('.contact-detail').forEach(function(detail){
+      const label=detail.querySelector('b');const value=detail.querySelector('span');
+      if(label&&value&&label.textContent.trim()==='WhatsApp'){
+        const link=document.createElement('a');link.href=WA_URL;link.target='_blank';link.rel='noopener noreferrer';link.textContent=DISPLAY_NUMBER;link.style.display='inline-block';link.style.color='inherit';link.style.fontWeight='700';link.style.textDecoration='none';link.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER);value.replaceWith(link);
+      }
+    });
+    document.querySelectorAll('.footer-contact-link').forEach(function(link){const label=link.querySelector('span');const number=link.querySelector('strong');if(label&&number&&label.textContent.trim()==='WhatsApp'){link.href=WA_URL;link.target='_blank';link.rel='noopener noreferrer';number.textContent=DISPLAY_NUMBER;}});
+    document.querySelectorAll('.wa-dot').forEach(function(dot){replaceWaBadge(dot,'grb-wa-dot-icon');});
+    document.querySelectorAll('.footer-socials a[aria-label]').forEach(function(link){const name=link.getAttribute('aria-label');if(['Facebook','Instagram','TikTok','X'].indexOf(name)!==-1){link.textContent='';link.appendChild(makeSocialIcon(name));link.setAttribute('title',name);}});
   };
   document.head.appendChild(core);
 })();
