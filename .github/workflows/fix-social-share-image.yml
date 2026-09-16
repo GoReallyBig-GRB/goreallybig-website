@@ -1,0 +1,51 @@
+name: Fix social share image
+
+on:
+  push:
+    branches:
+      - fix/social-share-image
+
+permissions:
+  contents: write
+
+jobs:
+  update-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+
+      - name: Replace social sharing image
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("index.html")
+          content = path.read_text(encoding="utf-8")
+          old = "https://goreallybig.com/assets/c04-hero.webp"
+          new = "https://goreallybig.com/assets/favicon.png"
+
+          if content.count(old) != 2:
+              raise SystemExit(f"Expected exactly 2 metadata image references, found {content.count(old)}")
+
+          content = content.replace(old, new)
+          path.write_text(content, encoding="utf-8")
+
+      - name: Verify metadata image references
+        shell: python
+        run: |
+          from pathlib import Path
+
+          content = Path("index.html").read_text(encoding="utf-8")
+          assert content.count('property="og:image"') == 1
+          assert content.count('name="twitter:image"') == 1
+          assert content.count('https://goreallybig.com/assets/favicon.png') >= 4
+          assert 'https://goreallybig.com/assets/c04-hero.webp' not in content
+
+      - name: Commit metadata change and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/fix-social-share-image.yml
+          git commit -m "fix: use favicon for social share previews"
+          git push origin HEAD:${GITHUB_REF_NAME}
