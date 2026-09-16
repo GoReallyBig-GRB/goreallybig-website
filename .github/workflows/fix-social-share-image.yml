@@ -38,9 +38,8 @@ jobs:
           from pathlib import Path
 
           content = Path("index.html").read_text(encoding="utf-8")
-          assert content.count('property="og:image"') == 1
-          assert content.count('name="twitter:image"') == 1
-          assert content.count('https://goreallybig.com/assets/favicon.png') >= 4
+          assert 'meta content="https://goreallybig.com/assets/favicon.png" property="og:image"' in content
+          assert 'meta content="https://goreallybig.com/assets/favicon.png" name="twitter:image"' in content
           assert 'https://goreallybig.com/assets/c04-hero.webp' not in content
 
       - name: Commit metadata change and remove temporary workflow
