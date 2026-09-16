@@ -23,9 +23,9 @@
       svg.setAttribute('focusable','false');
       if(className) svg.setAttribute('class',className);
       const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      circle.setAttribute('cx','16'); circle.setAttribute('cy','16'); circle.setAttribute('r','16'); circle.setAttribute('fill','#25D366');
+      circle.setAttribute('cx','16'); circle.setAttribute('cy','16'); circle.setAttribute('r','15'); circle.setAttribute('fill','#fff'); circle.setAttribute('stroke','#25D366'); circle.setAttribute('stroke-width','2');
       const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-      path.setAttribute('fill','#fff');
+      path.setAttribute('fill','#25D366');
       path.setAttribute('d','M23.6 8.4A10.8 10.8 0 0 0 7 21.4L5.8 26l4.7-1.2A10.8 10.8 0 0 0 23.6 8.4Zm-7.7 15.1a9 9 0 0 1-4.5-1.2l-.3-.2-2.8.7.7-2.7-.2-.3a9 9 0 1 1 7.1 3.7Zm4.9-6.7c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.2-1.4-.8-.7-1.3-1.6-1.5-1.9-.2-.3 0-.5.1-.6l.5-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.9-2-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.8 4.3.7.3 1.2.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.1-1.3-.1-.2-.3-.3-.6-.5Z');
       svg.append(circle,path);
       return svg;
@@ -51,6 +51,11 @@
       headerWa.style.gap='7px';
       replaceWaBadge(headerWa.querySelector('.wa'),'grb-header-wa-icon');
     }
+
+    /* Remove FAQ from the primary navbar while preserving the FAQ section itself. */
+    document.querySelectorAll('.links a[data-nav="faq"], .links a[href="#faq"]').forEach(function(link){
+      link.remove();
+    });
 
     /* Contact section: make the WhatsApp number itself a real clickable WhatsApp link. */
     document.querySelectorAll('.contact-detail').forEach(function(detail){
@@ -83,12 +88,12 @@
       }
     });
 
-    /* Form/modal/success WhatsApp CTAs: replace the old WA text badge with the official mark. */
+    /* Form/modal/success WhatsApp CTAs: replace the old WA text badge with the green mark. */
     document.querySelectorAll('.wa-dot').forEach(function(dot){
       replaceWaBadge(dot,'grb-wa-dot-icon');
     });
 
-    /* Mobile menu: official WhatsApp mark above the international number. */
+    /* Mobile menu: international number first, WhatsApp mark beside it. */
     if(menu && panel){
       const style=document.createElement('style');
       style.textContent=`
@@ -97,10 +102,10 @@
   .menu.grb-mobile-runtime::before{content:none!important;display:none!important}
   .mobile-panel>a.grb-mobile-wa{
     display:flex!important;
-    flex-direction:column!important;
+    flex-direction:row!important;
     align-items:center!important;
     justify-content:center!important;
-    gap:7px!important;
+    gap:9px!important;
     font-size:16px!important;
     color:var(--navy)!important;
     padding-top:16px!important;
@@ -116,6 +121,7 @@
     height:28px;
     display:block;
     flex:0 0 28px;
+    order:2;
   }
   .grb-header-wa-icon{
     width:31px;
@@ -136,10 +142,10 @@
       if(wa){
         wa.classList.add('grb-mobile-wa');
         wa.textContent='';
-        wa.appendChild(makeWaIcon('grb-wa-icon'));
         const label=document.createElement('span');
         label.textContent=DISPLAY_NUMBER;
         wa.appendChild(label);
+        wa.appendChild(makeWaIcon('grb-wa-icon'));
         wa.href=MOBILE_WA_URL;
         wa.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER+' with a prefilled message');
       }
