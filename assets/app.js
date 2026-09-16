@@ -157,6 +157,7 @@
 .footer-socials .grb-social-icon{width:20px;height:20px;display:block}
 .footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
 .contact-detail a:hover,.footer-contact-link:hover strong{color:var(--lime)!important}
+h1{font-size:clamp(52px,6.8vw,96px)!important}
 `;
       document.head.appendChild(style);
 
