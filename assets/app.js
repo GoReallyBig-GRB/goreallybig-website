@@ -31,6 +31,33 @@
       return svg;
     };
 
+    const makeSocialIcon=function(name){
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','0 0 24 24');
+      svg.setAttribute('aria-hidden','true');
+      svg.setAttribute('focusable','false');
+      svg.classList.add('grb-social-icon');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('fill','currentColor');
+      if(name==='Facebook'){
+        path.setAttribute('d','M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.8V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7.2v3H10v8h3.5Z');
+      }else if(name==='Instagram'){
+        path.setAttribute('fill','none'); path.setAttribute('stroke','currentColor'); path.setAttribute('stroke-width','2');
+        path.setAttribute('d','M7.2 3.5h9.6a3.7 3.7 0 0 1 3.7 3.7v9.6a3.7 3.7 0 0 1-3.7 3.7H7.2a3.7 3.7 0 0 1-3.7-3.7V7.2a3.7 3.7 0 0 1 3.7-3.7Z');
+        const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        circle.setAttribute('cx','12'); circle.setAttribute('cy','12'); circle.setAttribute('r','4.1'); circle.setAttribute('fill','none'); circle.setAttribute('stroke','currentColor'); circle.setAttribute('stroke-width','2');
+        const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        dot.setAttribute('cx','17.4'); dot.setAttribute('cy','6.7'); dot.setAttribute('r','1.1'); dot.setAttribute('fill','currentColor');
+        svg.append(path,circle,dot); return svg;
+      }else if(name==='TikTok'){
+        path.setAttribute('d','M15.1 3h3.1c.3 1.8 1.3 3.2 3 4v3.2c-1.2-.1-2.3-.5-3.3-1.1v6.1c0 3.9-2.7 6.8-6.5 6.8-3.1 0-5.5-2.3-5.5-5.3 0-3.4 2.8-5.8 6.2-5.5v3.3c-1.6-.2-2.9.7-2.9 2.2 0 1.1.9 2 2.1 2 1.4 0 2.8-1 2.8-3.2V3h1Z');
+      }else if(name==='X'){
+        path.setAttribute('d','M4.2 3.5h4.2l4.1 5.6 4.9-5.6h2.4l-6.2 7.1 6.6 9.9H16l-4.6-6.7-5.9 6.7H3.1l7.2-8.2-6.1-8.8Zm3.1 2 9.2 13h1.7l-9.2-13H7.3Z');
+      }
+      svg.appendChild(path);
+      return svg;
+    };
+
     const replaceWaBadge=function(element,className){
       if(!element) return;
       element.textContent='';
@@ -88,6 +115,16 @@
       replaceWaBadge(dot,'grb-wa-dot-icon');
     });
 
+    /* Footer social links: replace text placeholders with recognizable platform marks and optimize the tap targets. */
+    document.querySelectorAll('.footer-socials a[aria-label]').forEach(function(link){
+      const name=link.getAttribute('aria-label');
+      if(['Facebook','Instagram','TikTok','X'].indexOf(name)!==-1){
+        link.textContent='';
+        link.appendChild(makeSocialIcon(name));
+        link.setAttribute('title',name);
+      }
+    });
+
     if(menu && panel){
       const style=document.createElement('style');
       style.textContent=`
@@ -110,23 +147,15 @@
     content:none!important;
     display:none!important;
   }
-  .grb-wa-icon{
-    width:28px;
-    height:28px;
-    display:block;
-    flex:0 0 28px;
-    order:2;
-  }
-  .grb-header-wa-icon{
-    width:31px;
-    height:31px;
-    display:block;
-  }
-}
-@media(min-width:901px){
+  .grb-wa-icon{width:28px;height:28px;display:block;flex:0 0 28px;order:2}
   .grb-header-wa-icon{width:31px;height:31px;display:block}
 }
+@media(min-width:901px){.grb-header-wa-icon{width:31px;height:31px;display:block}}
 .grb-wa-dot-icon{width:24px;height:24px;display:block;flex:0 0 24px}
+.footer-socials a{width:42px!important;height:42px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:50%!important;background:rgba(255,255,255,.04)!important;color:#fff!important;transition:transform .2s ease,border-color .2s ease,background .2s ease!important}
+.footer-socials a:hover{transform:translateY(-2px)!important;border-color:var(--lime)!important;background:rgba(183,240,0,.08)!important;color:#fff!important}
+.footer-socials .grb-social-icon{width:20px;height:20px;display:block}
+.footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
 .contact-detail a:hover,.footer-contact-link:hover strong{color:var(--lime)!important}
 `;
       document.head.appendChild(style);
