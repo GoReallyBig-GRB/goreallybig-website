@@ -13,6 +13,8 @@
     const WA_NUMBER='2347017285626';
     const DISPLAY_NUMBER='+234 701 728 5626';
     const WA_URL='https://wa.me/'+WA_NUMBER;
+    const MOBILE_WA_MESSAGE='Hi GoReallyBig, I\'d like to talk about a website for my business.';
+    const MOBILE_WA_URL=WA_URL+'?text='+encodeURIComponent(MOBILE_WA_MESSAGE);
 
     const makeWaIcon=function(className){
       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -138,8 +140,8 @@
         const label=document.createElement('span');
         label.textContent=DISPLAY_NUMBER;
         wa.appendChild(label);
-        wa.href=WA_URL;
-        wa.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER);
+        wa.href=MOBILE_WA_URL;
+        wa.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER+' with a prefilled message');
       }
 
       const sync=function(){
