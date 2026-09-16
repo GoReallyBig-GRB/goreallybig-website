@@ -1,4 +1,4 @@
-/* HERO V14 — desktop H1 scale test. Mobile remains owned by production CSS. */
+/* HERO V14 — desktop H1 scale. Mobile remains owned by production CSS. */
 @media (min-width:901px){
   .hero-grid{
     width:min(1300px,calc(100% - 48px)) !important;
@@ -10,7 +10,7 @@
     align-items:center !important;
   }
   .hero-grid > div:first-child{min-width:0 !important;padding-right:0 !important}
-  .hero h1{width:100% !important;max-width:none !important;font-size:clamp(52px,4.8vw,96px) !important;line-height:1.08 !important}
+  .hero h1{width:100% !important;max-width:none !important;font-size:clamp(50px,5.5vw,82px) !important;line-height:1.08 !important}
   .hero h1 span{color:var(--lime) !important}
   .hero .lead{visibility:visible !important;font-size:17px !important;line-height:1.7 !important;max-width:620px !important;margin-top:22px !important}
   .hero .lead span{font-weight:800 !important;color:var(--navy) !important}
@@ -21,5 +21,18 @@
 @media (min-width:901px) and (max-width:1200px){
   .hero-grid{width:min(1300px,calc(100% - 48px)) !important;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr) !important}
   .hero-grid > div:first-child{padding-right:0 !important}
-  .hero h1{font-size:clamp(50px,4.85vw,96px) !important}
+  .hero h1{font-size:clamp(48px,5.5vw,78px) !important}
+}
+
+/* Use the supplied WhatsApp outline mark for all compact WhatsApp icons. */
+.grb-wa-icon,
+.grb-header-wa-icon,
+.grb-wa-dot-icon{
+  background:url('whatsapp-icon-outline.svg') center/contain no-repeat !important;
+  background-color:transparent !important;
+}
+.grb-wa-icon > *,
+.grb-header-wa-icon > *,
+.grb-wa-dot-icon > *{
+  display:none !important;
 }
