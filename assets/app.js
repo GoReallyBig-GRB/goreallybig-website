@@ -2,7 +2,7 @@
 (function(){
   const heroStyles=document.createElement('link');
   heroStyles.rel='stylesheet';
-  heroStyles.href='assets/hero-composition-v2.css?v=20260916-1';
+  heroStyles.href='assets/hero-composition-v2.css?v=20260916-2';
   document.head.appendChild(heroStyles);
 
   const core=document.createElement('script');
@@ -67,7 +67,6 @@
 .footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
 .contact-detail a:hover,.footer-contact-link:hover strong{color:var(--lime)!important}
 .hero .lead span{font-weight:800!important;color:var(--navy)!important}
-.hero h1{font-size:clamp(52px,6.8vw,96px)!important}
 `;
     document.head.appendChild(style);
 
@@ -91,16 +90,8 @@
     }
 
     if(hero){
-      const leads=hero.querySelectorAll('.lead');
-      if(leads.length){
-        const lead=leads[0];
-        lead.textContent='Start with a professional website that makes your business look credible, gets you found online, and turns your visitors into customers. At ';
-        const brand=document.createElement('strong');brand.textContent='GoReallyBig';
-        const middle=document.createTextNode(', our job is to make your website ');
-        const payoff=document.createElement('span');payoff.textContent='make money for you.';
-        lead.append(brand,middle,payoff);
-        for(let i=1;i<leads.length;i++)leads[i].remove();
-      }
+      hero.classList.add('hero-heading-ready');
+      hero.classList.add('hero-lead-ready');
     }
 
     if(menu&&panel){
