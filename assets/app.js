@@ -10,6 +10,20 @@
   core.onload=function(){
     const menu=document.querySelector('.menu');
     const panel=document.getElementById('mobilePanel');
+    const headerWa=document.querySelector('.contact-mini[data-wa-context="header"]');
+
+    if(headerWa){
+      const number=headerWa.querySelector('span:last-child');
+      if(number){
+        number.textContent='+234 701 728 5626';
+        number.style.fontSize='13px';
+        number.style.letterSpacing='-.01em';
+      }
+      headerWa.setAttribute('aria-label','Chat on WhatsApp at +234 701 728 5626');
+      headerWa.style.fontSize='13px';
+      headerWa.style.gap='7px';
+    }
+
     if(!menu||!panel) return;
 
     const style=document.createElement('style');
