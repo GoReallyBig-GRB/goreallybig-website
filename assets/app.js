@@ -10,33 +10,99 @@
   core.onload=function(){
     const menu=document.querySelector('.menu');
     const panel=document.getElementById('mobilePanel');
-    const headerWa=document.querySelector('.contact-mini[data-wa-context="header"]');
+    const WA_NUMBER='2347017285626';
+    const DISPLAY_NUMBER='+234 701 728 5626';
+    const WA_URL='https://wa.me/'+WA_NUMBER;
 
+    const makeWaIcon=function(className){
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','0 0 32 32');
+      svg.setAttribute('aria-hidden','true');
+      svg.setAttribute('focusable','false');
+      if(className) svg.setAttribute('class',className);
+      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx','16'); circle.setAttribute('cy','16'); circle.setAttribute('r','16'); circle.setAttribute('fill','#25D366');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('fill','#fff');
+      path.setAttribute('d','M23.6 8.4A10.8 10.8 0 0 0 7 21.4L5.8 26l4.7-1.2A10.8 10.8 0 0 0 23.6 8.4Zm-7.7 15.1a9 9 0 0 1-4.5-1.2l-.3-.2-2.8.7.7-2.7-.2-.3a9 9 0 1 1 7.1 3.7Zm4.9-6.7c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.2-1.4-.8-.7-1.3-1.6-1.5-1.9-.2-.3 0-.5.1-.6l.5-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.9-2-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.8 4.3.7.3 1.2.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.1-1.3-.1-.2-.3-.3-.6-.5Z');
+      svg.append(circle,path);
+      return svg;
+    };
+
+    const replaceWaBadge=function(element,className){
+      if(!element) return;
+      element.textContent='';
+      element.appendChild(makeWaIcon(className));
+    };
+
+    /* Desktop navbar: full international display, still compact enough for the existing bar. */
+    const headerWa=document.querySelector('.contact-mini[data-wa-context="header"]');
     if(headerWa){
       const number=headerWa.querySelector('span:last-child');
       if(number){
-        number.textContent='+234 701 728 5626';
+        number.textContent=DISPLAY_NUMBER;
         number.style.fontSize='13px';
         number.style.letterSpacing='-.01em';
       }
-      headerWa.setAttribute('aria-label','Chat on WhatsApp at +234 701 728 5626');
+      headerWa.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER);
       headerWa.style.fontSize='13px';
       headerWa.style.gap='7px';
+      replaceWaBadge(headerWa.querySelector('.wa'),'grb-header-wa-icon');
     }
 
-    if(!menu||!panel) return;
+    /* Contact section: make the WhatsApp number itself a real clickable WhatsApp link. */
+    document.querySelectorAll('.contact-detail').forEach(function(detail){
+      const label=detail.querySelector('b');
+      const value=detail.querySelector('span');
+      if(label && value && label.textContent.trim()==='WhatsApp'){
+        const link=document.createElement('a');
+        link.href=WA_URL;
+        link.target='_blank';
+        link.rel='noopener noreferrer';
+        link.textContent=DISPLAY_NUMBER;
+        link.style.display='inline-block';
+        link.style.color='inherit';
+        link.style.fontWeight='700';
+        link.style.textDecoration='none';
+        link.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER);
+        value.replaceWith(link);
+      }
+    });
 
-    const style=document.createElement('style');
-    style.textContent=`
+    /* Footer: preserve its existing clickable destination, standardize visible formatting. */
+    document.querySelectorAll('.footer-contact-link').forEach(function(link){
+      const label=link.querySelector('span');
+      const number=link.querySelector('strong');
+      if(label && number && label.textContent.trim()==='WhatsApp'){
+        link.href=WA_URL;
+        link.target='_blank';
+        link.rel='noopener noreferrer';
+        number.textContent=DISPLAY_NUMBER;
+      }
+    });
+
+    /* Form/modal/success WhatsApp CTAs: replace the old WA text badge with the official mark. */
+    document.querySelectorAll('.wa-dot').forEach(function(dot){
+      replaceWaBadge(dot,'grb-wa-dot-icon');
+    });
+
+    /* Mobile menu: official WhatsApp mark above the international number. */
+    if(menu && panel){
+      const style=document.createElement('style');
+      style.textContent=`
 @media(max-width:900px){
   .menu.grb-mobile-runtime[aria-expanded="true"]{font-size:30px!important}
   .menu.grb-mobile-runtime::before{content:none!important;display:none!important}
   .mobile-panel>a.grb-mobile-wa{
     display:flex!important;
-    align-items:center;
-    gap:10px;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:7px!important;
     font-size:16px!important;
     color:var(--navy)!important;
+    padding-top:16px!important;
+    padding-bottom:16px!important;
   }
   .mobile-panel>a.grb-mobile-wa::before,
   .mobile-panel>a.grb-mobile-wa::after{
@@ -44,41 +110,46 @@
     display:none!important;
   }
   .grb-wa-icon{
-    width:24px;
-    height:24px;
-    flex:0 0 24px;
+    width:28px;
+    height:28px;
+    display:block;
+    flex:0 0 28px;
+  }
+  .grb-header-wa-icon{
+    width:31px;
+    height:31px;
     display:block;
   }
-}`;
-    document.head.appendChild(style);
+}
+@media(min-width:901px){
+  .grb-header-wa-icon{width:31px;height:31px;display:block}
+}
+.grb-wa-dot-icon{width:24px;height:24px;display:block;flex:0 0 24px}
+.contact-detail a:hover,.footer-contact-link:hover strong{color:var(--lime)!important}
+`;
+      document.head.appendChild(style);
 
-    menu.classList.add('grb-mobile-runtime');
-    const wa=panel.querySelector('a[href^="https://wa.me/"]');
-    if(wa){
-      wa.classList.add('grb-mobile-wa');
-      wa.textContent='';
-      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-      svg.setAttribute('class','grb-wa-icon');
-      svg.setAttribute('viewBox','0 0 24 24');
-      svg.setAttribute('aria-hidden','true');
-      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      circle.setAttribute('cx','12'); circle.setAttribute('cy','12'); circle.setAttribute('r','12'); circle.setAttribute('fill','#25D366');
-      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-      path.setAttribute('fill','#fff');
-      path.setAttribute('d','M17.5 6.5A7.75 7.75 0 0 0 5.27 15.84L4.5 19.5l3.74-.98A7.75 7.75 0 0 0 17.5 6.5Zm-5.48 11.02a6.42 6.42 0 0 1-3.27-.9l-.23-.14-2.22.58-2.16.59a6.43 6.43 0 1 1 5.28 2.85Zm3.52-4.83c-.19-.1-1.12-.55-1.29-.61-.17-.06-.3-.1-.43.1-.13.19-.49.61-.6.73-.11.13-.22.14-.41.05-.19-.1-.79-.29-1.51-.92-.56-.5-.93-1.11-1.04-1.3-.11-.19-.01-.29.08-.39.08-.08.19-.22.29-.33.1-.11.13-.19.19-.32.06-.13.03-.24-.02-.34-.05-.1-.43-1.03-.59-1.41-.16-.37-.31-.32-.43-.33h-.37c-.13 0-.34.05-.52.24-.18.19-.68.66-.68 1.61s.7 1.87.79 2c.1.13 1.37 2.09 3.32 2.93.46.2.82.32 1.1.41.46.15.88.13 1.21.08.37-.06 1.12-.46 1.28-.9.16-.44.16-.82.11-.9-.05-.08-.17-.13-.36-.23Z');
-      svg.append(circle,path);
-      const label=document.createElement('span');
-      label.textContent='0701 728 5626';
-      wa.append(svg,label);
+      menu.classList.add('grb-mobile-runtime');
+      const wa=panel.querySelector('a[href^="https://wa.me/"]');
+      if(wa){
+        wa.classList.add('grb-mobile-wa');
+        wa.textContent='';
+        wa.appendChild(makeWaIcon('grb-wa-icon'));
+        const label=document.createElement('span');
+        label.textContent=DISPLAY_NUMBER;
+        wa.appendChild(label);
+        wa.href=WA_URL;
+        wa.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER);
+      }
+
+      const sync=function(){
+        const open=menu.getAttribute('aria-expanded')==='true';
+        menu.textContent=open?'×':'☰';
+      };
+      menu.addEventListener('click',sync);
+      panel.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setTimeout(sync,0)});});
+      sync();
     }
-
-    const sync=function(){
-      const open=menu.getAttribute('aria-expanded')==='true';
-      menu.textContent=open?'×':'☰';
-    };
-    menu.addEventListener('click',sync);
-    panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setTimeout(sync,0)));
-    sync();
   };
   document.head.appendChild(core);
 })();
