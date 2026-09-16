@@ -37,7 +37,6 @@
       element.appendChild(makeWaIcon(className));
     };
 
-    /* Desktop navbar: full international display, still compact enough for the existing bar. */
     const headerWa=document.querySelector('.contact-mini[data-wa-context="header"]');
     if(headerWa){
       const number=headerWa.querySelector('span:last-child');
@@ -52,12 +51,10 @@
       replaceWaBadge(headerWa.querySelector('.wa'),'grb-header-wa-icon');
     }
 
-    /* Remove FAQ from the primary navbar while preserving the FAQ section itself. */
     document.querySelectorAll('.links a[data-nav="faq"], .links a[href="#faq"]').forEach(function(link){
       link.remove();
     });
 
-    /* Contact section: make the WhatsApp number itself a real clickable WhatsApp link. */
     document.querySelectorAll('.contact-detail').forEach(function(detail){
       const label=detail.querySelector('b');
       const value=detail.querySelector('span');
@@ -76,7 +73,6 @@
       }
     });
 
-    /* Footer: preserve its existing clickable destination, standardize visible formatting. */
     document.querySelectorAll('.footer-contact-link').forEach(function(link){
       const label=link.querySelector('span');
       const number=link.querySelector('strong');
@@ -88,12 +84,10 @@
       }
     });
 
-    /* Form/modal/success WhatsApp CTAs: replace the old WA text badge with the green mark. */
     document.querySelectorAll('.wa-dot').forEach(function(dot){
       replaceWaBadge(dot,'grb-wa-dot-icon');
     });
 
-    /* Mobile menu: international number first, WhatsApp mark beside it. */
     if(menu && panel){
       const style=document.createElement('style');
       style.textContent=`
@@ -104,7 +98,7 @@
     display:flex!important;
     flex-direction:row!important;
     align-items:center!important;
-    justify-content:center!important;
+    justify-content:flex-start!important;
     gap:9px!important;
     font-size:16px!important;
     color:var(--navy)!important;
