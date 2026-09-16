@@ -1,15 +1,16 @@
 name: Fix social share image
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/social-share-image
+      - main
 
 permissions:
   contents: write
 
 jobs:
   update-metadata:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Check out branch
@@ -48,4 +49,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html .github/workflows/fix-social-share-image.yml
           git commit -m "fix: use favicon for social share previews"
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin HEAD:${GITHUB_HEAD_REF}
