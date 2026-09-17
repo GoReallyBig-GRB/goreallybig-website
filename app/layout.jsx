@@ -103,6 +103,43 @@ function getProductionStyles() {
   .contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:10px 12px!important}
   .contact .form .field textarea{min-height:90px!important}
 }
+/* Hero mockup carousel: all four supplied 1670×941 assets share the production Hero slot. */
+.grb-hero-carousel{
+  position:relative!important;
+  width:100%!important;
+  aspect-ratio:1670 / 941!important;
+  overflow:visible!important;
+}
+.grb-hero-carousel .grb-hero-slide{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  display:block!important;
+  opacity:0!important;
+  animation:grbHeroFade 20s linear infinite!important;
+  animation-delay:calc(var(--grb-slide) * 5s)!important;
+  animation-fill-mode:both!important;
+}
+.grb-hero-carousel .grb-hero-slide img{
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:0!important;
+  display:block!important;
+}
+@keyframes grbHeroFade{
+  0%,25%{opacity:1}
+  30%,100%{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .grb-hero-carousel .grb-hero-slide{animation:none!important}
+  .grb-hero-carousel .grb-hero-slide:not(:first-child){display:none!important}
+  .grb-hero-carousel .grb-hero-slide:first-child{opacity:1!important}
+}
 `;
   return [inline, productionCss, runtimePresentation].join('\n');
 }
