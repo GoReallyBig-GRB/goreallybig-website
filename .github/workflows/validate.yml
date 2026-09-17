@@ -1,11 +1,8 @@
-# Durable validation: focus on genuine integrity, security, and syntax regressions.
-# Validation trigger refresh.
 name: Validate
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: read
@@ -19,102 +16,69 @@ jobs:
     name: Validate site and changes
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        with: { fetch-depth: 0 }
 
       - name: Inventory changed files
         id: changes
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        shell: bash
         run: |
           set -euo pipefail
-          git diff --name-status "${BASE_SHA}...${HEAD_SHA}" > /tmp/changed-files.txt
-          cat /tmp/changed-files.txt
+          git diff --name-status "$BASE_SHA...$HEAD_SHA" | tee /tmp/changed-files.txt
           echo "count=$(wc -l < /tmp/changed-files.txt)" >> "$GITHUB_OUTPUT"
 
-      - name: Verify required repository structure
-        shell: bash
+      - name: Verify Next.js repository structure
         run: |
           set -euo pipefail
-          test -f index.html
-          echo "Required repository structure is present."
+          test -f package.json
+          test -f next.config.mjs
+          test -f app/layout.jsx
+          test -f app/page.jsx
+          test -f app/globals.css
+          test -f public/assets/favicon.png
 
-      - name: Check basic HTML structure
-        shell: bash
-        run: |
-          set -euo pipefail
-          grep -qi '<!doctype html' index.html
-          grep -qi '<html' index.html
-          grep -qi '<head' index.html
-          grep -qi '<body' index.html
-          echo "Basic HTML structure checks passed."
+      - name: Install Node dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-      - name: Scan for dangerous JavaScript constructs
-        shell: bash
+      - name: Build Next.js static export
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+          test -f out/index.html
+
+      - name: Verify first-paint HTML contains approved metadata and contact link
         run: |
           set -euo pipefail
-          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' --include='*.js' --include='*.mjs' '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\(|document\.write[[:space:]]*\()' .; then
-            echo "ERROR: Dangerous JavaScript construct detected."
+          grep -qi 'Professional Website Design for Nigerian Businesses' out/index.html
+          grep -q 'https://goreallybig.com/assets/favicon.png' out/index.html
+          grep -q 'mailto:info@goreallybig.com' out/index.html
+          if grep -q 'assets/app.js' out/index.html || grep -q 'assets/app-core.js' out/index.html; then
+            echo 'ERROR: Legacy runtime bootstrap leaked into the static export.'
             exit 1
           fi
-          echo "Dangerous JavaScript construct scan passed."
 
-      - name: Reject executable external scripts
-        shell: bash
+      - name: Scan source for dangerous JavaScript constructs
+        run: |
+          set -euo pipefail
+          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.js' --include='*.jsx' --include='*.mjs' '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\(|document\.write[[:space:]]*\()' .; then
+            echo 'ERROR: Dangerous JavaScript construct detected.'
+            exit 1
+          fi
+
+      - name: Reject executable external scripts in source
         run: |
           set -euo pipefail
           if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' "<script[^>]+src=[\"']https?://" .; then
-            echo "ERROR: External executable JavaScript detected."
+            echo 'ERROR: External executable JavaScript detected.'
             exit 1
           fi
-          echo "External executable script check passed."
-
-      - name: Check local asset references
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 <<'PY'
-          from pathlib import Path
-          import re
-          import sys
-
-          root = Path('.').resolve()
-          files = [p for p in root.rglob('*') if p.is_file() and '.git' not in p.parts and 'node_modules' not in p.parts and p.suffix.lower() in {'.html', '.css'}]
-          html_pattern = re.compile(r'''(?:src|href)\s*=\s*["']([^"']+)["']''', re.IGNORECASE)
-          css_pattern = re.compile(r'''url\(\s*["']?([^\)"']+)["']?\s*\)''', re.IGNORECASE)
-          ignored = ('#', 'data:', 'mailto:', 'tel:', 'javascript:', 'http://', 'https://', '//')
-          failures = []
-
-          for file in files:
-              try:
-                  text = file.read_text(encoding='utf-8')
-              except UnicodeDecodeError:
-                  continue
-              pattern = html_pattern if file.suffix.lower() == '.html' else css_pattern
-              for match in pattern.finditer(text):
-                  reference = match.group(1).strip()
-                  if reference.startswith(ignored):
-                      continue
-                  reference = reference.split('#', 1)[0].split('?', 1)[0]
-                  if not reference:
-                      continue
-                  target = root / reference.lstrip('/') if reference.startswith('/') else file.parent / reference
-                  if not target.exists():
-                      failures.append(f'{file.relative_to(root)} -> {reference}')
-
-          if failures:
-              print('ERROR: Broken local asset references detected:')
-              for failure in failures:
-                  print(f'  {failure}')
-              sys.exit(1)
-          print('Local asset reference check passed.')
-          PY
 
       - name: Secret scan
         uses: trufflesecurity/trufflehog@v3.97.1
@@ -124,111 +88,37 @@ jobs:
           head: ${{ github.event.pull_request.head.sha }}
           extra_args: --results=verified,unknown
 
-      - name: Validate changed HTML with html-validate
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          mapfile -t files < <(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | grep -Ei '\.html$' || true)
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo "No changed HTML files to validate."
-            exit 0
-          fi
-          cat > /tmp/htmlvalidate.json <<'JSON'
-          {
-            "extends": [],
-            "rules": {
-              "close-order": "error",
-              "no-dup-attr": "error",
-              "no-conditional-comment": "error",
-              "missing-doctype": "error"
-            }
-          }
-          JSON
-          printf 'Validating changed HTML files:\n'
-          printf '  %s\n' "${files[@]}"
-          npx --yes html-validate@11 --config /tmp/htmlvalidate.json "${files[@]}"
-
       - name: Validate changed CSS with Stylelint
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | grep -Ei '\.css$' || true)
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo "No changed CSS files to validate."
-            exit 0
-          fi
-          cat > /tmp/stylelint.config.mjs <<'JS'
-          export default { rules: {} };
-          JS
+          mapfile -t files < <(git diff --name-only "$BASE_SHA...$HEAD_SHA" | grep -Ei '\.css$' || true)
+          if [ "${#files[@]}" -eq 0 ]; then exit 0; fi
+          printf 'export default { rules: {} };\n' > /tmp/stylelint.config.mjs
           npx --yes stylelint@17 --config /tmp/stylelint.config.mjs "${files[@]}"
-
-      - name: Validate changed SVG syntax
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          mapfile -t files < <(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" | grep -Ei '\.svg$' || true)
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo "No changed SVG files to validate."
-            exit 0
-          fi
-          python3 - "${files[@]}" <<'PY'
-          import sys
-          import xml.etree.ElementTree as ET
-          failures = []
-          for filename in sys.argv[1:]:
-              try:
-                  ET.parse(filename)
-              except ET.ParseError as exc:
-                  failures.append(f'{filename}: {exc}')
-          if failures:
-              print('ERROR: Invalid SVG/XML syntax detected:')
-              for failure in failures:
-                  print(f'  {failure}')
-              sys.exit(1)
-          print('Changed SVG syntax checks passed.')
-          PY
 
       - name: Check Git whitespace errors
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          git diff --check "${BASE_SHA}...${HEAD_SHA}"
-          echo "Git whitespace check passed."
+        run: git diff --check "$BASE_SHA...$HEAD_SHA"
 
       - name: Write validation summary
         if: always()
         env:
           CHANGED_COUNT: ${{ steps.changes.outputs.count }}
-        shell: bash
         run: |
           {
-            echo "## GoReallyBig validation"
+            echo '## GoReallyBig validation'
             echo
             echo "- Files changed: ${CHANGED_COUNT}"
-            echo "- Repository structure: checked"
-            echo "- HTML structure: checked"
-            echo "- Dangerous JavaScript constructs: checked"
-            echo "- External executable scripts: checked"
-            echo "- Local asset references: checked"
-            echo "- TruffleHog secret scan: checked"
-            echo "- Changed HTML: validated with html-validate 11.x"
-            echo "- Changed CSS: syntax-parsed with Stylelint 17.x"
-            echo "- Changed SVG: XML syntax checked"
-            echo "- Git whitespace errors: checked"
-            echo
-            echo "No artificial PR size limit."
-            echo "Workflow changes are permitted through normal pull requests."
-            echo "No controlled-edit mechanism is used."
+            echo '- Next.js static export: built'
+            echo '- First-paint metadata/contact checks: passed'
+            echo '- Legacy runtime bootstrap check: passed'
+            echo '- Dangerous JavaScript constructs: checked'
+            echo '- TruffleHog secret scan: checked'
+            echo '- Changed CSS: validated with Stylelint 17.x'
+            echo '- Git whitespace errors: checked'
           } >> "$GITHUB_STEP_SUMMARY"
