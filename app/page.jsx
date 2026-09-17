@@ -51,7 +51,7 @@ function optimizeImages(html) {
 
 function optimizeHeroImage(html) {
   return html.replace(
-    /(<div class="hero-visual">\s*<picture class="grb-picture">\s*<source[^>]+>\s*<img\b[^>]*?src="\/assets\/c04-hero\.webp"[^>]*)(\/>)/i,
+    /(<div class="hero-visual">\s*<picture class="grb-picture">\s*<source[^>]+>\s*<img\b[^>]*?src="assets\/c04-hero\.png"[^>]*)(\/?>)/i,
     '$1 loading="eager" fetchpriority="high" decoding="async"$2',
   );
 }
