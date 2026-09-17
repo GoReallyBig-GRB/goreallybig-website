@@ -17,10 +17,10 @@ function getProductionSource() {
 }
 
 function preloadWhatsAppLinks(html) {
-  return html.replace(/href="https:\/\/wa\.me\/2347017285626"([^>]*data-wa-context="([^"]+)"[^>]*)/g, (full, attrs, context) => {
+  return html.replace(/(<a[^>]*data-wa-context="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2347017285626("[^>]*>)/g, (full, prefix, context, suffix) => {
     const message = WA_MESSAGES[context];
     if (!message) return full;
-    return `href="${WA_BASE}?text=${encodeURIComponent(message)}"${attrs}`;
+    return `${prefix}${WA_BASE}?text=${encodeURIComponent(message)}${suffix}`;
   });
 }
 
