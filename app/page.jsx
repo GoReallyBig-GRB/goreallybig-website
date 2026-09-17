@@ -72,6 +72,19 @@ function optimizeContactActions(html) {
     .replace(/WhatsApp: 0701 728 5626/g, '+234 701 728 5626');
 }
 
+function optimizeHeroCarousel(html) {
+  const current = '<div class="hero-visual"><picture class="grb-picture"><img alt="Evergreen Private School website design mockup" src="assets/c04-hero.png"/></picture></div>';
+  const carousel = `<div class="hero-visual">
+<div class="grb-hero-carousel" aria-label="Website design examples">
+<picture class="grb-hero-slide" style="--grb-slide:0"><source srcset="/assets/c04-hero.webp" type="image/webp" /><img alt="Evergreen Private School website design mockup" src="assets/c04-hero.png" loading="eager" fetchpriority="high" decoding="async" /></picture>
+<picture class="grb-hero-slide" style="--grb-slide:1"><img alt="AutoDrive Motors website design mockup" src="/assets/auto-drive-motors.webp" loading="eager" decoding="async" /></picture>
+<picture class="grb-hero-slide" style="--grb-slide:2"><img alt="Riverside Premium Hospital website design mockup" src="/assets/hero-riverside.webp" loading="eager" decoding="async" /></picture>
+<picture class="grb-hero-slide" style="--grb-slide:3"><img alt="Biliya View Resort and Spa website design mockup" src="/assets/hero-biliya.webp" loading="eager" decoding="async" /></picture>
+</div>
+</div>`;
+  return html.replace(current, carousel);
+}
+
 function getBody(source) {
   const match = source.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   if (!match) throw new Error('Production body could not be extracted.');
@@ -88,7 +101,7 @@ function getBody(source) {
   return optimizeImages(
     optimizeHeroImage(
       lazyLoadBelowFoldImages(
-        preloadWhatsAppLinks(optimizeContactActions(body)),
+        optimizeHeroCarousel(preloadWhatsAppLinks(optimizeContactActions(body))),
       ),
     ),
   ).trim();
