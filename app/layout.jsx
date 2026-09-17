@@ -103,7 +103,7 @@ function getProductionStyles() {
   .contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:10px 12px!important}
   .contact .form .field textarea{min-height:90px!important}
 }
-/* Hero mockup carousel: all four supplied 1670×941 assets share the production Hero slot. */
+/* Hero mockup carousel: deterministic first paint, one shared visual frame. */
 .grb-hero-carousel{
   position:relative!important;
   width:100%!important;
@@ -118,10 +118,11 @@ function getProductionStyles() {
   margin:0!important;
   display:block!important;
   opacity:0!important;
-  animation:grbHeroFade 20s linear infinite!important;
-  animation-delay:calc(var(--grb-slide) * 5s)!important;
-  animation-fill-mode:both!important;
+  animation:grbHeroFade 24s ease-in-out infinite!important;
+  animation-delay:calc(var(--grb-slide) * -6s)!important;
+  animation-fill-mode:none!important;
 }
+.grb-hero-carousel .grb-hero-slide:first-child{opacity:1}
 .grb-hero-carousel .grb-hero-slide img{
   width:100%!important;
   height:100%!important;
@@ -132,13 +133,14 @@ function getProductionStyles() {
   display:block!important;
 }
 @keyframes grbHeroFade{
-  0%,25%{opacity:1}
-  30%,100%{opacity:0}
+  0%,20%{opacity:1}
+  25%,95%{opacity:0}
+  100%{opacity:1}
 }
 @media(prefers-reduced-motion:reduce){
   .grb-hero-carousel .grb-hero-slide{animation:none!important}
   .grb-hero-carousel .grb-hero-slide:not(:first-child){display:none!important}
-  .grb-hero-carousel .grb-hero-slide:first-child{opacity:1!important}
+  .grb-hero-carousel .grb-hero-slide:first-child{display:block!important;opacity:1!important}
 }
 `;
   return [inline, productionCss, runtimePresentation].join('\n');
