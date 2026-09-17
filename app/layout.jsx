@@ -61,28 +61,29 @@ function getProductionStyles() {
 .contact-detail .contact-whatsapp img{width:22px;height:22px;display:block;flex:0 0 22px}
 .contact-detail .contact-whatsapp{font-weight:700}
 
-/* Form WhatsApp CTA: visually distinct from text inputs and clearly interactive. */
-.form .wa-link,.modal-fields .wa-link{display:inline-flex;align-items:center;justify-content:flex-start;gap:10px;width:auto;min-height:48px;padding:9px 16px;margin-top:14px;margin-bottom:28px;border:0;border-radius:999px;background:#25d366;color:#fff;text-decoration:none;cursor:pointer;box-shadow:0 6px 16px rgba(37,211,102,.18);transition:background .2s ease,color .2s ease,box-shadow .2s ease,transform .15s ease}
-.form .wa-link:hover,.modal-fields .wa-link:hover{background:#128c7e;color:#fff;box-shadow:0 9px 22px rgba(18,140,126,.22);transform:translateY(-1px)}
-.form .wa-link:active,.modal-fields .wa-link:active{transform:translateY(0) scale(.98);box-shadow:0 3px 10px rgba(18,140,126,.18)}
-.form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:3px solid rgba(21,94,239,.45);outline-offset:3px}
-.form .wa-link .wa-dot,.modal-fields .wa-link .wa-dot{flex:0 0 28px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#fff}
-.form .wa-link .wa-dot img,.modal-fields .wa-link .wa-dot img{width:20px;height:20px;display:block}
-.form .wa-link-copy,.modal-fields .wa-link-copy{font-size:13px;line-height:1.25;font-weight:700;white-space:nowrap}
+/* Premium full-width WhatsApp CTA: white surface with a restrained green outline. */
+.form .wa-link,.modal-fields .wa-link{display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;box-sizing:border-box;min-height:52px;padding:11px 16px;margin-top:14px;margin-bottom:28px;border:1.5px solid #25d366;border-radius:12px;background:#fff;color:#128c7e;text-decoration:none;cursor:pointer;box-shadow:0 4px 14px rgba(11,31,58,.06);transition:background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease,transform .15s ease}
+.form .wa-link:hover,.modal-fields .wa-link:hover{background:#ecfff3;color:#087f5b;border-color:#25d366;box-shadow:0 7px 20px rgba(37,211,102,.14);transform:translateY(-1px)}
+.form .wa-link:active,.modal-fields .wa-link:active{transform:translateY(0);box-shadow:0 3px 9px rgba(11,31,58,.08)}
+.form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:3px solid rgba(21,94,239,.28);outline-offset:3px}
+.form .wa-link .wa-dot,.modal-fields .wa-link .wa-dot{flex:0 0 26px;width:26px;height:26px;display:grid;place-items:center;background:transparent;border:0;border-radius:0}
+.form .wa-link .wa-dot img,.modal-fields .wa-link .wa-dot img{width:24px;height:24px;display:block}
+.form .wa-link-copy,.modal-fields .wa-link-copy{font-size:13px;line-height:1.25;font-weight:700;white-space:nowrap;color:inherit}
 .form .wa-link-copy strong,.modal-fields .wa-link-copy strong{font-weight:800}
-.form .wa-number,.modal-fields .wa-number{font-size:12px;line-height:1.2;font-weight:800;white-space:nowrap;color:#fff;text-decoration:underline;text-underline-offset:3px}
-.form .wa-link:hover .wa-number,.modal-fields .wa-link:hover .wa-number{color:#d9fff0}
+.form .wa-number,.modal-fields .wa-number{margin-left:auto;font-size:12px;line-height:1.2;font-weight:800;white-space:nowrap;color:#128c7e;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;transition:color .2s ease}
+.form .wa-link:hover .wa-number,.modal-fields .wa-link:hover .wa-number{color:#087f5b}
 
-/* Our Work: arrows sit inside the showcase flank so the media container cannot clip them. */
-.showcase-media{position:relative;padding:0 54px}
-.showcase-media .work-mockup{display:none;width:100%;height:620px;max-height:none;object-fit:contain}
-.showcase-media .work-mockup.active{display:block}
-.showcase-media .work-nav{position:absolute;top:50%;z-index:10;width:44px;height:64px;display:grid;place-items:center;padding:0;border:1px solid rgba(11,31,58,.12);border-radius:12px;background:rgba(255,255,255,.96);color:var(--navy);font-size:42px;font-weight:500;line-height:1;cursor:pointer;box-shadow:0 10px 24px rgba(11,31,58,.12);transform:translateY(-50%);transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
-.showcase-media .work-nav:hover{background:#fff;border-color:rgba(21,94,239,.45);box-shadow:0 14px 28px rgba(11,31,58,.18);transform:translateY(-50%) scale(1.04)}
+/* Our Work: remove the media panel's inner card/background and reserve dedicated side gutters for navigation. */
+.showcase-media{position:relative;padding:0 76px;background:transparent!important;border-radius:0!important;overflow:visible!important;display:grid;place-items:center;min-height:620px}
+.showcase-media .grb-picture{display:none!important;position:absolute;inset:0;width:100%;height:100%;align-items:center;justify-content:center}
+.showcase-media .grb-picture.active{display:flex!important}
+.showcase-media .work-mockup{display:block;width:100%;height:620px;max-height:none;object-fit:contain}
+.showcase-media .work-nav{position:absolute;top:50%;z-index:50;width:46px;height:58px;display:grid;place-items:center;padding:0;border:1px solid rgba(11,31,58,.16);border-radius:12px;background:#fff;color:var(--navy);font-size:40px;font-weight:500;line-height:1;cursor:pointer;box-shadow:0 8px 20px rgba(11,31,58,.12);transform:translateY(-50%);transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+.showcase-media .work-nav:hover{background:#f5f8ff;border-color:rgba(21,94,239,.55);box-shadow:0 12px 24px rgba(11,31,58,.16);transform:translateY(-50%) scale(1.04)}
 .showcase-media .work-nav:active{transform:translateY(-50%) scale(.96)}
 .showcase-media .work-nav:focus-visible{outline:3px solid rgba(21,94,239,.4);outline-offset:3px}
-.showcase-media .work-nav-prev{left:8px}
-.showcase-media .work-nav-next{right:8px}
+.showcase-media .work-nav-prev{left:12px}
+.showcase-media .work-nav-next{right:12px}
 
 /* Give the three secondary mockups the same presentation scale as the approved Private Schools view. */
 .showcase-media .work-mockup[data-work="professional"],
@@ -96,25 +97,25 @@ function getProductionStyles() {
 .footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
 
 @media(max-width:900px){
-  .showcase-media{padding:0 42px}
+  .showcase-media{padding:0 52px;min-height:520px}
   .showcase-media .work-mockup{height:520px}
-  .showcase-media .work-nav{width:38px;height:54px;font-size:36px}
-  .showcase-media .work-nav-prev{left:6px}
-  .showcase-media .work-nav-next{right:6px}
+  .showcase-media .work-nav{width:40px;height:52px;font-size:36px}
+  .showcase-media .work-nav-prev{left:7px}
+  .showcase-media .work-nav-next{right:7px}
   .showcase-media .work-mockup[data-work="professional"],
   .showcase-media .work-mockup[data-work="hospitality"],
   .showcase-media .work-mockup[data-work="local"]{transform:scale(1.06)}
 }
 
 @media(max-width:560px){
-  .form .wa-link,.modal-fields .wa-link{min-height:52px;padding:9px 13px;margin-top:14px;margin-bottom:24px}
+  .form .wa-link,.modal-fields .wa-link{min-height:52px;padding:10px 13px;margin-top:14px;margin-bottom:24px;border-radius:11px}
   .form .wa-link-copy,.modal-fields .wa-link-copy{font-size:12px}
-  .form .wa-number,.modal-fields .wa-number{font-size:11px;padding-top:2px}
-  .showcase-media{padding:0 32px}
+  .form .wa-number,.modal-fields .wa-number{font-size:11px}
+  .showcase-media{padding:0 40px;min-height:360px}
   .showcase-media .work-mockup{height:360px}
-  .showcase-media .work-nav{width:34px;height:48px;font-size:32px;border-radius:10px}
-  .showcase-media .work-nav-prev{left:5px}
-  .showcase-media .work-nav-next{right:5px}
+  .showcase-media .work-nav{width:34px;height:46px;font-size:32px;border-radius:10px}
+  .showcase-media .work-nav-prev{left:4px}
+  .showcase-media .work-nav-next{right:4px}
   .showcase-media .work-mockup[data-work="professional"],
   .showcase-media .work-mockup[data-work="hospitality"],
   .showcase-media .work-mockup[data-work="local"]{transform:scale(1.03)}
