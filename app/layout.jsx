@@ -53,13 +53,69 @@ function getProductionStyles() {
 .grb-wa-img{width:100%;height:100%;display:block;object-fit:contain}
 .wa{background:transparent!important;color:transparent!important}
 .wa:empty{display:block}
-.contact-detail a{color:#aebacc;text-decoration:none;font-size:15px;line-height:1.65}
+
+/* Contact actions: clear, touch-friendly links without changing the approved contact-card geometry. */
+.contact-detail a{color:#aebacc;text-decoration:none;font-size:15px;line-height:1.65;display:inline-flex;align-items:center;gap:8px;min-height:28px}
 .contact-detail a:hover{color:#fff;text-decoration:underline}
+.contact-detail a:focus-visible{outline:2px solid var(--lime);outline-offset:4px;border-radius:4px}
+.contact-detail .contact-whatsapp img{width:22px;height:22px;display:block;flex:0 0 22px}
+.contact-detail .contact-whatsapp{font-weight:700}
+
+/* Form WhatsApp alternative: prominent enough to scan, compact enough not to compete with the form. */
+.form .wa-link,.modal-fields .wa-link{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;min-height:52px;padding:10px 16px;margin-top:14px;margin-bottom:24px;border:1.5px solid #25d366;border-radius:12px;background:#f4fff8;color:#087f5b;text-decoration:none;cursor:pointer;box-shadow:0 4px 12px rgba(37,211,102,.10);transition:background .2s,border-color .2s,box-shadow .2s,transform .2s}
+.form .wa-link:hover,.modal-fields .wa-link:hover{background:#eafff1;border-color:#16b957;box-shadow:0 7px 18px rgba(37,211,102,.15);transform:translateY(-1px)}
+.form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.form .wa-link .wa-dot,.modal-fields .wa-link .wa-dot{flex:0 0 28px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#25d366}
+.form .wa-link .wa-dot img,.modal-fields .wa-link .wa-dot img{width:20px;height:20px;display:block}
+.form .wa-link-copy,.modal-fields .wa-link-copy{font-size:13px;line-height:1.35;font-weight:700;flex:1}
+.form .wa-link-copy strong,.modal-fields .wa-link-copy strong{font-weight:800}
+.form .wa-number,.modal-fields .wa-number{font-size:12px;line-height:1.2;font-weight:800;white-space:nowrap;color:#087f5b}
+
+/* Our Work: flank controls stay visually outside the showcase and remain keyboard accessible. */
+.showcase-media{position:relative;padding:0 44px}
+.showcase-media .work-mockup{display:none;width:100%;height:620px;max-height:none;object-fit:contain}
+.showcase-media .work-mockup.active{display:block}
+.showcase-media .work-nav{position:absolute;top:50%;z-index:4;width:44px;height:64px;display:grid;place-items:center;padding:0;border:1px solid rgba(11,31,58,.12);border-radius:12px;background:rgba(255,255,255,.94);color:var(--navy);font-size:42px;font-weight:500;line-height:1;cursor:pointer;box-shadow:0 10px 24px rgba(11,31,58,.12);transform:translateY(-50%);transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+.showcase-media .work-nav:hover{background:#fff;border-color:rgba(21,94,239,.35);box-shadow:0 14px 28px rgba(11,31,58,.18);transform:translateY(-50%) scale(1.03)}
+.showcase-media .work-nav:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.showcase-media .work-nav-prev{left:-18px}
+.showcase-media .work-nav-next{right:-18px}
+
+/* Give the three secondary mockups the same presentation scale as the approved Private Schools view. */
+.showcase-media .work-mockup[data-work="professional"],
+.showcase-media .work-mockup[data-work="hospitality"],
+.showcase-media .work-mockup[data-work="local"]{transform:scale(1.12)}
+
 .hero .lead span{font-weight:800!important;color:var(--navy)!important}
 .footer-socials a{width:42px!important;height:42px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:50%!important;background:rgba(255,255,255,.04)!important;color:#fff!important;transition:transform .2s ease,border-color .2s ease,background .2s ease!important}
 .footer-socials a:hover{transform:translateY(-2px)!important;border-color:var(--lime)!important;background:rgba(183,240,0,.08)!important;color:#fff!important}
 .footer-socials .grb-social-icon{width:20px;height:20px;display:block}
 .footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
+
+@media(max-width:900px){
+  .showcase-media{padding:0 34px}
+  .showcase-media .work-mockup{height:520px}
+  .showcase-media .work-nav{width:38px;height:54px;font-size:36px}
+  .showcase-media .work-nav-prev{left:-10px}
+  .showcase-media .work-nav-next{right:-10px}
+  .showcase-media .work-mockup[data-work="professional"],
+  .showcase-media .work-mockup[data-work="hospitality"],
+  .showcase-media .work-mockup[data-work="local"]{transform:scale(1.06)}
+}
+
+@media(max-width:560px){
+  .form .wa-link,.modal-fields .wa-link{align-items:flex-start;min-height:58px;padding:10px 12px;margin-bottom:22px}
+  .form .wa-link-copy,.modal-fields .wa-link-copy{font-size:12px}
+  .form .wa-number,.modal-fields .wa-number{font-size:11px;padding-top:3px}
+  .showcase-media{padding:0 24px}
+  .showcase-media .work-mockup{height:360px}
+  .showcase-media .work-nav{width:34px;height:48px;font-size:32px;border-radius:10px}
+  .showcase-media .work-nav-prev{left:-8px}
+  .showcase-media .work-nav-next{right:-8px}
+  .showcase-media .work-mockup[data-work="professional"],
+  .showcase-media .work-mockup[data-work="hospitality"],
+  .showcase-media .work-mockup[data-work="local"]{transform:scale(1.03)}
+}
 `;
   return [inline, productionCss, runtimePresentation].join('\n');
 }
