@@ -8,7 +8,9 @@
 
   let index = 0;
   let timer = null;
-  let busy = false;
+  let changing = false;
+
+  image.dataset.carouselIndex = '0';
 
   const preload = (src) => new Promise((resolve) => {
     const next = new Image();
@@ -17,24 +19,29 @@
     next.src = src;
   });
 
+  const scheduleNext = () => {
+    timer = window.setTimeout(advance, 6000);
+  };
+
   const advance = async () => {
-    if (busy) return;
-    busy = true;
+    if (changing) return;
+    changing = true;
 
     const nextIndex = (index + 1) % sources.length;
-    const loaded = await preload(sources[nextIndex]);
-
-    if (loaded) {
+    if (await preload(sources[nextIndex])) {
       image.classList.add('is-changing');
       window.setTimeout(() => {
         image.src = sources[nextIndex];
         if (alts[nextIndex]) image.alt = alts[nextIndex];
+        image.dataset.carouselIndex = String(nextIndex);
         image.classList.remove('is-changing');
         index = nextIndex;
-        busy = false;
+        changing = false;
+        scheduleNext();
       }, 180);
     } else {
-      busy = false;
+      changing = false;
+      scheduleNext();
     }
   };
 
@@ -43,6 +50,8 @@
     next.src = src;
   });
 
-  timer = window.setInterval(advance, 6000);
-  window.addEventListener('pagehide', () => window.clearInterval(timer), { once: true });
+  scheduleNext();
+  window.addEventListener('pagehide', () => {
+    if (timer) window.clearTimeout(timer);
+  }, { once: true });
 })();
