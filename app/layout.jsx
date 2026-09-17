@@ -29,22 +29,16 @@ function getProductionStyles() {
   const source = read('index.html');
   const inline = [...source.matchAll(/<style(?:\s[^>]*)?>([\s\S]*?)<\/style>/gi)]
     .map((match) => match[1]).join('\n');
-
-  // These external stylesheets are part of the production cascade and contain
-  // the final responsive/hero refinements that must be present on first paint.
   const productionCss = [
     read('assets/body-copy.css'),
     read('assets/hero-composition.css'),
     read('assets/hero-composition-v2.css')
       .replaceAll("url('whatsapp-icon-outline.svg')", "url('/assets/whatsapp-icon-outline.svg')"),
   ].join('\n');
-
-  // app.js used to inject these rules at runtime. They are presentation rules,
-  // so they belong in the initial CSS now that the page is statically rendered.
   const runtimePresentation = `
 @media(max-width:900px){
-  .menu.grb-mobile-runtime[aria-expanded="true"]{font-size:30px!important}
-  .menu.grb-mobile-runtime::before{content:none!important;display:none!important}
+  .menu[aria-expanded="true"]{font-size:0!important}
+  .menu[aria-expanded="true"]::before{content:"×"!important;font-size:30px!important;line-height:1;display:block!important}
   .mobile-panel>a.grb-mobile-wa{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;font-size:16px!important;color:var(--navy)!important;padding-top:16px!important;padding-bottom:16px!important}
   .mobile-panel>a.grb-mobile-wa::before,.mobile-panel>a.grb-mobile-wa::after{content:none!important;display:none!important}
   .grb-wa-icon{width:28px;height:28px;display:block;flex:0 0 28px;order:2}
@@ -63,7 +57,6 @@ function getProductionStyles() {
 .footer-socials .grb-social-icon{width:20px;height:20px;display:block}
 .footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
 `;
-
   return [inline, productionCss, runtimePresentation].join('\n');
 }
 
