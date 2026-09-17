@@ -109,6 +109,7 @@ export default function Home() {
     <>
       <div dangerouslySetInnerHTML={{ __html: body }} />
       <script src="/assets/app-core.js" defer />
+      <script src="/assets/hero-carousel.js" defer />
     </>
   );
 }
