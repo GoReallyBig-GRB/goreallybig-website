@@ -12,6 +12,23 @@ const WA_MESSAGES = {
   faq: "Hi GoReallyBig, I have a few questions about getting a website for my business.",
 };
 
+const WEBP_ASSETS = new Set([
+  'auto-drive-motors.png',
+  'c04-hero.png',
+  'c04-school-mockup.png',
+  'c06-problem.png',
+  'c07-promise.png',
+  'c14-about.png',
+  'c16-hospitality.png',
+  'c18-local-business.png',
+  'c19-professional-services.png',
+  'c22-logo-light.png',
+  'c23-logo-dark.png',
+  'nav-logo.png',
+  'footer-logo-transparent.png',
+  'willow-creek-academy.png',
+]);
+
 function getProductionSource() {
   return fs.readFileSync('index.html', 'utf8');
 }
@@ -22,6 +39,25 @@ function preloadWhatsAppLinks(html) {
     if (!message) return full;
     return `${prefix}${WA_BASE}?text=${encodeURIComponent(message)}${suffix}`;
   });
+}
+
+function optimizeImages(html) {
+  return html.replace(/<picture class="grb-picture">\s*(<img\b[^>]*?src="assets\/([^"]+\.png)"[^>]*>)\s*<\/picture>/gi, (full, img, filename) => {
+    if (!WEBP_ASSETS.has(filename)) return full;
+    const webp = filename.replace(/\.png$/i, '.webp');
+    return `<picture class="grb-picture"><source srcset="/assets/${webp}" type="image/webp" />${img}</picture>`;
+  });
+}
+
+function optimizeHeroImage(html) {
+  return html.replace(
+    /(<div class="hero-visual">\s*<picture class="grb-picture">\s*<source[^>]+>\s*<img\b[^>]*?src="\/assets\/c04-hero\.webp"[^>]*)(\/>)/i,
+    '$1 loading="eager" fetchpriority="high" decoding="async"$2',
+  );
+}
+
+function lazyLoadBelowFoldImages(html) {
+  return html.replace(/<img\b(?![^>]*\bloading=)(?![^>]*\bclass="logo"\b)([^>]*?src="(?:assets\/|\/assets\/)[^"]+"[^>]*)\/>/gi, '<img$1 loading="lazy" />');
 }
 
 function getBody(source) {
@@ -39,7 +75,12 @@ function getBody(source) {
     .replace(/<a href="https:\/\/wa\.me\/2347017285626" rel="noopener noreferrer" target="_blank">WhatsApp: 0701 728 5626<\/a>/g, `<a class="grb-mobile-wa" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" rel="noopener noreferrer" target="_blank" aria-label="Chat on WhatsApp at +234 701 728 5626 with a prefilled message"><span>+234 701 728 5626</span><img class="grb-wa-icon" src="/assets/whatsapp-icon-outline.svg" alt="" /></a>`)
     .replace(/WhatsApp: 0701 728 5626/g, '+234 701 728 5626');
 
-  return preloadWhatsAppLinks(body).trim();
+  body = preloadWhatsAppLinks(body);
+  body = optimizeImages(body);
+  body = optimizeHeroImage(body);
+  body = lazyLoadBelowFoldImages(body);
+
+  return body.trim();
 }
 
 export default function Home() {
