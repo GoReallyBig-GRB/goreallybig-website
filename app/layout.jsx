@@ -107,38 +107,17 @@ function getProductionStyles() {
 .grb-hero-carousel{
   position:relative!important;
   width:100%!important;
-  aspect-ratio:1670 / 941!important;
-  overflow:visible!important;
 }
-.grb-hero-carousel .grb-hero-slide{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  margin:0!important;
-  padding:0!important;
+.grb-hero-carousel .hero-carousel-image{
   display:block!important;
-  opacity:0!important;
-  animation:grbHeroFade 24s ease-in-out infinite!important;
-  animation-delay:calc(var(--grb-slide) * -6s)!important;
-  animation-fill-mode:none!important;
-}
-.grb-hero-carousel .grb-hero-slide:first-child{opacity:1}
-.grb-hero-carousel .grb-hero-slide img{
   width:100%!important;
-  height:100%!important;
+  height:auto!important;
   max-width:none!important;
-  object-fit:contain!important;
-  object-position:center!important;
   margin:0!important;
-  padding:0!important;
-  display:block!important;
+  opacity:1!important;
+  transition:opacity .18s ease!important;
 }
-@keyframes grbHeroFade{
-  0%,20%{opacity:1}
-  25%,95%{opacity:0}
-  100%{opacity:1}
-}
+.grb-hero-carousel .hero-carousel-image.is-changing{opacity:0!important}
 @media(prefers-reduced-motion:reduce){
   .grb-hero-carousel .grb-hero-slide{animation:none!important}
   .grb-hero-carousel .grb-hero-slide:not(:first-child){display:none!important}
