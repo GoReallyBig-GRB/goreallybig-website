@@ -21,6 +21,10 @@ export const metadata = {
   },
 };
 
+export const viewport = {
+  themeColor: '#155EEF',
+};
+
 function read(file) {
   return fs.readFileSync(file, 'utf8');
 }
