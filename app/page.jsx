@@ -75,12 +75,7 @@ function optimizeContactActions(html) {
 function optimizeHeroCarousel(html) {
   const current = '<div class="hero-visual"><picture class="grb-picture"><img alt="Evergreen Private School website design mockup" src="assets/c04-hero.png"/></picture></div>';
   const carousel = `<div class="hero-visual">
-<div class="grb-hero-carousel" aria-label="Website design examples">
-<div class="grb-hero-slide" style="--grb-slide:0"><img alt="Evergreen Private School website design mockup" src="/assets/c04-hero.webp" loading="eager" fetchpriority="high" decoding="async" /></div>
-<div class="grb-hero-slide" style="--grb-slide:1"><img alt="AutoDrive Motors website design mockup" src="/assets/auto-drive-motors.webp" loading="eager" decoding="async" /></div>
-<div class="grb-hero-slide" style="--grb-slide:2"><img alt="Riverside Premium Hospital website design mockup" src="/assets/hero-riverside.webp" loading="eager" decoding="async" /></div>
-<div class="grb-hero-slide" style="--grb-slide:3"><img alt="Biliya View Resort and Spa website design mockup" src="/assets/hero-biliya.webp" loading="eager" decoding="async" /></div>
-</div>
+<div class="grb-hero-carousel" aria-label="Website design examples"><img class="hero-carousel-image" alt="Evergreen Private School website design mockup" src="/assets/c04-hero.webp" loading="eager" fetchpriority="high" decoding="async" data-carousel-images="/assets/c04-hero.webp|/assets/auto-drive-motors.webp|/assets/hero-riverside.webp|/assets/hero-biliya.webp" data-carousel-alts="Evergreen Private School website design mockup|AutoDrive Motors website design mockup|Riverside Premium Hospital website design mockup|Biliya View Resort and Spa website design mockup" /></div>
 </div>`;
   return html.replace(current, carousel);
 }
