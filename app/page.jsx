@@ -29,21 +29,13 @@ function getBody(source) {
   if (!match) throw new Error('Production body could not be extracted.');
 
   let body = match[1]
-    // The old presentation bootstrap is intentionally removed; all static
-    // refinements are now emitted during the build instead.
     .replace(/<script[^>]+src=["']assets\/app\.js["'][^>]*><\/script>/gi, '')
-    // FAQ is a section, not a top-level navigation item.
     .replace(/<a data-nav="faq" href="#faq">FAQ<\/a>/g, '')
     .replace(/<a href="#faq">FAQ<\/a>/g, '')
-    // Contact email is an actual mailto link in the new implementation.
     .replace(/<div class="contact-detail"><b>Email<\/b><span>info@goreallybig\.com<\/span><\/div>/g, '<div class="contact-detail"><b>Email</b><a href="mailto:info@goreallybig.com">info@goreallybig.com</a></div>')
-    // Preserve the final production H1 line break at first paint; this used
-    // to be inserted by app.js after the browser had already rendered.
     .replace(/(<h1[^>]*>Your Business )Is /, '$1<br class="grb-h1-break" />Is ')
-    // Static WhatsApp artwork instead of the old "WA" text badge.
+    .replace(/<a aria-label="Chat on WhatsApp at 0701 728 5626" class="contact-mini" data-wa-context="header" href="https:\/\/wa\.me\/2347017285626" rel="noopener noreferrer" target="_blank"><span class="wa">WA<\/span><span>0701 728 5626<\/span><\/a>/g, `<a aria-label="Chat on WhatsApp at +234 701 728 5626" class="contact-mini" data-wa-context="header" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" rel="noopener noreferrer" target="_blank"><span class="wa" aria-hidden="true"><img class="grb-wa-img" src="/assets/whatsapp-icon-outline.svg" alt="" /></span><span>+234 701 728 5626</span></a>`)
     .replace(/<span class="wa">WA<\/span>/g, '<span class="wa" aria-hidden="true"><img class="grb-wa-img" src="/assets/whatsapp-icon-outline.svg" alt="" /></span>')
-    // Mobile menu WhatsApp is fully rendered, including the final number and
-    // preloaded message, without waiting for JavaScript.
     .replace(/<a href="https:\/\/wa\.me\/2347017285626" rel="noopener noreferrer" target="_blank">WhatsApp: 0701 728 5626<\/a>/g, `<a class="grb-mobile-wa" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" rel="noopener noreferrer" target="_blank" aria-label="Chat on WhatsApp at +234 701 728 5626 with a prefilled message"><span>+234 701 728 5626</span><img class="grb-wa-icon" src="/assets/whatsapp-icon-outline.svg" alt="" /></a>`)
     .replace(/WhatsApp: 0701 728 5626/g, '+234 701 728 5626');
 
