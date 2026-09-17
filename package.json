@@ -1,0 +1,15 @@
+{
+  "name": "goreallybig-website",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "rm -rf public/assets && mkdir -p public/assets && cp -R assets/. public/assets/ && cp _headers public/_headers && cp robots.txt public/robots.txt && cp sitemap.xml public/sitemap.xml && next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  }
+}
