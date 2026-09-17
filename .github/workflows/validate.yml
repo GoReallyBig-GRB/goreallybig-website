@@ -20,7 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-
       - name: Inventory changed files
         id: changes
         env:
@@ -30,7 +29,6 @@ jobs:
           set -euo pipefail
           git diff --name-status "$BASE_SHA...$HEAD_SHA" | tee /tmp/changed-files.txt
           echo "count=$(wc -l < /tmp/changed-files.txt)" >> "$GITHUB_OUTPUT"
-
       - name: Verify Next.js repository structure
         run: |
           set -euo pipefail
@@ -40,46 +38,31 @@ jobs:
           test -f app/page.jsx
           test -f app/globals.css
           test -f public/assets/favicon.png
-
       - name: Install Node dependencies
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-
       - name: Build Next.js static export
         run: |
           npm install --no-audit --no-fund
           npm run build
           test -f out/index.html
-
       - name: Verify first-paint HTML contains approved metadata and contact link
         run: |
           set -euo pipefail
           grep -qi 'Professional Website Design for Nigerian Businesses' out/index.html
           grep -q 'https://goreallybig.com/assets/favicon.png' out/index.html
           grep -q 'mailto:info@goreallybig.com' out/index.html
-          if grep -q 'assets/app.js' out/index.html || grep -q 'assets/app-core.js' out/index.html; then
-            echo 'ERROR: Legacy runtime bootstrap leaked into the static export.'
-            exit 1
-          fi
-
+          ! grep -q 'assets/app.js' out/index.html
+          ! grep -q 'assets/app-core.js' out/index.html
       - name: Scan source for dangerous JavaScript constructs
         run: |
           set -euo pipefail
-          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.js' --include='*.jsx' --include='*.mjs' '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\(|document\.write[[:space:]]*\()' .; then
-            echo 'ERROR: Dangerous JavaScript construct detected.'
-            exit 1
-          fi
-
+          ! grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.js' --include='*.jsx' --include='*.mjs' '(^|[^[:alnum:]_])(eval[[:space:]]*\(|new[[:space:]]+Function[[:space:]]*\(|document\.write[[:space:]]*\()' .
       - name: Reject executable external scripts in source
         run: |
           set -euo pipefail
-          if grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' "<script[^>]+src=[\"']https?://" .; then
-            echo 'ERROR: External executable JavaScript detected.'
-            exit 1
-          fi
-
+          ! grep -RInE --exclude-dir=.git --exclude-dir=node_modules --include='*.html' "<script[^>]+src=[\"']https?://" .
       - name: Secret scan
         uses: trufflesecurity/trufflehog@v3.97.1
         with:
@@ -87,7 +70,6 @@ jobs:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
           extra_args: --results=verified,unknown
-
       - name: Validate changed CSS with Stylelint
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -98,27 +80,24 @@ jobs:
           if [ "${#files[@]}" -eq 0 ]; then exit 0; fi
           printf 'export default { rules: {} };\n' > /tmp/stylelint.config.mjs
           npx --yes stylelint@17 --config /tmp/stylelint.config.mjs "${files[@]}"
-
       - name: Check Git whitespace errors
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: git diff --check "$BASE_SHA...$HEAD_SHA"
-
       - name: Write validation summary
         if: always()
         env:
           CHANGED_COUNT: ${{ steps.changes.outputs.count }}
         run: |
           {
-            echo '## GoReallyBig validation'
-            echo
-            echo "- Files changed: ${CHANGED_COUNT}"
-            echo '- Next.js static export: built'
-            echo '- First-paint metadata/contact checks: passed'
-            echo '- Legacy runtime bootstrap check: passed'
-            echo '- Dangerous JavaScript constructs: checked'
-            echo '- TruffleHog secret scan: checked'
-            echo '- Changed CSS: validated with Stylelint 17.x'
-            echo '- Git whitespace errors: checked'
+            echo '## GoReallyBig validation'; echo;
+            echo "- Files changed: ${CHANGED_COUNT}";
+            echo '- Next.js static export: built';
+            echo '- First-paint metadata/contact checks: passed';
+            echo '- Legacy runtime bootstrap check: passed';
+            echo '- Dangerous JavaScript constructs: checked';
+            echo '- TruffleHog secret scan: checked';
+            echo '- Changed CSS: validated with Stylelint 17.x';
+            echo '- Git whitespace errors: checked';
           } >> "$GITHUB_STEP_SUMMARY"
