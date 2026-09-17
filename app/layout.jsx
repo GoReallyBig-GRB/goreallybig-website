@@ -118,10 +118,12 @@ function getProductionStyles() {
   transition:opacity .18s ease!important;
 }
 .grb-hero-carousel .hero-carousel-image.is-changing{opacity:0!important}
-@media(prefers-reduced-motion:reduce){
-  .grb-hero-carousel .grb-hero-slide{animation:none!important}
-  .grb-hero-carousel .grb-hero-slide:not(:first-child){display:none!important}
-  .grb-hero-carousel .grb-hero-slide:first-child{display:block!important;opacity:1!important}
+.grb-hero-carousel .hero-carousel-image[src*="auto-drive-motors"],
+.grb-hero-carousel .hero-carousel-image[src*="hero-riverside"],
+.grb-hero-carousel .hero-carousel-image[src*="hero-biliya"]{
+  width:108%!important;
+  max-width:none!important;
+  margin-left:-4%!important;
 }
 `;
   return [inline, productionCss, runtimePresentation].join('\n');
