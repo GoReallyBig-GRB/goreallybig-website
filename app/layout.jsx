@@ -82,36 +82,15 @@ function getProductionStyles() {
 .contact .form .form-actions{margin-top:14px!important}
 .contact .form .form-note{margin-top:8px!important}
 
-/* Our Work: remove the inner media card and give navigation its own clear side gutters. */
-.showcase-media{position:relative!important;padding:0 76px!important;background:transparent!important;border-radius:0!important;overflow:visible!important;display:grid!important;place-items:center!important;min-height:620px!important}
-.showcase-media .grb-picture{display:none!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;align-items:center!important;justify-content:center!important;background:transparent!important}
-.showcase-media .grb-picture.active{display:flex!important}
-.showcase-media .grb-picture img{display:block!important;width:100%!important;height:auto!important;max-height:620px!important;object-fit:contain!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-.showcase-media .work-nav{position:absolute!important;top:50%!important;z-index:1000!important;width:46px!important;height:58px!important;display:grid!important;place-items:center!important;padding:0!important;border:1px solid rgba(11,31,58,.16)!important;border-radius:12px!important;background:#fff!important;color:var(--navy)!important;font-size:40px!important;font-weight:500!important;line-height:1!important;cursor:pointer!important;visibility:visible!important;opacity:1!important;box-shadow:0 8px 20px rgba(11,31,58,.12)!important;transform:translateY(-50%)!important;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease!important}
-.showcase-media .work-nav:hover{background:#f5f8ff!important;border-color:rgba(21,94,239,.55)!important;box-shadow:0 12px 24px rgba(11,31,58,.16)!important;transform:translateY(-50%) scale(1.04)!important}
-.showcase-media .work-nav:active{transform:translateY(-50%) scale(.96)!important}
-.showcase-media .work-nav:focus-visible{outline:3px solid rgba(21,94,239,.4)!important;outline-offset:3px!important}
-.showcase-media .work-nav-prev{left:12px!important}
-.showcase-media .work-nav-next{right:12px!important}
-.showcase-media .grb-picture img[data-work="professional"],
-.showcase-media .grb-picture img[data-work="hospitality"],
-.showcase-media .grb-picture img[data-work="local"]{transform:scale(1.12);transform-origin:center center}
-
-.hero .lead span{font-weight:800!important;color:var(--navy)!important}
-.footer-socials a{width:42px!important;height:42px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:50%!important;background:rgba(255,255,255,.04)!important;color:#fff!important;transition:transform .2s ease,border-color .2s ease,background .2s ease!important}
-.footer-socials a:hover{transform:translateY(-2px)!important;border-color:var(--lime)!important;background:rgba(183,240,0,.08)!important;color:#fff!important}
-.footer-socials .grb-social-icon{width:20px;height:20px;display:block}
-.footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
+/* Social icons: compact, restrained and consistent with the production visual language. */
+.footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.16)!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:#dbe4ee!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
+.footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.55)!important;background:rgba(183,240,0,.06)!important;color:var(--lime)!important}
+.footer-socials a:focus-visible{outline:2px solid var(--lime)!important;outline-offset:3px!important}
+.footer-socials .grb-social-icon{width:18px;height:18px;display:block}
+.footer-socials a[aria-label="Facebook"] .grb-social-icon{width:19px;height:19px}
 
 @media(max-width:900px){
-  .showcase-media{padding:0 52px!important;min-height:520px!important}
-  .showcase-media .grb-picture img{max-height:520px!important}
-  .showcase-media .work-nav{width:40px!important;height:52px!important;font-size:36px!important}
-  .showcase-media .work-nav-prev{left:7px!important}
-  .showcase-media .work-nav-next{right:7px!important}
-  .showcase-media .grb-picture img[data-work="professional"],
-  .showcase-media .grb-picture img[data-work="hospitality"],
-  .showcase-media .grb-picture img[data-work="local"]{transform:scale(1.06)}
+  .contact .form{padding:20px!important;border-radius:20px!important}
 }
 
 @media(max-width:560px){
@@ -123,14 +102,6 @@ function getProductionStyles() {
   .contact .form .fields{gap:10px!important}
   .contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:10px 12px!important}
   .contact .form .field textarea{min-height:90px!important}
-  .showcase-media{padding:0 40px!important;min-height:360px!important}
-  .showcase-media .grb-picture img{max-height:360px!important}
-  .showcase-media .work-nav{width:34px!important;height:46px!important;font-size:32px!important;border-radius:10px!important}
-  .showcase-media .work-nav-prev{left:4px!important}
-  .showcase-media .work-nav-next{right:4px!important}
-  .showcase-media .grb-picture img[data-work="professional"],
-  .showcase-media .grb-picture img[data-work="hospitality"],
-  .showcase-media .grb-picture img[data-work="local"]{transform:scale(1.03)}
 }
 `;
   return [inline, productionCss, runtimePresentation].join('\n');
