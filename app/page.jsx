@@ -68,7 +68,7 @@ function optimizeContactActions(html) {
     .replace(/<div class="contact-detail"><b>WhatsApp<\/b><span>0701 728 5626<\/span><\/div>/g,
       `<div class="contact-detail"><b>WhatsApp</b><a class="contact-whatsapp" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp at +234 701 728 5626"><img src="/assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true" /><span>+234 701 728 5626</span></a></div>`)
     .replace(/<a class="wa-link" data-wa-form="([^"]+)"[^>]*>[\s\S]*?<\/a>/gi,
-      (full, formType) => `<a class="wa-link" data-wa-form="${formType}" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.form)}" target="_blank" rel="noopener noreferrer" aria-label="Prefer WhatsApp? Start a chat at +234 701 728 5626"><span class="wa-dot" aria-hidden="true"><img src="/assets/whatsapp-icon-outline.svg" alt="" /></span><span class="wa-link-copy">Prefer WhatsApp? <strong>Start a chat instead.</strong></span><span class="wa-number">+234 701 728 5626</span></a>`)
+      (full, formType) => `<a class="wa-link" data-wa-form="${formType}" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.form)}" target="_blank" rel="noopener noreferrer" aria-label="Prefer WhatsApp? Start a chat at +234 701 728 5626"><span class="wa-link-copy">Prefer WhatsApp? <strong>Start a chat instead.</strong></span><span class="wa-number"><img src="/assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true" /><span>+234 701 728 5626</span></span></a>`)
     .replace(/WhatsApp: 0701 728 5626/g, '+234 701 728 5626');
 }
 
