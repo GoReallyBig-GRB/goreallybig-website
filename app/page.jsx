@@ -72,18 +72,11 @@ function optimizeContactActions(html) {
     .replace(/WhatsApp: 0701 728 5626/g, '+234 701 728 5626');
 }
 
-function addWorkNavigation(html) {
-  return html.replace(
-    /(<div class="showcase-media">)/i,
-    '$1<button class="work-nav work-nav-prev" type="button" data-work-nav="prev" aria-label="Previous project">‹</button><button class="work-nav work-nav-next" type="button" data-work-nav="next" aria-label="Next project">›</button>',
-  );
-}
-
 function getBody(source) {
   const match = source.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   if (!match) throw new Error('Production body could not be extracted.');
 
-  let body = match[1]
+  const body = match[1]
     .replace(/<script[^>]+src=["']assets\/app\.js["'][^>]*><\/script>/gi, '')
     .replace(/<a data-nav="faq" href="#faq">FAQ<\/a>/g, '')
     .replace(/<a href="#faq">FAQ<\/a>/g, '')
@@ -92,14 +85,13 @@ function getBody(source) {
     .replace(/<span class="wa">WA<\/span>/g, '<span class="wa" aria-hidden="true"><img class="grb-wa-img" src="/assets/whatsapp-icon-outline.svg" alt="" /></span>')
     .replace(/<a href="https:\/\/wa\.me\/2347017285626" rel="noopener noreferrer" target="_blank">WhatsApp: 0701 728 5626<\/a>/g, `<a class="grb-mobile-wa" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" rel="noopener noreferrer" target="_blank" aria-label="Chat on WhatsApp at +234 701 728 5626 with a prefilled message"><span>+234 701 728 5626</span><img class="grb-wa-icon" src="/assets/whatsapp-icon-outline.svg" alt="" /></a>`);
 
-  body = optimizeContactActions(body);
-  body = preloadWhatsAppLinks(body);
-  body = addWorkNavigation(body);
-  body = optimizeImages(body);
-  body = optimizeHeroImage(body);
-  body = lazyLoadBelowFoldImages(body);
-
-  return body.trim();
+  return optimizeImages(
+    optimizeHeroImage(
+      lazyLoadBelowFoldImages(
+        preloadWhatsAppLinks(optimizeContactActions(body)),
+      ),
+    ),
+  ).trim();
 }
 
 export default function Home() {
@@ -109,7 +101,6 @@ export default function Home() {
     <>
       <div dangerouslySetInnerHTML={{ __html: body }} />
       <script src="/assets/app-core.js" defer />
-      <script src="/assets/work-nav.js" defer />
     </>
   );
 }
