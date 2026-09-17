@@ -1,0 +1,2 @@
+'use client';
+export default function ActionButton({children,lime=false,modal='Get Started',className=''}){return <button type="button" className={`cta${lime?' lime':''} ${className}`} onClick={()=>window.dispatchEvent(new CustomEvent('grb:modal',{detail:modal}))}>{children}</button>}
