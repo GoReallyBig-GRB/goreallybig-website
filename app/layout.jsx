@@ -116,6 +116,7 @@ function getProductionStyles() {
   width:100%!important;
   height:100%!important;
   margin:0!important;
+  padding:0!important;
   display:block!important;
   opacity:0!important;
   animation:grbHeroFade 24s ease-in-out infinite!important;
@@ -130,6 +131,7 @@ function getProductionStyles() {
   object-fit:contain!important;
   object-position:center!important;
   margin:0!important;
+  padding:0!important;
   display:block!important;
 }
 @keyframes grbHeroFade{
