@@ -123,6 +123,20 @@
         const link=document.createElement('a');link.href=WA_URL;link.target='_blank';link.rel='noopener noreferrer';link.textContent=DISPLAY_NUMBER;link.style.display='inline-block';link.style.color='inherit';link.style.fontWeight='700';link.style.textDecoration='none';link.setAttribute('aria-label','Chat on WhatsApp at '+DISPLAY_NUMBER);value.replaceWith(link);
       }
     });
+    document.querySelectorAll('.contact-detail').forEach(function(detail){
+      const label=detail.querySelector('b');const value=detail.querySelector('span');
+      if(label&&value&&label.textContent.trim()==='Email'&&value.textContent.trim()==='info@goreallybig.com'){
+        const link=document.createElement('a');
+        link.href='mailto:info@goreallybig.com';
+        link.textContent='info@goreallybig.com';
+        link.style.display='inline-block';
+        link.style.color='inherit';
+        link.style.fontWeight='700';
+        link.style.textDecoration='none';
+        link.setAttribute('aria-label','Email GoReallyBig at info@goreallybig.com');
+        value.replaceWith(link);
+      }
+    });
     document.querySelectorAll('.footer-contact-link').forEach(function(link){const label=link.querySelector('span');const number=link.querySelector('strong');if(label&&number&&label.textContent.trim()==='WhatsApp'){link.href=WA_URL;link.target='_blank';link.rel='noopener noreferrer';number.textContent=DISPLAY_NUMBER;}});
     document.querySelectorAll('.wa-dot').forEach(function(dot){replaceWaBadge(dot,'grb-wa-dot-icon');});
     document.querySelectorAll('.footer-socials a[aria-label]').forEach(function(link){const name=link.getAttribute('aria-label');if(['Facebook','Instagram','TikTok','X'].indexOf(name)!==-1){link.textContent='';link.appendChild(makeSocialIcon(name));link.setAttribute('title',name);}});
