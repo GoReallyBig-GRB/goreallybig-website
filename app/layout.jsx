@@ -67,7 +67,7 @@ function getProductionStyles() {
 .form .wa-link,.modal-fields .wa-link{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;width:max-content!important;max-width:100%!important;min-height:30px!important;margin:0 0 16px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#087f5b!important;font-size:13px!important;font-weight:800!important;text-decoration:none!important;cursor:pointer!important}
 .form .wa-link:hover,.modal-fields .wa-link:hover{text-decoration:underline!important;color:#087f5b!important;background:transparent!important;transform:none!important;box-shadow:none!important}
 .form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:2px solid var(--blue)!important;outline-offset:4px!important;border-radius:4px!important}
-.form .wa-form-icon,.modal-fields .wa-form-icon{width:24px!important;height:24px!important;flex:0 0 24px!important;display:block!important}
+.form .wa-form-icon,.modal-fields .wa-form-icon{width:18px!important;height:18px!important;min-width:18px!important;max-width:18px!important;min-height:18px!important;max-height:18px!important;flex:0 0 18px!important;display:block!important;object-fit:contain!important}
 .form .wa-link-copy,.modal-fields .wa-link-copy{display:flex!important;align-items:center!important;gap:4px!important;line-height:1.35!important}
 .form .wa-link-copy strong,.modal-fields .wa-link-copy strong{font-weight:800!important}
 .form-continue,.modal-fields .form-continue{margin:0 0 7px!important;color:var(--navy)!important;font-size:12px!important;font-weight:800!important}
@@ -76,11 +76,22 @@ function getProductionStyles() {
 .form .form-actions .cta,.modal-fields>.cta{width:100%!important;min-height:50px!important;border-radius:12px!important;box-shadow:none!important;font-weight:800!important}
 .contact .form{padding:22px!important;border-radius:22px!important}
 .contact .form .fields{gap:12px!important}
-.contact .form .field label{margin-bottom:5px!important}
+.contact .form .field label{margin-bottom:5px!important}.contact .form .fields{gap:11px!important}.contact .form .field label{font-size:12px!important;line-height:1.25!important}.contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:10px 12px!important}.contact .form .field textarea{min-height:82px!important}
 .contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:11px 13px!important}
 .contact .form .field textarea{min-height:100px!important}
 @media(max-width:900px){.contact .form{padding:20px!important;border-radius:20px!important}}
 @media(max-width:560px){.contact .form{padding:17px!important;border-radius:18px!important}.contact .form .wa-link{margin-bottom:15px!important}.contact .form .wa-link-copy{font-size:11px!important}.contact .form .fields{gap:10px!important}.contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:10px 12px!important}.contact .form .field textarea{min-height:90px!important}}
+/* FORM — native need selection, styled as compact accessible choices. */
+.form .need-fieldset,.modal-fields .need-fieldset{border:0;padding:0;margin:0;min-width:0}
+.form .need-fieldset legend,.modal-fields .need-fieldset legend{display:block;padding:0;margin:0 0 5px;font-weight:800;font-size:12px;line-height:1.25;color:var(--navy)}
+.form .need,.modal-fields .need{display:flex!important;gap:6px!important;flex-wrap:wrap!important}
+.form .need-option,.modal-fields .need-option{position:relative;display:inline-flex;align-items:center;margin:0;cursor:pointer}
+.form .need-option input,.modal-fields .need-option input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.form .need-option span,.modal-fields .need-option span{display:block;border:1px solid #ccd6e3;background:#fff;color:var(--navy);padding:9px 11px;border-radius:9px;font-size:12px;line-height:1.2;font-weight:600;transition:border-color .15s ease,background .15s ease,color .15s ease,box-shadow .15s ease}
+.form .need-option input:checked + span,.modal-fields .need-option input:checked + span{background:var(--blue);border-color:var(--blue);color:#fff}
+.form .need-option input:focus-visible + span,.modal-fields .need-option input:focus-visible + span{outline:2px solid var(--blue);outline-offset:2px}
+.form .need-option:hover span,.modal-fields .need-option:hover span{border-color:var(--blue)}
+.form .need-option.selected span,.modal-fields .need-option.selected span{background:var(--blue);border-color:var(--blue);color:#fff}
 /* Social icons — static SVGs in the document; CSS only. */
 .footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.16)!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:#dbe4ee!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
 .footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.55)!important;background:rgba(183,240,0,.06)!important;color:var(--lime)!important}
@@ -121,66 +132,3 @@ export default function RootLayout({ children }) {
   );
 }
 
-<style>
-/* FORM REFINEMENT — compact field rhythm and proportionate WhatsApp action. */
-.form .wa-form-icon,.modal-fields .wa-form-icon{
-  width:18px!important;
-  height:18px!important;
-  flex:0 0 18px!important;
-}
-.form .wa-link,.modal-fields .wa-link{
-  min-height:24px!important;
-  gap:7px!important;
-  font-size:12px!important;
-  line-height:1.3!important;
-}
-.form .wa-link-copy,.modal-fields .wa-link-copy{
-  font-size:12px!important;
-  white-space:normal!important;
-}
-.form .fields{
-  gap:11px!important;
-}
-.form .field label{
-  margin-bottom:4px!important;
-  font-size:12px!important;
-  line-height:1.25!important;
-}
-.form .field input,
-.form .field textarea,
-.form .field select{
-  padding:10px 12px!important;
-}
-.form .field textarea{
-  min-height:82px!important;
-}
-.form .need{
-  gap:6px!important;
-}
-.form .need button{
-  padding:9px 11px!important;
-  font-size:12px!important;
-}
-.form .form-actions{
-  margin-top:14px!important;
-}
-.modal-fields{
-  gap:10px!important;
-}
-.modal-fields .field label{
-  margin-bottom:4px!important;
-  font-size:12px!important;
-}
-.modal-fields .field input,
-.modal-fields .field textarea,
-.modal-fields .field select{
-  padding:10px 12px!important;
-}
-.modal-fields .field textarea{
-  min-height:78px!important;
-}
-.modal-fields .need button{
-  padding:9px 11px!important;
-  font-size:12px!important;
-}
-</style>
