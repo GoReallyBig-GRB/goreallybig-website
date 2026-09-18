@@ -316,5 +316,155 @@ function validWebsiteUrl(value){
   form.addEventListener('submit',e=>{
     const url=form.id==='modalForm'?document.getElementById('mSite'):document.getElementById('site');
     const need=form.querySelector('input[name="need"]:checked');
-    if(url && need && need?.value==='Website makeover' && !validWebsiteUrl(url.value)){
+    if(url && need && need.value==='Website makeover' && !validWebsiteUrl(url.value)){
       e.preventDefault();
+      url.setCustomValidity('Enter a valid website URL starting with https:// or www.');
+      url.reportValidity();
+      url.addEventListener('input',()=>url.setCustomValidity(''),{once:true});
+    }else if(url){
+      url.setCustomValidity('');
+    }
+  },true);
+});
+
+/* ===== Consistent required-field UX across browsers. ===== */
+function validateRequiredUX(form){
+  if(!form) return true;
+  const required=[...form.querySelectorAll('[required]')].filter(el=>{
+    if(el.type==='radio') return el.checked;
+    return el.offsetParent!==null;
+  });
+  form.querySelector('.required-error')?.remove();
+  const missing=required.filter(el=>el.type==='radio' ? !form.querySelector('input[name="need"]:checked') : !String(el.value||'').trim());
+  if(!missing.length) return true;
+
+  const error=document.createElement('div');
+  error.className='required-error';
+  error.setAttribute('role','alert');
+  error.style.cssText='margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;font-weight:600;';
+  error.textContent='Please complete the required fields marked with *.';
+  form.insertBefore(error,form.firstElementChild);
+
+  const first=missing[0];
+  first.focus();
+  first.setAttribute('aria-invalid','true');
+  first.addEventListener('input',()=>first.removeAttribute('aria-invalid'),{once:true});
+  return false;
+}
+
+document.querySelectorAll('form').forEach(form=>{
+  form.addEventListener('submit',e=>{
+    if(!validateRequiredUX(form)){ e.preventDefault(); }
+  }, true);
+});
+
+/* ===== Inline script block 2 from original index.html ===== */
+/* Consistent required-field UX across browsers. */
+function validateRequiredUX(form){
+  if(!form) return true;
+  const required=[...form.querySelectorAll('[required]')].filter(el=>el.offsetParent!==null || el.type==='hidden');
+  const missing=required.filter(el=>!String(el.value||'').trim());
+  form.querySelector('.required-error')?.remove();
+  if(!missing.length) return true;
+
+  const error=document.createElement('div');
+  error.className='required-error';
+  error.setAttribute('role','alert');
+  error.style.cssText='margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;font-weight:600;';
+  error.textContent='Please complete the required fields marked with *.';
+  form.insertBefore(error,form.firstElementChild);
+
+  const first=missing[0];
+  first.focus();
+  first.setAttribute('aria-invalid','true');
+  first.addEventListener('input',()=>first.removeAttribute('aria-invalid'),{once:true});
+  return false;
+}
+
+document.querySelectorAll('form').forEach(form=>{
+  form.addEventListener('submit',e=>{
+    if(!validateRequiredUX(form)){ e.preventDefault(); }
+  }, true);
+});
+
+
+/* ===== Inline script block 3 from original index.html ===== */
+(function(){
+  document.querySelectorAll('.offer-expand').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const target=btn.dataset.expandTarget;
+      const scope=target==='core'?document.querySelector('.offer-core'):document.querySelector('.offer-growth');
+      if(!scope) return;
+      const hidden=scope.querySelectorAll('.offer-item-hidden');
+      const open=btn.getAttribute('aria-expanded')==='true';
+      hidden.forEach(el=>{
+        el.style.display=open?'none':'grid';
+      });
+      btn.setAttribute('aria-expanded',String(!open));
+      const count=target==='core'?7:6;
+      btn.querySelector('span').textContent=open
+        ? `View all ${count} ${target==='core'?'essentials':'additions'}`
+        : 'Show less';
+    });
+  });
+})();
+
+
+/* ===== Inline script block 4 from original index.html ===== */
+(function(){
+  const panel=document.querySelector('.services-panel');
+  const toggle=document.querySelector('.services-toggle');
+  if(!panel||!toggle) return;
+  toggle.addEventListener('click',()=>{
+    const collapsed=panel.classList.toggle('is-collapsed');
+    toggle.setAttribute('aria-expanded',String(!collapsed));
+    const icon=toggle.querySelector('.services-toggle-icon');
+    if(icon) icon.textContent=collapsed?'+':'−';
+  });
+})();
+
+
+/* ===== Inline script block 5 from original index.html ===== */
+/* What's Included compact expand controls. */
+document.querySelectorAll('.service-expand').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const panel=btn.closest('.services-panel');
+    const expanded=btn.getAttribute('aria-expanded')==='true';
+    panel.classList.toggle('is-expanded',!expanded);
+    btn.setAttribute('aria-expanded',String(!expanded));
+    const label=btn.querySelector('span');
+    if(label) label.textContent=expanded?'View all 7 essentials':'Show less';
+  });
+});
+document.querySelectorAll('.addon-expand').forEach(btn=>{
+  const box=btn.closest('.addons');
+  const label=btn.querySelector('span');
+  const mobile=()=>window.matchMedia('(max-width: 560px)').matches;
+
+  // Desktop: all 6 visible by default and can be collapsed. Mobile: first 3 visible by default and can be expanded.
+  function syncAddonState(){
+    if(mobile()){
+      const expanded=box.classList.contains('is-expanded');
+      box.classList.remove('is-collapsed');
+      btn.setAttribute('aria-expanded',String(expanded));
+      if(label) label.textContent=expanded?'Show less':'View all 6 additions';
+    }else{
+      const collapsed=box.classList.contains('is-collapsed');
+      box.classList.remove('is-expanded');
+      btn.setAttribute('aria-expanded',String(!collapsed));
+      if(label) label.textContent=collapsed?'View all 6 additions':'Show less';
+    }
+  }
+  syncAddonState();
+  window.addEventListener('resize',syncAddonState);
+
+  btn.addEventListener('click',()=>{
+    if(mobile()){
+      box.classList.toggle('is-expanded');
+    }else{
+      box.classList.toggle('is-collapsed');
+    }
+    syncAddonState();
+  });
+});
+
