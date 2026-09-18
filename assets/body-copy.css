@@ -40,6 +40,7 @@ body{font-size:16px}
     font-size:clamp(44px,4.8vw,72px);
   }
   .hero h1 span{color:var(--lime)!important}
+  .hero .lead span{color:var(--navy)!important}
   .hero .lead{
     font-size:17px;
     line-height:1.7;
