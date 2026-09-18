@@ -71,6 +71,36 @@ function getProductionStyles() {
 .form .wa-number img,.modal-fields .wa-number img{width:22px!important;height:22px!important;display:block!important;flex:0 0 22px!important}
 .form .wa-link:hover .wa-number,.modal-fields .wa-link:hover .wa-number{color:#075f4e!important}
 
+/* Form flow: make the two contact paths unmistakably separate. */
+.form-intro,.modal-fields .form-intro{
+  display:grid!important;
+  gap:3px!important;
+  margin:0 0 12px!important;
+}
+.form-intro strong,.modal-fields .form-intro strong{
+  color:var(--navy)!important;
+  font-size:15px!important;
+  line-height:1.35!important;
+}
+.form-intro span,.modal-fields .form-intro span{
+  color:#667085!important;
+  font-size:13px!important;
+  line-height:1.55!important;
+}
+.form-continue,.modal-fields .form-continue{
+  margin:0 0 7px!important;
+  color:var(--navy)!important;
+  font-size:12px!important;
+  font-weight:800!important;
+}
+.form .form-required-note,.modal-fields .form-required-note{
+  margin:0 0 12px!important;
+}
+.footer-socials .grb-social-icon{width:18px!important;height:18px!important;display:block!important}
+.footer-socials .grb-social-icon path{fill:currentColor}
+.footer-socials .grb-social-instagram rect,
+.footer-socials .grb-social-instagram circle{fill:none;stroke:currentColor;stroke-width:2}
+.footer-socials .grb-social-instagram circle:last-child{fill:currentColor;stroke:none}
 /* Compact the contact form so it remains a focused conversion panel. */
 .contact .form{padding:22px!important;border-radius:22px!important}
 .contact .form .form-required-note{margin:0 0 10px!important}
