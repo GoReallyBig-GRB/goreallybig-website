@@ -120,3 +120,67 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+<style>
+/* FORM REFINEMENT — compact field rhythm and proportionate WhatsApp action. */
+.form .wa-form-icon,.modal-fields .wa-form-icon{
+  width:18px!important;
+  height:18px!important;
+  flex:0 0 18px!important;
+}
+.form .wa-link,.modal-fields .wa-link{
+  min-height:24px!important;
+  gap:7px!important;
+  font-size:12px!important;
+  line-height:1.3!important;
+}
+.form .wa-link-copy,.modal-fields .wa-link-copy{
+  font-size:12px!important;
+  white-space:normal!important;
+}
+.form .fields{
+  gap:11px!important;
+}
+.form .field label{
+  margin-bottom:4px!important;
+  font-size:12px!important;
+  line-height:1.25!important;
+}
+.form .field input,
+.form .field textarea,
+.form .field select{
+  padding:10px 12px!important;
+}
+.form .field textarea{
+  min-height:82px!important;
+}
+.form .need{
+  gap:6px!important;
+}
+.form .need button{
+  padding:9px 11px!important;
+  font-size:12px!important;
+}
+.form .form-actions{
+  margin-top:14px!important;
+}
+.modal-fields{
+  gap:10px!important;
+}
+.modal-fields .field label{
+  margin-bottom:4px!important;
+  font-size:12px!important;
+}
+.modal-fields .field input,
+.modal-fields .field textarea,
+.modal-fields .field select{
+  padding:10px 12px!important;
+}
+.modal-fields .field textarea{
+  min-height:78px!important;
+}
+.modal-fields .need button{
+  padding:9px 11px!important;
+  font-size:12px!important;
+}
+</style>
