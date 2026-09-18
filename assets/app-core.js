@@ -8,7 +8,6 @@ let previousY=0, opener=null, modalNeed='';
 function openModal(source){
   previousY=window.scrollY; opener=document.activeElement;
   modal.classList.add('show'); body.style.overflow='hidden';
-  document.getElementById('modalTitle').textContent=source==='Get My Offer'?'Get My Offer':source==='Get Your Free Website Audit'?'Get Your Free Website Audit':'Let’s get your business moving.';
   const modalFormEl=document.getElementById('modalForm');
   modalFormEl.classList.remove('hidden');
   document.getElementById('modalSuccess').classList.add('hidden');
@@ -231,7 +230,7 @@ document.getElementById('modalForm').addEventListener('submit',async e=>{
   if(!sent) return;
   form.classList.add('hidden');
   const modalSuccess=document.getElementById('modalSuccess');
-  modalSuccess.querySelector('p').textContent=`Request type: ${document.getElementById('modalNeed').value}. Your request has been captured. We'll take it from here.`;
+  modalSuccess.querySelector('p').textContent=`Request type: ${selectedNeed('modal')}. Your request has been captured. We'll take it from here.`;
   modalSuccess.classList.remove('hidden');
   refreshWaLinks();
 });
@@ -263,7 +262,7 @@ contactForm.addEventListener('submit',async e=>{
     success.append(strong,p,wa);
     contactForm.appendChild(success);
   }
-  success.querySelector('p').textContent=`Request type: ${document.getElementById('contactNeed').value}. Your request has been captured. We'll take it from here.`;
+  success.querySelector('p').textContent=`Request type: ${selectedNeed('contact')}. Your request has been captured. We'll take it from here.`;
   refreshWaLinks();
   success.scrollIntoView({block:'nearest'});
 });
