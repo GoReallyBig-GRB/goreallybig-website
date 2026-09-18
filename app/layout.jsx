@@ -68,6 +68,7 @@ function getProductionStyles() {
 .form .wa-link:hover,.modal-fields .wa-link:hover{color:#066b4d!important;text-decoration:none!important}
 .form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:2px solid var(--lime)!important;outline-offset:4px!important;border-radius:4px!important}
 .form .wa-form-icon,.modal-fields .wa-form-icon{display:block!important;width:22px!important;height:22px!important;flex:0 0 22px!important;object-fit:contain!important}
+.success .wa-form-icon{display:block!important;width:22px!important;height:22px!important;max-width:22px!important;flex:0 0 22px!important;object-fit:contain!important}
 .form .wa-link-copy,.modal-fields .wa-link-copy{display:inline-flex!important;align-items:center!important;gap:4px!important;line-height:1.35!important;color:inherit!important}
 .form .wa-link-copy strong,.modal-fields .wa-link-copy strong{font-weight:800!important}
 .form .wa-link-underlined,.modal-fields .wa-link-underlined{text-decoration:underline!important;text-decoration-thickness:1.5px!important;text-underline-offset:3px!important}
