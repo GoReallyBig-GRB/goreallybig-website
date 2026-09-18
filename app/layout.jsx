@@ -60,14 +60,7 @@ function getProductionStyles() {
 .contact-detail .contact-whatsapp img{width:22px;height:22px;display:block;flex:0 0 22px}
 .contact-detail .contact-whatsapp{font-weight:700}
 
-/* Premium WhatsApp form CTA: compact, full-width, white with a restrained green outline. */
-.form .wa-link,.modal-fields .wa-link{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;width:100%!important;box-sizing:border-box!important;min-height:50px!important;padding:10px 15px!important;margin-top:12px!important;margin-bottom:18px!important;border:1.5px solid #25d366!important;border-radius:12px!important;background:#fff!important;color:#087f5b!important;text-decoration:none!important;cursor:pointer!important;box-shadow:none!important;transition:background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease,transform .15s ease!important}
-.form .wa-link:hover,.modal-fields .wa-link:hover{background:#effff5!important;color:#087f5b!important;border-color:#25d366!important;box-shadow:0 6px 18px rgba(37,211,102,.12)!important;transform:translateY(-1px)!important}
-.form .wa-link:active,.modal-fields .wa-link:active{transform:translateY(0)!important;box-shadow:none!important}
-.form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:3px solid rgba(21,94,239,.25)!important;outline-offset:3px!important}
-.form .wa-link-copy,.modal-fields .wa-link-copy{min-width:0!important;font-size:13px!important;line-height:1.3!important;font-weight:700!important;white-space:nowrap!important;color:inherit!important}
-.form .wa-link-copy strong,.modal-fields .wa-link-copy strong{font-weight:800!important}
-/* Form flow: make the two contact paths unmistakably separate. */
+/* Form flow and WhatsApp CTA — single authoritative implementation. */
 .form-intro,.modal-fields .form-intro{
   display:grid!important;
   gap:3px!important;
@@ -76,7 +69,7 @@ function getProductionStyles() {
 .form-intro-heading,.modal-fields .form-intro-heading{
   margin:0!important;
   color:var(--navy)!important;
-  font-size:clamp(26px,3vw,34px)!important;
+  font-size:clamp(30px,4vw,42px)!important;
   font-weight:800!important;
   line-height:1.08!important;
   letter-spacing:-.035em!important;
