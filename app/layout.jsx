@@ -91,13 +91,13 @@ function getProductionStyles() {
 .form .need-option input:focus-visible+span,.modal-fields .need-option input:focus-visible+span{outline:2px solid var(--blue)!important;outline-offset:2px!important}
 .form .need-option:hover span,.modal-fields .need-option:hover span{border-color:var(--blue)!important}
 .form .need-option.selected span,.modal-fields .need-option.selected span{background:var(--blue)!important;border-color:var(--blue)!important;color:#fff!important}
-.contact .form .fields>.field:not(.full),.modal-fields>.field:not(.full){display:grid!important;grid-template-columns:125px minmax(0,1fr)!important;align-items:center!important;column-gap:12px!important}
-.contact .form .fields>.field:not(.full) label,.modal-fields>.field:not(.full) label{margin:0!important}
-.contact .form .fields>.field:not(.full) input,.modal-fields>.field:not(.full) input{width:100%!important;min-width:0!important}
+.contact .form{width:100%!important;min-width:0!important;padding:22px!important;border-radius:22px!important}
+.contact .form .fields,.modal-fields{gap:12px!important}
+.contact .form .field label,.modal-fields .field label{display:block!important;margin:0 0 5px!important;font-size:12px!important;line-height:1.25!important}
+.contact .form .field input,.contact .form .field textarea,.contact .form .field select,.modal-fields .field input,.modal-fields .field textarea,.modal-fields .field select{width:100%!important;min-width:0!important;padding:9px 11px!important}
+.contact .form .field.full textarea,.modal-fields .field.full textarea{min-height:72px!important}
 @media(max-width:900px){.contact .form{padding:20px!important;border-radius:20px!important}}
-@media(max-width:600px){.contact .form .fields>.field:not(.full),.modal-fields>.field:not(.full){grid-template-columns:112px minmax(0,1fr)!important;column-gap:9px!important}}
 @media(max-width:560px){.contact .form{padding:17px!important;border-radius:18px!important}}
-@media(max-width:480px){.contact .form .fields>.field:not(.full),.modal-fields>.field:not(.full){grid-template-columns:1fr!important;row-gap:3px!important}.contact .form .fields>.field:not(.full) label,.modal-fields>.field:not(.full) label{margin-bottom:2px!important}}
 /* Social icons — static SVGs in the document; CSS only. */
 .footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.16)!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:#dbe4ee!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
 .footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.55)!important;background:rgba(183,240,0,.06)!important;color:var(--lime)!important}
@@ -121,51 +121,6 @@ function getProductionStyles() {
 .grb-hero-carousel .hero-carousel-image.is-changing{opacity:0!important}
 `;
   return [inline, productionCss, runtimePresentation].join('\n');
-}
-
-/* Keep the free-text field compact: its title shares the row with the textarea. */
-.contact .form .fields>.field.full:has(> label) {
-  display:grid!important;
-  grid-template-columns:125px minmax(0,1fr)!important;
-  align-items:start!important;
-  column-gap:12px!important;
-}
-.contact .form .fields>.field.full:has(> label)>label {
-  margin:9px 0 0!important;
-}
-.contact .form .fields>.field.full:has(> label)>textarea {
-  width:100%!important;
-  min-width:0!important;
-}
-.modal-fields>.field:has(> label) {
-  display:grid!important;
-  grid-template-columns:125px minmax(0,1fr)!important;
-  align-items:start!important;
-  column-gap:12px!important;
-}
-.modal-fields>.field:has(> label)>label {
-  margin:9px 0 0!important;
-}
-.modal-fields>.field:has(> label)>input,
-.modal-fields>.field:has(> label)>textarea {
-  width:100%!important;
-  min-width:0!important;
-}
-@media(max-width:600px){
-  .contact .form .fields>.field.full:has(> label),
-  .modal-fields>.field:has(> label){
-    grid-template-columns:112px minmax(0,1fr)!important;
-    column-gap:9px!important;
-  }
-}
-@media(max-width:480px){
-  .contact .form .fields>.field.full:has(> label),
-  .modal-fields>.field:has(> label){
-    grid-template-columns:1fr!important;
-    row-gap:3px!important;
-  }
-  .contact .form .fields>.field.full:has(> label)>label,
-  .modal-fields>.field:has(> label)>label{margin:0 0 2px!important}
 }
 
 export default function RootLayout({ children }) {
