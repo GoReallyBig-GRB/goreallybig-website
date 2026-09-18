@@ -76,11 +76,6 @@ function getProductionStyles() {
 .form .req-star,.modal-fields .req-star{font-weight:800!important;color:inherit!important}
 .form .form-actions{margin-top:12px!important}
 .form .form-actions .cta,.modal-fields>.cta{width:100%!important;min-height:50px!important;margin-top:0!important;border-radius:12px!important;box-shadow:none!important;font-weight:800!important}
-.contact .form{padding:22px!important;border-radius:22px!important}
-.contact .form .fields,.modal-fields{gap:10px!important}
-.contact .form .field label,.modal-fields .field label{font-size:12px!important;line-height:1.25!important}
-.contact .form .field input,.contact .form .field textarea,.contact .form .field select,.modal-fields .field input,.modal-fields .field textarea,.modal-fields .field select{padding:9px 11px!important}
-.contact .form .field.full textarea,.modal-fields .field.full textarea{min-height:72px!important}
 .form .need-fieldset,.modal-fields .need-fieldset{border:0!important;padding:0!important;margin:0!important;min-width:0!important}
 .form .need-fieldset legend,.modal-fields .need-fieldset legend{display:block!important;padding:0!important;margin:0 0 5px!important;color:var(--navy)!important;font-size:12px!important;line-height:1.25!important;font-weight:800!important}
 .form .need,.modal-fields .need{display:flex!important;gap:6px!important;flex-wrap:wrap!important}
