@@ -118,14 +118,7 @@ function getProductionStyles() {
   transition:opacity .18s ease!important;
 }
 .grb-hero-carousel .hero-carousel-image.is-changing{opacity:0!important}
-.grb-hero-carousel .hero-carousel-image[data-carousel-index="1"],
-.grb-hero-carousel .hero-carousel-image[data-carousel-index="2"],
-.grb-hero-carousel .hero-carousel-image[data-carousel-index="3"]{
-  width:108%!important;
-  max-width:none!important;
-  margin-left:-4%!important;
-}
-`;
+;
   return [inline, productionCss, runtimePresentation].join('\n');
 }
 

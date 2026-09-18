@@ -7,19 +7,26 @@
   if (sources.length < 2) return;
 
   let index = 0;
-  let timer = null;
+  let timer = 0;
   let changing = false;
+  const cache = new Map();
 
   image.dataset.carouselIndex = '0';
 
-  const preload = (src) => new Promise((resolve) => {
-    const next = new Image();
-    next.onload = () => resolve(true);
-    next.onerror = () => resolve(false);
-    next.src = src;
-  });
+  const preload = (src) => {
+    if (cache.has(src)) return cache.get(src);
+    const promise = new Promise((resolve) => {
+      const next = new Image();
+      next.onload = () => resolve(true);
+      next.onerror = () => resolve(false);
+      next.src = src;
+    });
+    cache.set(src, promise);
+    return promise;
+  };
 
   const scheduleNext = () => {
+    window.clearTimeout(timer);
     timer = window.setTimeout(advance, 6000);
   };
 
@@ -27,31 +34,41 @@
     if (changing) return;
     changing = true;
 
-    const nextIndex = (index + 1) % sources.length;
-    if (await preload(sources[nextIndex])) {
-      image.classList.add('is-changing');
-      window.setTimeout(() => {
-        image.src = sources[nextIndex];
-        if (alts[nextIndex]) image.alt = alts[nextIndex];
-        image.dataset.carouselIndex = String(nextIndex);
-        image.classList.remove('is-changing');
-        index = nextIndex;
-        changing = false;
-        scheduleNext();
-      }, 180);
-    } else {
+    let nextIndex = (index + 1) % sources.length;
+    let loaded = await preload(sources[nextIndex]);
+
+    if (!loaded) {
+      for (let offset = 1; offset < sources.length; offset += 1) {
+        const candidate = (index + 1 + offset) % sources.length;
+        if (await preload(sources[candidate])) {
+          nextIndex = candidate;
+          loaded = true;
+          break;
+        }
+      }
+    }
+
+    if (!loaded) {
       changing = false;
       scheduleNext();
+      return;
     }
+
+    image.classList.add('is-changing');
+
+    window.setTimeout(() => {
+      image.src = sources[nextIndex];
+      if (alts[nextIndex]) image.alt = alts[nextIndex];
+      image.dataset.carouselIndex = String(nextIndex);
+      image.classList.remove('is-changing');
+      index = nextIndex;
+      changing = false;
+      scheduleNext();
+    }, 180);
   };
 
-  sources.slice(1).forEach((src) => {
-    const next = new Image();
-    next.src = src;
-  });
+  sources.slice(1).forEach(preload);
 
   scheduleNext();
-  window.addEventListener('pagehide', () => {
-    if (timer) window.clearTimeout(timer);
-  }, { once: true });
+  window.addEventListener('pagehide', () => window.clearTimeout(timer), { once: true });
 })();
