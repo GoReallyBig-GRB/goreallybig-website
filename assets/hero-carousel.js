@@ -9,66 +9,46 @@
   let index = 0;
   let timer = 0;
   let changing = false;
-  const cache = new Map();
 
   image.dataset.carouselIndex = '0';
 
-  const preload = (src) => {
-    if (cache.has(src)) return cache.get(src);
-    const promise = new Promise((resolve) => {
-      const next = new Image();
-      next.onload = () => resolve(true);
-      next.onerror = () => resolve(false);
-      next.src = src;
-    });
-    cache.set(src, promise);
-    return promise;
-  };
+  const loadImage = (src) => new Promise((resolve) => {
+    const probe = new Image();
+    probe.onload = () => resolve(true);
+    probe.onerror = () => resolve(false);
+    probe.src = src;
+  });
 
-  const scheduleNext = () => {
-    window.clearTimeout(timer);
-    timer = window.setTimeout(advance, 6000);
-  };
-
-  const advance = async () => {
+  const showNext = async () => {
     if (changing) return;
     changing = true;
 
-    let nextIndex = (index + 1) % sources.length;
-    let loaded = await preload(sources[nextIndex]);
-
-    if (!loaded) {
-      for (let offset = 1; offset < sources.length; offset += 1) {
-        const candidate = (index + 1 + offset) % sources.length;
-        if (await preload(sources[candidate])) {
-          nextIndex = candidate;
-          loaded = true;
-          break;
-        }
-      }
-    }
+    const nextIndex = (index + 1) % sources.length;
+    const nextSrc = sources[nextIndex];
+    const loaded = await loadImage(nextSrc);
 
     if (!loaded) {
       changing = false;
-      scheduleNext();
+      timer = window.setTimeout(showNext, 6000);
       return;
     }
 
     image.classList.add('is-changing');
 
     window.setTimeout(() => {
-      image.src = sources[nextIndex];
+      image.src = nextSrc;
       if (alts[nextIndex]) image.alt = alts[nextIndex];
       image.dataset.carouselIndex = String(nextIndex);
       image.classList.remove('is-changing');
       index = nextIndex;
       changing = false;
-      scheduleNext();
+      timer = window.setTimeout(showNext, 6000);
     }, 180);
   };
 
-  sources.slice(1).forEach(preload);
+  // The first image is deliberately left completely static. Only after it
+  // has painted do we begin loading and cycling the remaining mockups.
+  timer = window.setTimeout(showNext, 6000);
 
-  scheduleNext();
   window.addEventListener('pagehide', () => window.clearTimeout(timer), { once: true });
 })();
