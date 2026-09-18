@@ -89,17 +89,17 @@ function buildWaMessage(context, formType){
   const need=selectedNeed(formType);
   const business=(document.getElementById(formType==='modal'?'mBusiness':'business')?.value||'').trim();
   const name=(document.getElementById(formType==='modal'?'mName':'name')?.value||'').trim();
-  if(context==='hero') return 'Hi GoReallyBig, I\\'d like to get started with a website for my business.';
-  if(context==='header') return 'Hi GoReallyBig, I\\'d like to talk about a website for my business.';
-  if(context==='offer') return 'Hi GoReallyBig, I\\'d like to discuss the right website package for my business.';
-  if(context==='promise') return 'Hi GoReallyBig, I\\'d like to discuss a website that can help my business get found, build trust and win more business.';
-  if(context==='commercial') return 'Hi GoReallyBig, I\\'d like to talk about making sure my business is ready when people look me up online.';
-  if(context==='approach') return 'Hi GoReallyBig, I\\'d like to talk about a website built around my business, customers and goals.';
-  if(context==='process') return 'Hi GoReallyBig, I\\'d like to talk through getting my business from idea to online.';
-  if(context==='work') return 'Hi GoReallyBig, I\\'d like to discuss what my business website could look like.';
+  if(context==='hero') return 'Hi GoReallyBig, I\'d like to get started with a website for my business.';
+  if(context==='header') return 'Hi GoReallyBig, I\'d like to talk about a website for my business.';
+  if(context==='offer') return 'Hi GoReallyBig, I\'d like to discuss the right website package for my business.';
+  if(context==='promise') return 'Hi GoReallyBig, I\'d like to discuss a website that can help my business get found, build trust and win more business.';
+  if(context==='commercial') return 'Hi GoReallyBig, I\'d like to talk about making sure my business is ready when people look me up online.';
+  if(context==='approach') return 'Hi GoReallyBig, I\'d like to talk about a website built around my business, customers and goals.';
+  if(context==='process') return 'Hi GoReallyBig, I\'d like to talk through getting my business from idea to online.';
+  if(context==='work') return 'Hi GoReallyBig, I\'d like to discuss what my business website could look like.';
   if(context==='faq') return 'Hi GoReallyBig, I have a few questions about getting a website for my business.';
-  let msg='Hi GoReallyBig, I\\'d like to discuss my website needs.';
-  if(need) msg+=` I\\'m looking for: ${need}.`;
+  let msg='Hi GoReallyBig, I\'d like to discuss my website needs.';
+  if(need) msg+=` I\'m looking for: ${need}.`;
   if(business) msg+=` Business: ${business}.`;
   if(name) msg+=` My name is ${name}.`;
   return msg;
@@ -318,27 +318,3 @@ function validWebsiteUrl(value){
     const need=form.querySelector('input[name="need"]:checked');
     if(url && need && need?.value==='Website makeover' && !validWebsiteUrl(url.value)){
       e.preventDefault();
-      url.setCustomValidity('Enter a valid website URL starting with https:// or www.');
-      url.reportValidity();
-      url.addEventListener('input',()=>url.setCustomValidity(''),{once:true});
-    }else if(url){
-      url.setCustomValidity('');
-    }
-  },true);
-});
-
-
-/* ===== Inline script block 2 from original index.html ===== */
-/* Consistent required-field UX across browsers. */
-function validateRequiredUX(form){
-  if(!form) return true;
-  const required=[...form.querySelectorAll('[required]')].filter(el=>!el.hidden && el.offsetParent!==null);
-  const missing=required.filter(el=>!String(el.value||'').trim());
-  form.querySelector('.required-error')?.remove();
-  if(!missing.length) return true;
-
-  const error=document.createElement('div');
-  error.className='required-error';
-  error.setAttribute('role','alert');
-  error.style.cssText='margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;font-weight:600;';
-  error.textContent='Please complete the required fields marked with *.';
