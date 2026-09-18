@@ -123,6 +123,51 @@ function getProductionStyles() {
   return [inline, productionCss, runtimePresentation].join('\n');
 }
 
+/* Keep the free-text field compact: its title shares the row with the textarea. */
+.contact .form .fields>.field.full:has(> label) {
+  display:grid!important;
+  grid-template-columns:125px minmax(0,1fr)!important;
+  align-items:start!important;
+  column-gap:12px!important;
+}
+.contact .form .fields>.field.full:has(> label)>label {
+  margin:9px 0 0!important;
+}
+.contact .form .fields>.field.full:has(> label)>textarea {
+  width:100%!important;
+  min-width:0!important;
+}
+.modal-fields>.field:has(> label) {
+  display:grid!important;
+  grid-template-columns:125px minmax(0,1fr)!important;
+  align-items:start!important;
+  column-gap:12px!important;
+}
+.modal-fields>.field:has(> label)>label {
+  margin:9px 0 0!important;
+}
+.modal-fields>.field:has(> label)>input,
+.modal-fields>.field:has(> label)>textarea {
+  width:100%!important;
+  min-width:0!important;
+}
+@media(max-width:600px){
+  .contact .form .fields>.field.full:has(> label),
+  .modal-fields>.field:has(> label){
+    grid-template-columns:112px minmax(0,1fr)!important;
+    column-gap:9px!important;
+  }
+}
+@media(max-width:480px){
+  .contact .form .fields>.field.full:has(> label),
+  .modal-fields>.field:has(> label){
+    grid-template-columns:1fr!important;
+    row-gap:3px!important;
+  }
+  .contact .form .fields>.field.full:has(> label)>label,
+  .modal-fields>.field:has(> label)>label{margin:0 0 2px!important}
+}
+
 export default function RootLayout({ children }) {
   const styles = getProductionStyles();
   return (
