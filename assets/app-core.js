@@ -87,73 +87,35 @@ document.querySelector('.showcase-arrow-next')?.addEventListener('click',()=>{
 const WA_NUMBER='2347017285626';
 function waUrl(message){return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;}
 function selectedNeed(formType){
-  const el=document.getElementById(formType==='modal'?'modalNeed':'contactNeed');
+  const form=document.getElementById(formType==='modal'?'modalForm':'contactForm');
+  const el=form?.querySelector('input[name="need"]:checked');
   return el ? String(el.value||'').trim() : '';
 }
-function buildWaMessage(context, formType){
-  const need=selectedNeed(formType);
-  const business=(document.getElementById(formType==='modal'?'mBusiness':'business')?.value||'').trim();
-  const name=(document.getElementById(formType==='modal'?'mName':'name')?.value||'').trim();
-  if(context==='hero') return 'Hi GoReallyBig, I\'d like to get started with a website for my business.';
-  if(context==='header') return 'Hi GoReallyBig, I\'d like to talk about a website for my business.';
-  if(context==='offer') return 'Hi GoReallyBig, I\'d like to discuss the right website package for my business.';
-  if(context==='promise') return 'Hi GoReallyBig, I\'d like to discuss a website that can help my business get found, build trust and win more business.';
-  if(context==='commercial') return 'Hi GoReallyBig, I\'d like to talk about making sure my business is ready when people look me up online.';
-  if(context==='approach') return 'Hi GoReallyBig, I\'d like to talk about a website built around my business, customers and goals.';
-  if(context==='process') return 'Hi GoReallyBig, I\'d like to talk through getting my business from idea to online.';
-  if(context==='work') return 'Hi GoReallyBig, I\'d like to discuss what my business website could look like.';
-  if(context==='faq') return 'Hi GoReallyBig, I have a few questions about getting a website for my business.';
-  let msg='Hi GoReallyBig, I\'d like to discuss my website needs.';
-  if(need) msg+=` I\'m looking for: ${need}.`;
-  if(business) msg+=` Business: ${business}.`;
-  if(name) msg+=` My name is ${name}.`;
-  return msg;
-}
-function refreshWaLinks(){
-  document.querySelectorAll('[data-wa-context]').forEach(a=>a.href=waUrl(buildWaMessage(a.dataset.waContext,'contact')));
-  document.querySelectorAll('[data-wa-form]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waForm)));
-  document.querySelectorAll('[data-wa-success]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waSuccess)));
-}
-refreshWaLinks();
-
-// Need selectors: site URL only appears for a makeover.
-function wireNeedButtons(selector, fieldId, attr){
-  document.querySelectorAll(selector).forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll(selector).forEach(x=>x.classList.remove('selected'));
-    b.classList.add('selected');
-    const need=b.dataset[attr];
-    if(fieldId==='modalSiteField'){
-      const hidden=document.getElementById('modalNeed');
-      const url=document.getElementById('mSite');
-      if(hidden) hidden.value=need;
-      if(url){
-        const makeover=need==='Website makeover';
-        url.required=makeover;
-        url.setAttribute('aria-required',String(makeover));
-        const label=url.closest('.field')?.querySelector('label');
-        if(label) label.classList.toggle('required-field',makeover);
-        if(!makeover) url.removeAttribute('aria-invalid');
-      }
+function wireNeedRadios(formId, fieldId){
+  const form=document.getElementById(formId);
+  if(!form) return;
+  const radios=[...form.querySelectorAll('input[name="need"]')];
+  const siteField=document.getElementById(fieldId);
+  const url=document.getElementById(formId==='modalForm'?'mSite':'site');
+  const sync=()=>{
+    const need=form.querySelector('input[name="need"]:checked')?.value||'';
+    const makeover=need==='Website makeover';
+    if(siteField){siteField.hidden=!makeover;siteField.setAttribute('aria-hidden',String(!makeover));}
+    if(url){
+      url.required=makeover;
+      url.setAttribute('aria-required',String(makeover));
+      if(!makeover){url.setCustomValidity('');url.removeAttribute('aria-invalid');}
+      const label=url.closest('.field')?.querySelector('label');
+      if(label) label.classList.toggle('required-field',makeover);
     }
-    if(fieldId==='siteField'){
-      const hidden=document.getElementById('contactNeed');
-      const url=document.getElementById('site');
-      if(hidden) hidden.value=need;
-      if(url){
-        const makeover=need==='Website makeover';
-        url.required=makeover;
-        url.setAttribute('aria-required',String(makeover));
-        const label=url.closest('.field')?.querySelector('label');
-        if(label) label.classList.toggle('required-field',makeover);
-        if(!makeover) url.removeAttribute('aria-invalid');
-      }
-    }
-    if(fieldId) document.getElementById(fieldId).classList.toggle('hidden',need!=='Website makeover');
-    return need;
-  }));
+    radios.forEach(r=>r.closest('.need-option')?.classList.toggle('selected',r.checked));
+    refreshWaLinks();
+  };
+  radios.forEach(r=>r.addEventListener('change',sync));
+  sync();
 }
-wireNeedButtons('[data-mneed]','modalSiteField','mneed');
-wireNeedButtons('[data-need]','siteField','need');
+wireNeedRadios('modalForm','modalSiteField');
+wireNeedRadios('contactForm','siteField');
 document.querySelectorAll('#contactForm input,#contactForm textarea,#modalForm input,#modalForm textarea').forEach(el=>el.addEventListener('input',refreshWaLinks));
 
 
@@ -169,7 +131,7 @@ function formPayload(formType){
   const business=(get(modalForm?'mBusiness':'business')?.value||'').trim();
   const email=(get(modalForm?'mEmail':'email')?.value||'').trim();
   const phone=(get(modalForm?'mPhone':'phone')?.value||'').trim();
-  const need=(get(modalForm?'modalNeed':'contactNeed')?.value||'').trim();
+  const need=(document.getElementById(modalForm?'modalForm':'contactForm')?.querySelector('input[name="need"]:checked')?.value||'').trim();
   const site=(get(modalForm?'mSite':'site')?.value||'').trim();
   const message=(get(modalForm?'mContext':'message')?.value||'').trim();
 
@@ -330,8 +292,8 @@ function validWebsiteUrl(value){
   if(!form) return;
   form.addEventListener('submit',e=>{
     const url=form.id==='modalForm'?document.getElementById('mSite'):document.getElementById('site');
-    const need=form.id==='modalForm'?document.getElementById('modalNeed'):document.getElementById('contactNeed');
-    if(url && need && need.value==='Website makeover' && !validWebsiteUrl(url.value)){
+    const need=form.querySelector('input[name="need"]:checked');
+    if(url && need && need?.value==='Website makeover' && !validWebsiteUrl(url.value)){
       e.preventDefault();
       url.setCustomValidity('Enter a valid website URL starting with https:// or www.');
       url.reportValidity();
@@ -347,7 +309,7 @@ function validWebsiteUrl(value){
 /* Consistent required-field UX across browsers. */
 function validateRequiredUX(form){
   if(!form) return true;
-  const required=[...form.querySelectorAll('[required]')].filter(el=>el.offsetParent!==null || el.type==='hidden');
+  const required=[...form.querySelectorAll('[required]')].filter(el=>!el.hidden && el.offsetParent!==null);
   const missing=required.filter(el=>!String(el.value||'').trim());
   form.querySelector('.required-error')?.remove();
   if(!missing.length) return true;
