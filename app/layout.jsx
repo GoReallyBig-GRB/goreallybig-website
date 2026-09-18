@@ -49,7 +49,6 @@ function getProductionStyles() {
   .grb-header-wa-icon{width:31px;height:31px;display:block}
 }
 @media(min-width:901px){.grb-header-wa-icon{width:31px;height:31px;display:block}}
-.grb-wa-dot-icon{width:24px;height:24px;display:block;flex:0 0 24px}
 .grb-wa-img{width:100%;height:100%;display:block;object-fit:contain}
 .wa{background:transparent!important;color:transparent!important}
 .wa:empty{display:block}
