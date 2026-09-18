@@ -47,9 +47,15 @@ document.querySelectorAll('.faq-q').forEach((q,i)=>{
   });
 });
 
-// Work tabs.
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+// Work gallery tabs + flanking navigation.
+const workTabs=[...document.querySelectorAll('.tab')];
+function setWorkSlide(index){
+  if(!workTabs.length) return;
+  const next=((index%workTabs.length)+workTabs.length)%workTabs.length;
+  workTabs[next].click();
+}
+workTabs.forEach(t=>t.addEventListener('click',()=>{
+  workTabs.forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
 
   const mockups={
@@ -65,8 +71,17 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
     const picture=img.closest('.grb-picture');
     if(picture) picture.classList.toggle('active',active);
   });
-  document.getElementById('workCopy').textContent=t.dataset.copy;
+  const copy=document.getElementById('workCopy');
+  if(copy) copy.textContent=t.dataset.copy;
 }));
+document.querySelector('.showcase-arrow-prev')?.addEventListener('click',()=>{
+  const active=Math.max(0,workTabs.findIndex(t=>t.classList.contains('active')));
+  setWorkSlide(active-1);
+});
+document.querySelector('.showcase-arrow-next')?.addEventListener('click',()=>{
+  const active=Math.max(0,workTabs.findIndex(t=>t.classList.contains('active')));
+  setWorkSlide(active+1);
+});
 
 // Lightweight contextual WhatsApp links. Messages stay short and are built from the form state.
 const WA_NUMBER='2347017285626';
