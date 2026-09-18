@@ -85,6 +85,30 @@ document.querySelector('.showcase-arrow-next')?.addEventListener('click',()=>{
 // Lightweight contextual WhatsApp links. Messages stay short and are built from the form state.
 const WA_NUMBER='2347017285626';
 function waUrl(message){return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;}
+function buildWaMessage(context, formType){
+  const need=selectedNeed(formType);
+  const business=(document.getElementById(formType==='modal'?'mBusiness':'business')?.value||'').trim();
+  const name=(document.getElementById(formType==='modal'?'mName':'name')?.value||'').trim();
+  if(context==='hero') return 'Hi GoReallyBig, I\\'d like to get started with a website for my business.';
+  if(context==='header') return 'Hi GoReallyBig, I\\'d like to talk about a website for my business.';
+  if(context==='offer') return 'Hi GoReallyBig, I\\'d like to discuss the right website package for my business.';
+  if(context==='promise') return 'Hi GoReallyBig, I\\'d like to discuss a website that can help my business get found, build trust and win more business.';
+  if(context==='commercial') return 'Hi GoReallyBig, I\\'d like to talk about making sure my business is ready when people look me up online.';
+  if(context==='approach') return 'Hi GoReallyBig, I\\'d like to talk about a website built around my business, customers and goals.';
+  if(context==='process') return 'Hi GoReallyBig, I\\'d like to talk through getting my business from idea to online.';
+  if(context==='work') return 'Hi GoReallyBig, I\\'d like to discuss what my business website could look like.';
+  if(context==='faq') return 'Hi GoReallyBig, I have a few questions about getting a website for my business.';
+  let msg='Hi GoReallyBig, I\\'d like to discuss my website needs.';
+  if(need) msg+=` I\\'m looking for: ${need}.`;
+  if(business) msg+=` Business: ${business}.`;
+  if(name) msg+=` My name is ${name}.`;
+  return msg;
+}
+function refreshWaLinks(){
+  document.querySelectorAll('[data-wa-context]').forEach(a=>a.href=waUrl(buildWaMessage(a.dataset.waContext,'contact')));
+  document.querySelectorAll('[data-wa-form]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waForm)));
+  document.querySelectorAll('[data-wa-success]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waSuccess)));
+}
 function selectedNeed(formType){
   const form=document.getElementById(formType==='modal'?'modalForm':'contactForm');
   const el=form?.querySelector('input[name="need"]:checked');
@@ -318,99 +342,3 @@ function validateRequiredUX(form){
   error.setAttribute('role','alert');
   error.style.cssText='margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;font-weight:600;';
   error.textContent='Please complete the required fields marked with *.';
-  form.insertBefore(error,form.firstElementChild);
-
-  const first=missing[0];
-  first.focus();
-  first.setAttribute('aria-invalid','true');
-  first.addEventListener('input',()=>first.removeAttribute('aria-invalid'),{once:true});
-  return false;
-}
-
-document.querySelectorAll('form').forEach(form=>{
-  form.addEventListener('submit',e=>{
-    if(!validateRequiredUX(form)){ e.preventDefault(); }
-  }, true);
-});
-
-
-/* ===== Inline script block 3 from original index.html ===== */
-(function(){
-  document.querySelectorAll('.offer-expand').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const target=btn.dataset.expandTarget;
-      const scope=target==='core'?document.querySelector('.offer-core'):document.querySelector('.offer-growth');
-      if(!scope) return;
-      const hidden=scope.querySelectorAll('.offer-item-hidden');
-      const open=btn.getAttribute('aria-expanded')==='true';
-      hidden.forEach(el=>{
-        el.style.display=open?'none':'grid';
-      });
-      btn.setAttribute('aria-expanded',String(!open));
-      const count=target==='core'?7:6;
-      btn.querySelector('span').textContent=open
-        ? `View all ${count} ${target==='core'?'essentials':'additions'}`
-        : 'Show less';
-    });
-  });
-})();
-
-
-/* ===== Inline script block 4 from original index.html ===== */
-(function(){
-  const panel=document.querySelector('.services-panel');
-  const toggle=document.querySelector('.services-toggle');
-  if(!panel||!toggle) return;
-  toggle.addEventListener('click',()=>{
-    const collapsed=panel.classList.toggle('is-collapsed');
-    toggle.setAttribute('aria-expanded',String(!collapsed));
-    const icon=toggle.querySelector('.services-toggle-icon');
-    if(icon) icon.textContent=collapsed?'+':'−';
-  });
-})();
-
-
-/* ===== Inline script block 5 from original index.html ===== */
-/* What's Included compact expand controls. */
-document.querySelectorAll('.service-expand').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const panel=btn.closest('.services-panel');
-    const expanded=btn.getAttribute('aria-expanded')==='true';
-    panel.classList.toggle('is-expanded',!expanded);
-    btn.setAttribute('aria-expanded',String(!expanded));
-    const label=btn.querySelector('span');
-    if(label) label.textContent=expanded?'View all 7 essentials':'Show less';
-  });
-});
-document.querySelectorAll('.addon-expand').forEach(btn=>{
-  const box=btn.closest('.addons');
-  const label=btn.querySelector('span');
-  const mobile=()=>window.matchMedia('(max-width: 560px)').matches;
-
-  // Desktop: all 6 visible by default and can be collapsed. Mobile: first 3 visible by default and can be expanded.
-  function syncAddonState(){
-    if(mobile()){
-      const expanded=box.classList.contains('is-expanded');
-      box.classList.remove('is-collapsed');
-      btn.setAttribute('aria-expanded',String(expanded));
-      if(label) label.textContent=expanded?'Show less':'View all 6 additions';
-    }else{
-      const collapsed=box.classList.contains('is-collapsed');
-      box.classList.remove('is-expanded');
-      btn.setAttribute('aria-expanded',String(!collapsed));
-      if(label) label.textContent=collapsed?'View all 6 additions':'Show less';
-    }
-  }
-  syncAddonState();
-  window.addEventListener('resize',syncAddonState);
-
-  btn.addEventListener('click',()=>{
-    if(mobile()){
-      box.classList.toggle('is-expanded');
-    }else{
-      box.classList.toggle('is-collapsed');
-    }
-    syncAddonState();
-  });
-});
-
