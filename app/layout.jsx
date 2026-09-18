@@ -118,7 +118,7 @@ function getProductionStyles() {
   transition:opacity .18s ease!important;
 }
 .grb-hero-carousel .hero-carousel-image.is-changing{opacity:0!important}
-;
+`;
   return [inline, productionCss, runtimePresentation].join('\n');
 }
 
