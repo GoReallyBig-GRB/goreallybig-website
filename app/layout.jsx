@@ -60,115 +60,33 @@ function getProductionStyles() {
 .contact-detail .contact-whatsapp img{width:22px;height:22px;display:block;flex:0 0 22px}
 .contact-detail .contact-whatsapp{font-weight:700}
 
-/* Form flow and WhatsApp CTA — single authoritative implementation. */
-.form-intro,.modal-fields .form-intro{
-  display:grid!important;
-  gap:3px!important;
-  margin:0 0 14px!important;
-}
-.form-intro-heading,.modal-fields .form-intro-heading{
-  margin:0!important;
-  color:var(--navy)!important;
-  font-size:clamp(30px,4vw,42px)!important;
-  font-weight:800!important;
-  line-height:1.08!important;
-  letter-spacing:-.035em!important;
-}
-.form-intro span,.modal-fields .form-intro span{
-  color:#667085!important;
-  font-size:13px!important;
-  line-height:1.55!important;
-}
-.form-continue,.modal-fields .form-continue{
-  margin:14px 0 7px!important;
-  color:var(--navy)!important;
-  font-size:12px!important;
-  font-weight:800!important;
-}
-.form .form-required-note,.modal-fields .form-required-note{
-  margin:0 0 12px!important;
-}
-.form .wa-link,.modal-fields .wa-link{
-  min-height:30px!important;
-  width:max-content!important;
-  max-width:100%!important;
-  margin:2px 0 0!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  gap:9px!important;
-  color:#087f5b!important;
-}
-.form .wa-form-icon,.modal-fields .wa-form-icon{
-  width:24px!important;
-  height:24px!important;
-  flex:0 0 24px!important;
-  display:block!important;
-}
-.form .wa-link-copy,.modal-fields .wa-link-copy{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:4px!important;
-  line-height:1.35!important;
-}
-.form .wa-link-copy strong,.modal-fields .wa-link-copy strong{
-  font-weight:800!important;
-}
-.form .form-actions{
-  margin-top:18px!important;
-}
-.form .form-actions .cta,.modal-fields>.cta{
-  width:100%!important;
-  min-height:50px!important;
-  border-radius:12px!important;
-  box-shadow:none!important;
-  font-weight:800!important;
-}
-.form .form-note{
-  margin-top:8px!important;
-  text-align:center!important;
-  font-size:11px!important;
-  line-height:1.45!important;
-}
-.footer-socials .grb-social-icon{width:18px!important;height:18px!important;display:block!important}
-.footer-socials .grb-social-icon path{fill:currentColor}
-.footer-socials .grb-social-instagram rect,
-.footer-socials .grb-social-instagram circle{fill:none;stroke:currentColor;stroke-width:2}
-.footer-socials .grb-social-instagram circle:last-child{fill:currentColor;stroke:none}
-/* Compact the contact form so it remains a focused conversion panel. */
+/* FORM — single authoritative implementation. */
+.form-intro,.modal-fields .form-intro{display:grid!important;gap:4px!important;margin:0 0 14px!important}
+.form-intro-heading,.modal-fields .form-intro-heading{margin:0!important;color:var(--navy)!important;font-size:clamp(30px,4vw,42px)!important;font-weight:800!important;line-height:1.08!important;letter-spacing:-.035em!important}
+.form-intro span,.modal-fields .form-intro span{color:#667085!important;font-size:13px!important;line-height:1.55!important}
+.form .wa-link,.modal-fields .wa-link{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;width:max-content!important;max-width:100%!important;min-height:30px!important;margin:0 0 16px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#087f5b!important;font-size:13px!important;font-weight:800!important;text-decoration:none!important;cursor:pointer!important}
+.form .wa-link:hover,.modal-fields .wa-link:hover{text-decoration:underline!important;color:#087f5b!important;background:transparent!important;transform:none!important;box-shadow:none!important}
+.form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:2px solid var(--blue)!important;outline-offset:4px!important;border-radius:4px!important}
+.form .wa-form-icon,.modal-fields .wa-form-icon{width:24px!important;height:24px!important;flex:0 0 24px!important;display:block!important}
+.form .wa-link-copy,.modal-fields .wa-link-copy{display:flex!important;align-items:center!important;gap:4px!important;line-height:1.35!important}
+.form .wa-link-copy strong,.modal-fields .wa-link-copy strong{font-weight:800!important}
+.form-continue,.modal-fields .form-continue{margin:0 0 7px!important;color:var(--navy)!important;font-size:12px!important;font-weight:800!important}
+.form .form-required-note,.modal-fields .form-required-note{margin:0 0 12px!important;color:#667085!important;font-size:11px!important;line-height:1.45!important}
+.form .form-actions{margin-top:14px!important}
+.form .form-actions .cta,.modal-fields>.cta{width:100%!important;min-height:50px!important;border-radius:12px!important;box-shadow:none!important;font-weight:800!important}
 .contact .form{padding:22px!important;border-radius:22px!important}
-.contact .form .form-required-note{margin:0 0 10px!important}
-.contact .form .wa-link{margin-top:0!important;margin-bottom:18px!important}
 .contact .form .fields{gap:12px!important}
 .contact .form .field label{margin-bottom:5px!important}
 .contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:11px 13px!important}
 .contact .form .field textarea{min-height:100px!important}
-.contact .form .form-actions{margin-top:14px!important}
-.contact .form .form-note{margin-top:8px!important}
-
-/* Social icons: compact, restrained and consistent with the production visual language. */
+@media(max-width:900px){.contact .form{padding:20px!important;border-radius:20px!important}}
+@media(max-width:560px){.contact .form{padding:17px!important;border-radius:18px!important}.contact .form .wa-link{margin-bottom:15px!important}.contact .form .wa-link-copy{font-size:11px!important}.contact .form .fields{gap:10px!important}.contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:10px 12px!important}.contact .form .field textarea{min-height:90px!important}}
+/* Social icons — static SVGs in the document; CSS only. */
 .footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.16)!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:#dbe4ee!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
 .footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.55)!important;background:rgba(183,240,0,.06)!important;color:var(--lime)!important}
 .footer-socials a:focus-visible{outline:2px solid var(--lime)!important;outline-offset:3px!important}
 .footer-socials .grb-social-icon{width:18px;height:18px;display:block}
 .footer-socials a[aria-label="Facebook"] .grb-social-icon{width:19px;height:19px}
-
-@media(max-width:900px){
-  .contact .form{padding:20px!important;border-radius:20px!important}
-}
-
-@media(max-width:560px){
-  .contact .form{padding:17px!important;border-radius:18px!important}
-  .contact .form .wa-link{min-height:48px!important;padding:9px 12px!important;margin-bottom:15px!important;border-radius:10px!important}
-  .contact .form .wa-link-copy{font-size:11px!important}
-  .contact .form .wa-number{font-size:10px!important;gap:5px!important}
-  .contact .form .wa-number img{width:20px!important;height:20px!important;flex-basis:20px!important}
-  .contact .form .fields{gap:10px!important}
-  .contact .form .field input,.contact .form .field textarea,.contact .form .field select{padding:10px 12px!important}
-  .contact .form .field textarea{min-height:90px!important}
-}
 /* Hero mockup carousel: deterministic first paint, one shared visual frame. */
 .grb-hero-carousel{
   position:relative!important;
