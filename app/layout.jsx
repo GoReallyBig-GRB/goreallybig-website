@@ -94,11 +94,11 @@ function getProductionStyles() {
 @media(max-width:900px){.contact .form{padding:20px!important;border-radius:20px!important}}
 @media(max-width:560px){.contact .form{padding:17px!important;border-radius:18px!important}}
 /* Social icons — static SVGs in the document; CSS only. */
-.footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.16)!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:#dbe4ee!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
-.footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.55)!important;background:rgba(183,240,0,.06)!important;color:var(--lime)!important}
+.footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.28)!important;border-radius:11px!important;background:rgba(255,255,255,.08)!important;color:#fff!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
+.footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.7)!important;background:rgba(183,240,0,.1)!important;color:var(--lime)!important}
 .footer-socials a:focus-visible{outline:2px solid var(--lime)!important;outline-offset:3px!important}
-.footer-socials .grb-social-icon{width:18px;height:18px;display:block}
-.footer-socials a[aria-label="Facebook"] .grb-social-icon{width:19px;height:19px}
+.footer-socials .grb-social-icon{width:20px!important;height:20px!important;display:block!important;fill:currentColor!important;stroke:currentColor!important}
+.footer-socials a[aria-label="Facebook"] .grb-social-icon{width:21px!important;height:21px!important}
 /* Hero mockup carousel: deterministic first paint, one shared visual frame. */
 .grb-hero-carousel{
   position:relative!important;
