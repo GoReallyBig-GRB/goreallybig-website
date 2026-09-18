@@ -82,8 +82,7 @@ function getBody(source) {
   if (!match) throw new Error('Production body could not be extracted.');
 
   const body = match[1]
-    .replace(/<script[^>]+src=["']assets\/app\.js["'][^>]*><\/script>/gi, '')
-    .replace(/<a data-nav="faq" href="#faq">FAQ<\/a>/g, '')
+        .replace(/<a data-nav="faq" href="#faq">FAQ<\/a>/g, '')
     .replace(/<a href="#faq">FAQ<\/a>/g, '')
     .replace(/(<h1[^>]*>Your Business )Is /, '$1<br class="grb-h1-break" />Is ')
     .replace(/<a aria-label="Chat on WhatsApp at 0701 728 5626" class="contact-mini" data-wa-context="header" href="https:\/\/wa\.me\/2347017285626" rel="noopener noreferrer" target="_blank"><span class="wa">WA<\/span><span>0701 728 5626<\/span><\/a>/g, `<a aria-label="Chat on WhatsApp at +234 701 728 5626" class="contact-mini" data-wa-context="header" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" rel="noopener noreferrer" target="_blank"><span class="wa" aria-hidden="true"><img class="grb-wa-img" src="/assets/whatsapp-icon-outline.svg" alt="" /></span><span>+234 701 728 5626</span></a>`)
