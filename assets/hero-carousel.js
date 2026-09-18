@@ -43,7 +43,7 @@
       index = nextIndex;
       changing = false;
       timer = window.setTimeout(showNext, 6000);
-    }, 180);
+    }, 320);
   };
 
   // The first image is deliberately left completely static. Only after it
