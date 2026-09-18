@@ -35,11 +35,16 @@ function getProductionSource() {
 }
 
 function preloadWhatsAppLinks(html) {
-  return html.replace(/(<a[^>]*data-wa-context="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2347017285626("[^>]*>)/g, (full, prefix, context, suffix) => {
-    const message = WA_MESSAGES[context];
-    if (!message) return full;
-    return `${prefix}${WA_BASE}?text=${encodeURIComponent(message)}${suffix}`;
-  });
+  return html
+    .replace(/(<a[^>]*data-wa-context="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2347017285626("[^>]*>)/g, (full, prefix, context, suffix) => {
+      const message = WA_MESSAGES[context];
+      if (!message) return full;
+      return `${prefix}${WA_BASE}?text=${encodeURIComponent(message)}${suffix}`;
+    })
+    .replace(/(<a[^>]*data-wa-form="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2347017285626("[^>]*>)/g, (full, prefix, context, suffix) => {
+      const message = WA_MESSAGES.form;
+      return `${prefix}${WA_BASE}?text=${encodeURIComponent(message)}${suffix}`;
+    });
 }
 
 function optimizeImages(html) {
