@@ -75,7 +75,7 @@ function getProductionStyles() {
 .form-intro,.modal-fields .form-intro{
   display:grid!important;
   gap:3px!important;
-  margin:0 0 12px!important;
+  margin:0 0 14px!important;
 }
 .form-intro strong,.modal-fields .form-intro strong{
   color:var(--navy)!important;
@@ -88,13 +88,68 @@ function getProductionStyles() {
   line-height:1.55!important;
 }
 .form-continue,.modal-fields .form-continue{
-  margin:0 0 7px!important;
+  margin:14px 0 7px!important;
   color:var(--navy)!important;
   font-size:12px!important;
   font-weight:800!important;
 }
 .form .form-required-note,.modal-fields .form-required-note{
   margin:0 0 12px!important;
+}
+.form .wa-link,.modal-fields .wa-link{
+  min-height:46px!important;
+  margin-top:0!important;
+  padding:10px 14px!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+  gap:9px!important;
+}
+.form .wa-link .wa-dot,.modal-fields .wa-link .wa-dot{
+  position:relative!important;
+  width:22px!important;height:22px!important;flex:0 0 22px!important;
+  border:0!important;background:transparent!important;
+}
+.form .wa-link .wa-dot::before,.modal-fields .wa-link .wa-dot::before{
+  content:""!important;
+  position:absolute!important;inset:0!important;
+  border-radius:50%!important;
+  background:#25D366!important;
+}
+.form .wa-link .wa-dot::after,.modal-fields .wa-link .wa-dot::after{
+  content:""!important;
+  position:absolute!important;
+  left:6px!important;top:5px!important;
+  width:9px!important;height:9px!important;
+  border:2px solid #fff!important;
+  border-top-color:transparent!important;
+  border-radius:50%!important;
+  transform:rotate(-35deg)!important;
+}
+.form .wa-link-copy,.modal-fields .wa-link-copy{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  line-height:1.35!important;
+}
+.form .wa-link-copy strong,.modal-fields .wa-link-copy strong{
+  font-weight:800!important;
+}
+.form .form-actions{
+  margin-top:18px!important;
+}
+.form .form-actions .cta,.modal-fields>.cta{
+  width:100%!important;
+  min-height:50px!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+  font-weight:800!important;
+}
+.form .form-note{
+  margin-top:8px!important;
+  text-align:center!important;
+  font-size:11px!important;
+  line-height:1.45!important;
 }
 .footer-socials .grb-social-icon{width:18px!important;height:18px!important;display:block!important}
 .footer-socials .grb-social-icon path{fill:currentColor}
