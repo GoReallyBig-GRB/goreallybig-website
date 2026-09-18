@@ -53,6 +53,8 @@ function getProductionStyles() {
 .wa{background:transparent!important;color:transparent!important}
 .wa:empty{display:block}
 
+.hero .lead{color:var(--navy)!important;text-decoration:none!important}
+.hero .lead span{color:inherit!important;text-decoration:none!important}
 .contact-detail a{color:#aebacc;text-decoration:none;font-size:15px;line-height:1.65;display:inline-flex;align-items:center;gap:8px;min-height:28px}
 .contact-detail a:hover{color:#fff;text-decoration:underline}
 .contact-detail a:focus-visible{outline:2px solid var(--lime);outline-offset:4px;border-radius:4px}
@@ -97,8 +99,9 @@ function getProductionStyles() {
 .footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.28)!important;border-radius:11px!important;background:rgba(255,255,255,.08)!important;color:#fff!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
 .footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.7)!important;background:rgba(183,240,0,.1)!important;color:var(--lime)!important}
 .footer-socials a:focus-visible{outline:2px solid var(--lime)!important;outline-offset:3px!important}
-.footer-socials .grb-social-icon{width:20px!important;height:20px!important;display:block!important;fill:currentColor!important;stroke:currentColor!important}
+.footer-socials .grb-social-icon{width:20px!important;height:20px!important;display:block!important;fill:currentColor!important;stroke:none!important}
 .footer-socials a[aria-label="Facebook"] .grb-social-icon{width:21px!important;height:21px!important}
+.footer-socials a[aria-label="Instagram"] .grb-social-icon{fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;stroke-linecap:round!important;stroke-linejoin:round!important}
 /* Hero mockup carousel: deterministic first paint, one shared visual frame. */
 .grb-hero-carousel{
   position:relative!important;
