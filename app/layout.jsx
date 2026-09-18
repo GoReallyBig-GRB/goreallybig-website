@@ -67,20 +67,19 @@ function getProductionStyles() {
 .form .wa-link:focus-visible,.modal-fields .wa-link:focus-visible{outline:3px solid rgba(21,94,239,.25)!important;outline-offset:3px!important}
 .form .wa-link-copy,.modal-fields .wa-link-copy{min-width:0!important;font-size:13px!important;line-height:1.3!important;font-weight:700!important;white-space:nowrap!important;color:inherit!important}
 .form .wa-link-copy strong,.modal-fields .wa-link-copy strong{font-weight:800!important}
-.form .wa-number,.modal-fields .wa-number{display:inline-flex!important;align-items:center!important;gap:7px!important;margin-left:auto!important;flex:0 0 auto!important;font-size:12px!important;line-height:1.2!important;font-weight:800!important;white-space:nowrap!important;color:#128c7e!important;text-decoration:underline!important;text-underline-offset:3px!important;text-decoration-thickness:1px!important;transition:color .2s ease!important}
-.form .wa-number img,.modal-fields .wa-number img{width:22px!important;height:22px!important;display:block!important;flex:0 0 22px!important}
-.form .wa-link:hover .wa-number,.modal-fields .wa-link:hover .wa-number{color:#075f4e!important}
-
 /* Form flow: make the two contact paths unmistakably separate. */
 .form-intro,.modal-fields .form-intro{
   display:grid!important;
   gap:3px!important;
   margin:0 0 14px!important;
 }
-.form-intro strong,.modal-fields .form-intro strong{
+.form-intro-heading,.modal-fields .form-intro-heading{
+  margin:0!important;
   color:var(--navy)!important;
-  font-size:15px!important;
-  line-height:1.35!important;
+  font-size:clamp(26px,3vw,34px)!important;
+  font-weight:800!important;
+  line-height:1.08!important;
+  letter-spacing:-.035em!important;
 }
 .form-intro span,.modal-fields .form-intro span{
   color:#667085!important;
@@ -97,33 +96,22 @@ function getProductionStyles() {
   margin:0 0 12px!important;
 }
 .form .wa-link,.modal-fields .wa-link{
-  min-height:46px!important;
-  margin-top:0!important;
-  padding:10px 14px!important;
-  border-radius:12px!important;
+  min-height:30px!important;
+  width:max-content!important;
+  max-width:100%!important;
+  margin:2px 0 0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
   box-shadow:none!important;
   gap:9px!important;
+  color:#087f5b!important;
 }
-.form .wa-link .wa-dot,.modal-fields .wa-link .wa-dot{
-  position:relative!important;
-  width:22px!important;height:22px!important;flex:0 0 22px!important;
-  border:0!important;background:transparent!important;
-}
-.form .wa-link .wa-dot::before,.modal-fields .wa-link .wa-dot::before{
-  content:""!important;
-  position:absolute!important;inset:0!important;
-  border-radius:50%!important;
-  background:#25D366!important;
-}
-.form .wa-link .wa-dot::after,.modal-fields .wa-link .wa-dot::after{
-  content:""!important;
-  position:absolute!important;
-  left:6px!important;top:5px!important;
-  width:9px!important;height:9px!important;
-  border:2px solid #fff!important;
-  border-top-color:transparent!important;
-  border-radius:50%!important;
-  transform:rotate(-35deg)!important;
+.form .wa-form-icon,.modal-fields .wa-form-icon{
+  width:24px!important;
+  height:24px!important;
+  flex:0 0 24px!important;
+  display:block!important;
 }
 .form .wa-link-copy,.modal-fields .wa-link-copy{
   display:flex!important;
