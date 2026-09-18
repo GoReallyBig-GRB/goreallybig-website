@@ -8,7 +8,6 @@ let previousY=0, opener=null, modalNeed='';
 function openModal(source){
   previousY=window.scrollY; opener=document.activeElement;
   modal.classList.add('show'); body.style.overflow='hidden';
-  document.getElementById('modalTitle').textContent=source==='Get My Offer'?'Get My Offer':source==='Get Your Free Website Audit'?'Get Your Free Website Audit':'Let’s get your business moving.';
   const modalFormEl=document.getElementById('modalForm');
   modalFormEl.classList.remove('hidden');
   document.getElementById('modalSuccess').classList.add('hidden');
@@ -47,9 +46,15 @@ document.querySelectorAll('.faq-q').forEach((q,i)=>{
   });
 });
 
-// Work tabs.
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+// Work gallery tabs + flanking navigation.
+const workTabs=[...document.querySelectorAll('.tab')];
+function setWorkSlide(index){
+  if(!workTabs.length) return;
+  const next=((index%workTabs.length)+workTabs.length)%workTabs.length;
+  workTabs[next].click();
+}
+workTabs.forEach(t=>t.addEventListener('click',()=>{
+  workTabs.forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
 
   const mockups={
@@ -65,16 +70,21 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
     const picture=img.closest('.grb-picture');
     if(picture) picture.classList.toggle('active',active);
   });
-  document.getElementById('workCopy').textContent=t.dataset.copy;
+  const copy=document.getElementById('workCopy');
+  if(copy) copy.textContent=t.dataset.copy;
 }));
+document.querySelector('.showcase-arrow-prev')?.addEventListener('click',()=>{
+  const active=Math.max(0,workTabs.findIndex(t=>t.classList.contains('active')));
+  setWorkSlide(active-1);
+});
+document.querySelector('.showcase-arrow-next')?.addEventListener('click',()=>{
+  const active=Math.max(0,workTabs.findIndex(t=>t.classList.contains('active')));
+  setWorkSlide(active+1);
+});
 
 // Lightweight contextual WhatsApp links. Messages stay short and are built from the form state.
 const WA_NUMBER='2347017285626';
 function waUrl(message){return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;}
-function selectedNeed(formType){
-  const el=document.getElementById(formType==='modal'?'modalNeed':'contactNeed');
-  return el ? String(el.value||'').trim() : '';
-}
 function buildWaMessage(context, formType){
   const need=selectedNeed(formType);
   const business=(document.getElementById(formType==='modal'?'mBusiness':'business')?.value||'').trim();
@@ -99,46 +109,36 @@ function refreshWaLinks(){
   document.querySelectorAll('[data-wa-form]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waForm)));
   document.querySelectorAll('[data-wa-success]').forEach(a=>a.href=waUrl(buildWaMessage('form',a.dataset.waSuccess)));
 }
-refreshWaLinks();
-
-// Need selectors: site URL only appears for a makeover.
-function wireNeedButtons(selector, fieldId, attr){
-  document.querySelectorAll(selector).forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll(selector).forEach(x=>x.classList.remove('selected'));
-    b.classList.add('selected');
-    const need=b.dataset[attr];
-    if(fieldId==='modalSiteField'){
-      const hidden=document.getElementById('modalNeed');
-      const url=document.getElementById('mSite');
-      if(hidden) hidden.value=need;
-      if(url){
-        const makeover=need==='Website makeover';
-        url.required=makeover;
-        url.setAttribute('aria-required',String(makeover));
-        const label=url.closest('.field')?.querySelector('label');
-        if(label) label.classList.toggle('required-field',makeover);
-        if(!makeover) url.removeAttribute('aria-invalid');
-      }
-    }
-    if(fieldId==='siteField'){
-      const hidden=document.getElementById('contactNeed');
-      const url=document.getElementById('site');
-      if(hidden) hidden.value=need;
-      if(url){
-        const makeover=need==='Website makeover';
-        url.required=makeover;
-        url.setAttribute('aria-required',String(makeover));
-        const label=url.closest('.field')?.querySelector('label');
-        if(label) label.classList.toggle('required-field',makeover);
-        if(!makeover) url.removeAttribute('aria-invalid');
-      }
-    }
-    if(fieldId) document.getElementById(fieldId).classList.toggle('hidden',need!=='Website makeover');
-    return need;
-  }));
+function selectedNeed(formType){
+  const form=document.getElementById(formType==='modal'?'modalForm':'contactForm');
+  const el=form?.querySelector('input[name="need"]:checked');
+  return el ? String(el.value||'').trim() : '';
 }
-wireNeedButtons('[data-mneed]','modalSiteField','mneed');
-wireNeedButtons('[data-need]','siteField','need');
+function wireNeedRadios(formId, fieldId){
+  const form=document.getElementById(formId);
+  if(!form) return;
+  const radios=[...form.querySelectorAll('input[name="need"]')];
+  const siteField=document.getElementById(fieldId);
+  const url=document.getElementById(formId==='modalForm'?'mSite':'site');
+  const sync=()=>{
+    const need=form.querySelector('input[name="need"]:checked')?.value||'';
+    const makeover=need==='Website makeover';
+    if(siteField){siteField.hidden=!makeover;siteField.setAttribute('aria-hidden',String(!makeover));}
+    if(url){
+      url.required=makeover;
+      url.setAttribute('aria-required',String(makeover));
+      if(!makeover){url.setCustomValidity('');url.removeAttribute('aria-invalid');}
+      const label=url.closest('.field')?.querySelector('label');
+      if(label) label.classList.toggle('required-field',makeover);
+    }
+    radios.forEach(r=>r.closest('.need-option')?.classList.toggle('selected',r.checked));
+    refreshWaLinks();
+  };
+  radios.forEach(r=>r.addEventListener('change',sync));
+  sync();
+}
+wireNeedRadios('modalForm','modalSiteField');
+wireNeedRadios('contactForm','siteField');
 document.querySelectorAll('#contactForm input,#contactForm textarea,#modalForm input,#modalForm textarea').forEach(el=>el.addEventListener('input',refreshWaLinks));
 
 
@@ -154,7 +154,7 @@ function formPayload(formType){
   const business=(get(modalForm?'mBusiness':'business')?.value||'').trim();
   const email=(get(modalForm?'mEmail':'email')?.value||'').trim();
   const phone=(get(modalForm?'mPhone':'phone')?.value||'').trim();
-  const need=(get(modalForm?'modalNeed':'contactNeed')?.value||'').trim();
+  const need=(document.getElementById(modalForm?'modalForm':'contactForm')?.querySelector('input[name="need"]:checked')?.value||'').trim();
   const site=(get(modalForm?'mSite':'site')?.value||'').trim();
   const message=(get(modalForm?'mContext':'message')?.value||'').trim();
 
@@ -254,7 +254,7 @@ document.getElementById('modalForm').addEventListener('submit',async e=>{
   if(!sent) return;
   form.classList.add('hidden');
   const modalSuccess=document.getElementById('modalSuccess');
-  modalSuccess.querySelector('p').textContent=`Request type: ${document.getElementById('modalNeed').value}. Your request has been captured. We'll take it from here.`;
+  modalSuccess.querySelector('p').textContent=`Request type: ${selectedNeed('modal')}. Your request has been captured. We'll take it from here.`;
   modalSuccess.classList.remove('hidden');
   refreshWaLinks();
 });
@@ -279,14 +279,16 @@ contactForm.addEventListener('submit',async e=>{
     wa.target='_blank';
     wa.rel='noopener noreferrer';
     wa.dataset.waSuccess='contact';
-    const dot=document.createElement('span');
-    dot.className='wa-dot';
-    dot.textContent='WA';
-    wa.append(dot,document.createTextNode('Continue on WhatsApp'));
+    const icon=document.createElement('img');
+    icon.className='wa-form-icon';
+    icon.src='/assets/whatsapp-icon-outline.svg';
+    icon.alt='';
+    icon.setAttribute('aria-hidden','true');
+    wa.append(icon,document.createTextNode('Continue on WhatsApp'));
     success.append(strong,p,wa);
     contactForm.appendChild(success);
   }
-  success.querySelector('p').textContent=`Request type: ${document.getElementById('contactNeed').value}. Your request has been captured. We'll take it from here.`;
+  success.querySelector('p').textContent=`Request type: ${selectedNeed('contact')}. Your request has been captured. We'll take it from here.`;
   refreshWaLinks();
   success.scrollIntoView({block:'nearest'});
 });
@@ -315,7 +317,7 @@ function validWebsiteUrl(value){
   if(!form) return;
   form.addEventListener('submit',e=>{
     const url=form.id==='modalForm'?document.getElementById('mSite'):document.getElementById('site');
-    const need=form.id==='modalForm'?document.getElementById('modalNeed'):document.getElementById('contactNeed');
+    const need=form.querySelector('input[name="need"]:checked');
     if(url && need && need.value==='Website makeover' && !validWebsiteUrl(url.value)){
       e.preventDefault();
       url.setCustomValidity('Enter a valid website URL starting with https:// or www.');
@@ -327,14 +329,15 @@ function validWebsiteUrl(value){
   },true);
 });
 
-
-/* ===== Inline script block 2 from original index.html ===== */
-/* Consistent required-field UX across browsers. */
+/* ===== Consistent required-field UX across browsers. ===== */
 function validateRequiredUX(form){
   if(!form) return true;
-  const required=[...form.querySelectorAll('[required]')].filter(el=>el.offsetParent!==null || el.type==='hidden');
-  const missing=required.filter(el=>!String(el.value||'').trim());
+  const required=[...form.querySelectorAll('[required]')].filter(el=>{
+    if(el.type==='radio') return el.checked;
+    return el.offsetParent!==null;
+  });
   form.querySelector('.required-error')?.remove();
+  const missing=required.filter(el=>el.type==='radio' ? !form.querySelector('input[name="need"]:checked') : !String(el.value||'').trim());
   if(!missing.length) return true;
 
   const error=document.createElement('div');
@@ -350,6 +353,16 @@ function validateRequiredUX(form){
   first.addEventListener('input',()=>first.removeAttribute('aria-invalid'),{once:true});
   return false;
 }
+
+document.querySelectorAll('form').forEach(form=>{
+  form.addEventListener('submit',e=>{
+    if(!validateRequiredUX(form)){ e.preventDefault(); }
+  }, true);
+});
+
+/* ===== Inline script block 2 from original index.html ===== */
+/* Consistent required-field UX across browsers. */
+
 
 document.querySelectorAll('form').forEach(form=>{
   form.addEventListener('submit',e=>{
