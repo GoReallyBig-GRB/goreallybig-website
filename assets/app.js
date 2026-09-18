@@ -47,10 +47,6 @@
   .grb-header-wa-icon{width:31px;height:31px;display:block}
 }
 .grb-wa-dot-icon{width:24px;height:24px;display:block;flex:0 0 24px}
-.footer-socials a{width:42px!important;height:42px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:50%!important;background:rgba(255,255,255,.04)!important;color:#fff!important;transition:transform .2s ease,border-color .2s ease,background .2s ease!important}
-.footer-socials a:hover{transform:translateY(-2px)!important;border-color:var(--lime)!important;background:rgba(183,240,0,.08)!important;color:#fff!important}
-.footer-socials .grb-social-icon{width:20px;height:20px;display:block}
-.footer-socials a[aria-label="Facebook"] .grb-social-icon{width:22px;height:22px}
 .contact-detail a:hover,.footer-contact-link:hover strong{color:var(--lime)!important}
 .hero .lead span{font-weight:800!important;color:var(--navy)!important}
 `;
