@@ -362,26 +362,7 @@ document.querySelectorAll('form').forEach(form=>{
 
 /* ===== Inline script block 2 from original index.html ===== */
 /* Consistent required-field UX across browsers. */
-function validateRequiredUX(form){
-  if(!form) return true;
-  const required=[...form.querySelectorAll('[required]')].filter(el=>el.offsetParent!==null || el.type==='hidden');
-  const missing=required.filter(el=>!String(el.value||'').trim());
-  form.querySelector('.required-error')?.remove();
-  if(!missing.length) return true;
 
-  const error=document.createElement('div');
-  error.className='required-error';
-  error.setAttribute('role','alert');
-  error.style.cssText='margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;font-weight:600;';
-  error.textContent='Please complete the required fields marked with *.';
-  form.insertBefore(error,form.firstElementChild);
-
-  const first=missing[0];
-  first.focus();
-  first.setAttribute('aria-invalid','true');
-  first.addEventListener('input',()=>first.removeAttribute('aria-invalid'),{once:true});
-  return false;
-}
 
 document.querySelectorAll('form').forEach(form=>{
   form.addEventListener('submit',e=>{
