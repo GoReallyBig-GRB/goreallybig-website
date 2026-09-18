@@ -92,7 +92,6 @@ function getProductionStyles() {
 .form .need-option input:focus-visible + span,.modal-fields .need-option input:focus-visible + span{outline:2px solid var(--blue);outline-offset:2px}
 .form .need-option:hover span,.modal-fields .need-option:hover span{border-color:var(--blue)}
 .form .need-option.selected span,.modal-fields .need-option.selected span{background:var(--blue);border-color:var(--blue);color:#fff}
-<style>
 /* FORMS — authoritative compact layout. */
 .contact .form .wa-link,.modal-fields 
 .contact .form .wa-form-icon,.modal-fields .wa-form-icon{
@@ -171,7 +170,6 @@ function getProductionStyles() {
   .contact .form .fields > .field:not(.full) label,.modal-fields > .field:not(.full) label{margin-bottom:2px!important}
   .contact .form .wa-link-copy,.modal-fields 
 }
-</style>
 /* Social icons — static SVGs in the document; CSS only. */
 .footer-socials a{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border:1px solid rgba(255,255,255,.16)!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:#dbe4ee!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease!important}
 .footer-socials a:hover{transform:translateY(-2px)!important;border-color:rgba(183,240,0,.55)!important;background:rgba(183,240,0,.06)!important;color:var(--lime)!important}
