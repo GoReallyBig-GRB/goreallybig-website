@@ -111,8 +111,9 @@ function getProductionStyles() {
   max-width:none!important;
   margin:0!important;
   opacity:1!important;
-  transition:opacity .18s ease!important;
+  transition:opacity .32s ease-in-out,transform .32s ease-in-out!important;
 }
+.grb-hero-carousel .hero-carousel-image[data-carousel-index="3"]{transform:scale(.92)!important}
 .grb-hero-carousel .hero-carousel-image.is-changing{opacity:0!important}
 `;
   return [inline, productionCss, runtimePresentation].join('\n');
