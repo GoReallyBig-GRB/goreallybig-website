@@ -75,11 +75,10 @@ function optimizeContactActions(html) {
 function optimizeHeroCarousel(html) {
   const current = '<div class="hero-visual"><picture class="grb-picture"><img alt="Evergreen Private School website design mockup" src="assets/c04-hero.png"/></picture></div>';
   const carousel = `<div class="hero-visual">
-<div class="grb-hero-carousel" aria-label="Website design examples"><img class="hero-carousel-image" alt="AutoDrive Motors website design mockup" src="/assets/auto-drive-motors.webp" loading="eager" fetchpriority="high" decoding="async" data-carousel-images="/assets/auto-drive-motors.webp|/assets/hero-riverside.webp|/assets/hero-biliya.webp|/assets/ifem-studio.png" data-carousel-alts="AutoDrive Motors website design mockup|Riverside Premium Hospital website design mockup|Biliya View Resort and Spa website design mockup|Ifem Studio website design mockup" /></div>
+<div class="grb-hero-carousel" aria-label="Website design examples"><img class="hero-carousel-image" alt="Biliya View Resort and Spa website design mockup" src="/assets/hero-biliya.webp" loading="eager" fetchpriority="high" decoding="async" data-carousel-images="/assets/hero-biliya.webp|/assets/auto-drive-motors.webp|/assets/hero-riverside.webp|/assets/ifem-studio.png" data-carousel-alts="Biliya View Resort and Spa website design mockup|AutoDrive Motors website design mockup|Riverside Premium Hospital website design mockup|Ifem Studio website design mockup" /></div>
 </div>`;
   return html.replace(current, carousel);
 }
-
 function getBody(source) {
   const match = source.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   if (!match) throw new Error('Production body could not be extracted.');
