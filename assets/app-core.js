@@ -279,10 +279,12 @@ contactForm.addEventListener('submit',async e=>{
     wa.target='_blank';
     wa.rel='noopener noreferrer';
     wa.dataset.waSuccess='contact';
-    const dot=document.createElement('span');
-    dot.className='wa-dot';
-    dot.textContent='WA';
-    wa.append(dot,document.createTextNode('Continue on WhatsApp'));
+    const icon=document.createElement('img');
+    icon.className='wa-form-icon';
+    icon.src='/assets/whatsapp-icon-outline.svg';
+    icon.alt='';
+    icon.setAttribute('aria-hidden','true');
+    wa.append(icon,document.createTextNode('Continue on WhatsApp'));
     success.append(strong,p,wa);
     contactForm.appendChild(success);
   }
