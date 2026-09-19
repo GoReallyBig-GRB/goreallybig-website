@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const WA_BASE = 'https://wa.me/2347017285626';
+const WA_BASE = 'https://wa.me/2349121236665';
 const WA_MESSAGES = {
   header: "Hi GoReallyBig, I'd like to talk about a website for my business.",
   hero: "Hi GoReallyBig, I'd like to get started with a website for my business.",
@@ -36,12 +36,12 @@ function getProductionSource() {
 
 function preloadWhatsAppLinks(html) {
   return html
-    .replace(/(<a[^>]*data-wa-context="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2347017285626("[^>]*>)/g, (full, prefix, context, suffix) => {
+    .replace(/(<a[^>]*data-wa-context="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2349121236665("[^>]*>)/g, (full, prefix, context, suffix) => {
       const message = WA_MESSAGES[context];
       if (!message) return full;
       return `${prefix}${WA_BASE}?text=${encodeURIComponent(message)}${suffix}`;
     })
-    .replace(/(<a[^>]*data-wa-form="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2347017285626("[^>]*>)/g, (full, prefix, context, suffix) => {
+    .replace(/(<a[^>]*data-wa-form="([^"]+)"[^>]*href=")https:\/\/wa\.me\/2349121236665("[^>]*>)/g, (full, prefix, context, suffix) => {
       const message = WA_MESSAGES.form;
       return `${prefix}${WA_BASE}?text=${encodeURIComponent(message)}${suffix}`;
     });
@@ -70,9 +70,9 @@ function optimizeContactActions(html) {
   return html
     .replace(/<div class="contact-detail"><b>Email<\/b><span>info@goreallybig\.com<\/span><\/div>/g,
       '<div class="contact-detail"><b>Email</b><a class="contact-email" href="mailto:info@goreallybig.com">info@goreallybig.com</a></div>')
-    .replace(/<div class="contact-detail"><b>WhatsApp<\/b><span>0701 728 5626<\/span><\/div>/g,
+    .replace(/<div class="contact-detail"><b>WhatsApp<\/b><span>+234 9121236665<\/span><\/div>/g,
       `<div class="contact-detail"><b>WhatsApp</b><a class="contact-whatsapp" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp at +234 701 728 5626"><img src="/assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true" /><span>+234 701 728 5626</span></a></div>`)
-    .replace(/WhatsApp: 0701 728 5626/g, '+234 701 728 5626');
+    .replace(/WhatsApp: +234 9121236665/g, '+234 701 728 5626');
 }
 
 function optimizeHeroCarousel(html) {
@@ -90,7 +90,7 @@ function getBody(source) {
         .replace(/<a data-nav="faq" href="#faq">FAQ<\/a>/g, '')
     .replace(/<a href="#faq">FAQ<\/a>/g, '')
     .replace(/(<h1[^>]*>Your Business )Is /, '$1<br class="grb-h1-break" />Is ')
-    .replace(/<a href="https:\/\/wa\.me\/2347017285626" rel="noopener noreferrer" target="_blank">WhatsApp: 0701 728 5626<\/a>/g, `<a class="grb-mobile-wa" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" rel="noopener noreferrer" target="_blank" aria-label="Chat on WhatsApp at +234 701 728 5626 with a prefilled message"><span>+234 701 728 5626</span><img class="grb-wa-icon" src="/assets/whatsapp-icon-outline.svg" alt="" /></a>`);
+    .replace(/<a href="https:\/\/wa\.me\/2349121236665" rel="noopener noreferrer" target="_blank">WhatsApp: +234 9121236665<\/a>/g, `<a class="grb-mobile-wa" href="${WA_BASE}?text=${encodeURIComponent(WA_MESSAGES.header)}" rel="noopener noreferrer" target="_blank" aria-label="Chat on WhatsApp at +234 701 728 5626 with a prefilled message"><span>+234 701 728 5626</span><img class="grb-wa-icon" src="/assets/whatsapp-icon-outline.svg" alt="" /></a>`);
 
   return optimizeImages(
     optimizeHeroImage(
