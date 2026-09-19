@@ -45,12 +45,12 @@ function getProductionStyles() {
   .menu[aria-expanded="true"]::before{content:"×"!important;font-size:30px!important;line-height:1;display:block!important}
   .mobile-panel>a.grb-mobile-wa{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;font-size:16px!important;color:var(--navy)!important;padding-top:16px!important;padding-bottom:16px!important}
   .mobile-panel>a.grb-mobile-wa::before,.mobile-panel>a.grb-mobile-wa::after{content:none!important;display:none!important}
-  .grb-wa-icon{width:28px;height:28px;display:block;flex:0 0 28px;order:2}
+  .grb-wa-icon{width:22px;height:22px;display:block;flex:0 0 22px;order:2}
   .grb-header-wa-icon{width:31px;height:31px;display:block}
 }
 @media(min-width:901px){.grb-header-wa-icon{width:31px;height:31px;display:block}}
-.grb-wa-img{width:100%;height:100%;display:block;object-fit:contain}
-.wa{background:transparent!important;color:transparent!important}
+.grb-wa-img{width:20px;height:20px;display:block;object-fit:contain}
+.wa{background:transparent!important;color:transparent!important;width:24px!important;height:24px!important;display:grid!important;place-items:center!important}
 .wa:empty{display:block}
 
 .hero .lead{color:var(--navy)!important;text-decoration:none!important}
@@ -58,8 +58,8 @@ function getProductionStyles() {
 .contact-detail a{color:#aebacc;text-decoration:none;font-size:15px;line-height:1.65;display:inline-flex;align-items:center;gap:8px;min-height:28px}
 .contact-detail a:hover{color:#fff;text-decoration:underline}
 .contact-detail a:focus-visible{outline:2px solid var(--lime);outline-offset:4px;border-radius:4px}
-.contact-detail .contact-whatsapp img{width:22px;height:22px;display:block;flex:0 0 22px}
-.contact-detail .contact-whatsapp{font-weight:700}
+.contact-detail .contact-whatsapp img{width:20px;height:20px;display:block;flex:0 0 20px;object-fit:contain}
+.contact-detail .contact-whatsapp{font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
 
 /* FORM — single authoritative implementation. */
 .form-intro,.modal-fields .form-intro{display:grid!important;gap:4px!important;margin:0 0 14px!important}
