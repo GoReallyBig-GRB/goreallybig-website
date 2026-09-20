@@ -32,7 +32,7 @@
 .links{display:flex;align-items:center;gap:25px;margin-left:auto;font-weight:700;font-size:14px}
 .links a{padding:10px 0;border-bottom:3px solid transparent}.links a.active{color:var(--blue);border-color:var(--lime)}
 .contact-mini{display:flex;align-items:center;gap:8px;white-space:nowrap;font-weight:800;font-size:14px}
-.wa{width:31px;height:31px;border-radius:50%;background:#25D366;color:white;display:grid;place-items:center;font-weight:800}
+.wa{width:24px;height:24px;display:grid;place-items:center;flex:0 0 24px;background:transparent;color:transparent}
 .cta{border:0;background:var(--blue);color:#fff;padding:15px 25px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 8px 22px rgba(21,94,239,.18)}.cta:disabled{cursor:not-allowed;opacity:.78}.cta.is-submitting{position:relative}.submit-spinner{width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;vertical-align:-3px;margin-right:8px;animation:grb-spin .7s linear infinite}@keyframes grb-spin{to{transform:rotate(360deg)}}.submit-status{font-size:12px;color:#667085;margin-top:9px}
 .cta.alt{background:#fff;color:var(--blue);border:1.5px solid #a9bce1;box-shadow:none}
 .cta.lime{background:var(--lime);color:var(--navy)}
@@ -69,7 +69,7 @@ h1,h2,h3{margin:0;line-height:1.08;letter-spacing:-.035em}h1{font-size:clamp(48p
 
 .contact{background:var(--navy);color:#fff}.contact-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:70px}.contact .lead{color:#b9c5d4}.contact-details{margin-top:38px;display:grid;gap:14px}.contact-detail{padding:18px 20px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#10233d}.contact-detail b{display:block}.contact-detail span{color:#aebacc}.form{background:#fff;color:var(--navy);padding:30px;border-radius:24px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field.full{grid-column:1/-1}.field label{display:block;font-weight:800;font-size:13px;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;padding:14px;border:1px solid #d4dce7;border-radius:10px;font:inherit;outline:none}.field textarea{min-height:120px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,94,239,.12)}.need{display:flex;gap:10px;flex-wrap:wrap}.need button{border:1px solid #ccd6e3;background:#fff;padding:12px 14px;border-radius:9px;cursor:pointer}.need button.selected{background:var(--blue);border-color:var(--blue);color:#fff}.form-actions{margin-top:20px}.form-note{font-size:12px;color:#667085;margin-top:10px}
 
-.footer{background:#051126;color:#fff;padding:50px 28px}.footer-inner{max-width:1180px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:30px}.footer-logo{width:250px}.footer-meta{color:#aebacc;text-align:right;font-size:13px}.socials{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}.socials a{width:34px;height:34px;border:1px solid rgba(255,255,255,.15);border-radius:50%;display:grid;place-items:center}
+.footer{background:#051126;color:#fff;padding:50px 28px}.footer-inner{max-width:1180px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:30px}.footer-logo{width:250px}.footer-meta{color:#aebacc;text-align:right;font-size:13px}.socials{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}.socials a{width:34px;height:34px;border:1px solid rgba(255,255,255,.15);border-radius:50%;display:grid;place-items:center;color:#fff;transition:transform .2s,border-color .2s,background .2s}.socials a:hover{transform:translateY(-2px);border-color:rgba(183,240,0,.65);background:rgba(255,255,255,.06)}.grb-social-icon{width:17px;height:17px;display:block;fill:currentColor}.grb-social-instagram{fill:none;stroke:currentColor;stroke-width:1.8}.grb-social-instagram circle:last-child{fill:currentColor;stroke:none}
 
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(2,10,22,.68);z-index:100;padding:20px;align-items:center;justify-content:center}.modal-backdrop.show{display:flex}.modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#fff;color:var(--navy);border-radius:22px;padding:28px;box-shadow:0 40px 100px rgba(0,0,0,.35)}.modal-head{display:flex;justify-content:space-between;gap:20px}.close{border:0;background:#f0f3f7;border-radius:8px;width:40px;height:40px;cursor:pointer;font-size:22px}.modal h2{font-size:34px}.modal .sub{color:#667085}.modal-fields{display:grid;gap:14px;margin-top:22px}.hidden{display:none}.success{padding:24px;background:#f2fae6;border:1px solid #cbe68e;border-radius:14px;margin-top:20px}.error{font-size:12px;color:#c62828;margin-top:5px}
 
@@ -1008,6 +1008,40 @@ img { max-width: 100%; }</style>
 .hero-visual .grb-picture,.problem-grid .grb-picture,.promise-visual .grb-picture,.about-visual .grb-picture{width:100%;display:block}
 .hero-visual .grb-picture img,.problem-grid .grb-picture img,.promise-visual .grb-picture img,.about-visual .grb-picture img{display:block;width:100%;height:auto;max-width:100%;object-fit:contain}</style>
 
+<style>
+/* GoReallyBig brand visual — responsive banner after the Why GoReallyBig section. */
+.brand-visual-section{
+  background:#fff;
+  padding:56px 24px;
+}
+.brand-visual-wrap{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+}
+.brand-visual{
+  margin:0;
+  width:100%;
+  overflow:hidden;
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 20px 50px rgba(11,31,58,.10);
+}
+.brand-visual img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-width:100%;
+}
+@media(max-width:850px){
+  .brand-visual-section{padding:40px 20px}
+  .brand-visual{border-radius:18px}
+}
+@media(max-width:520px){
+  .brand-visual-section{padding:32px 16px}
+  .brand-visual{border-radius:14px}
+}
+</style>
 </head>
 <body>
 <header class="nav">
@@ -1016,12 +1050,12 @@ img { max-width: 100%; }</style>
 <nav aria-label="Primary navigation" class="links">
 <a data-nav="home" href="#home">Home</a><a data-nav="services" href="#services">Services</a><a data-nav="about" href="#about">About</a><a data-nav="work" href="#work">Our Work</a><a data-nav="offer" href="#offer">The Offer</a><a data-nav="faq" href="#faq">FAQ</a><a data-nav="contact" href="#contact">Contact</a>
 </nav>
-<a aria-label="Chat on WhatsApp at 0701 728 5626" class="contact-mini" data-wa-context="header" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank"><span class="wa" aria-hidden="true"><img class="grb-wa-img" src="assets/whatsapp-icon-outline.svg" alt="" /></span><span>0701 728 5626</span></a>
+<a aria-label="Chat on WhatsApp at +234 9121236665" class="contact-mini" data-wa-context="header" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank"><span class="wa" aria-hidden="true"><img class="grb-wa-img" src="assets/whatsapp-icon-outline.svg" alt="" /></span><span>+234 9121236665</span></a>
 <button class="cta" data-modal="Get Started">Get Started</button>
 <button aria-expanded="false" aria-label="Open menu" class="menu">☰</button>
 </div>
 <div class="mobile-panel" id="mobilePanel">
-<a href="#home">Home</a><a href="#services">Services</a><a href="#about">About</a><a href="#work">Our Work</a><a href="#offer">The Offer</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank">WhatsApp: 0701 728 5626</a>
+<a href="#home">Home</a><a href="#services">Services</a><a href="#about">About</a><a href="#work">Our Work</a><a href="#offer">The Offer</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a class="grb-mobile-wa" data-wa-context="header" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank" aria-label="Chat on WhatsApp at +234 9121236665"><img src="assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true"/><span>+234 9121236665</span></a>
 <button class="cta mobile-cta" data-modal="Get Started">Get Started</button>
 </div>
 </header>
@@ -1033,7 +1067,7 @@ img { max-width: 100%; }</style>
 <h1>Your Business Is Ready To Go Really <span>Big.</span></h1>
 <p class="lead">Start with a professional website that makes your business look credible, gets you found online, and turns your visitors into customers.
 <p class="lead">At <strong>GoReallyBig</strong>, our job is to make your website <span>make money for you.</span></p>
-<div class="actions"><button class="cta" data-modal="Go Really Big">Get Started</button><a class="cta alt" data-wa-context="hero" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank">WhatsApp Us</a></div>
+<div class="actions"><button class="cta" data-modal="Go Really Big">Get Started</button><a class="cta alt" data-wa-context="hero" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank">WhatsApp Us</a></div>
 </div>
 <div class="hero-visual"><picture class="grb-picture"><img alt="Evergreen Private School website design mockup" src="assets/c04-hero.png"/></picture></div>
 </div>
@@ -1078,7 +1112,7 @@ img { max-width: 100%; }</style>
 </div>
 <figure class="promise-visual"><picture class="grb-picture"><img alt="GoReallyBig website visual showing get found, build trust and win the business" decoding="async" loading="eager" src="assets/c07-promise.png"/></picture><figcaption>One website. Three jobs: get found, build trust, win the business.</figcaption></figure>
 </div>
-<div class="actions"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="promise" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank">Message Us</a></div>
+<div class="actions"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="promise" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank">Message Us</a></div>
 </div>
 </section>
 <section class="services section" id="services">
@@ -1135,7 +1169,7 @@ img { max-width: 100%; }</style>
 <div class="journey-step"><div class="node">03</div><div><b>Experience</b><p>They visit your website.</p></div></div>
 <div class="journey-step"><div class="node">04</div><div><b>Decision</b><p>They take action or leave.</p></div></div>
 </div>
-<div class="opportunity-close"><strong>Be ready when they arrive.</strong><div class="actions" style="justify-content:center"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="commercial" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank">Talk To Us</a></div></div>
+<div class="opportunity-close"><strong>Be ready when they arrive.</strong><div class="actions" style="justify-content:center"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="commercial" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank">Talk To Us</a></div></div>
 </div>
 </section>
 <section class="about section" id="about">
@@ -1156,6 +1190,13 @@ img { max-width: 100%; }</style>
 <div class="actions"><button class="cta" data-modal="Get Started">Get Started</button></div>
 </div>
 </section>
+<section class="brand-visual-section" aria-label="GoReallyBig business website visual">
+<div class="brand-visual-wrap">
+<figure class="brand-visual">
+<img src="assets/business-goreallybig.png" alt="GoReallyBig business website visual showing a professional website across desktop and mobile devices" loading="eager" decoding="async" width="1410" height="522" fetchpriority="high"/>
+</figure>
+</div>
+</section>
 <section class="process section">
 <div class="wrap">
 <div class="eyebrow">How we work</div>
@@ -1168,7 +1209,7 @@ img { max-width: 100%; }</style>
 <article class="process-card"><div class="process-node">04</div><div><h3>Go live</h3><p>We connect your domain, complete the final checks and put your website to work.</p></div></article>
 </div>
 <div class="process-close">You don't need to know anything about websites. That's our job.</div>
-<div class="actions"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="process" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank">Chat With Us</a></div>
+<div class="actions"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="process" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank">Chat With Us</a></div>
 </div>
 </section>
 <section class="work section" id="work">
@@ -1192,7 +1233,7 @@ img { max-width: 100%; }</style>
 <button class="showcase-arrow showcase-arrow-next" type="button" aria-label="Next work example">›</button>
 </div>
 <p class="showcase-copy" id="workCopy">Private Schools — Build trust with parents, showcase your school and make admissions easier.</p></div>
-<div class="makeover"><div><h3>Already have a website?</h3><p>We can refresh, restructure or rebuild it to make it work harder for your business.</p></div><div class="actions" style="margin-top:0"><button class="cta" data-modal="Get Your Website">Get Your Website</button><a class="cta wa-cta" data-wa-context="work" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank">Message Us</a></div></div>
+<div class="makeover"><div><h3>Already have a website?</h3><p>We can refresh, restructure or rebuild it to make it work harder for your business.</p></div><div class="actions" style="margin-top:0"><button class="cta" data-modal="Get Your Website">Get Your Website</button><a class="cta wa-cta" data-wa-context="work" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank">Message Us</a></div></div>
 <p class="work-close">Your business doesn't need to look like everyone else's. It needs to look like a business worth choosing.</p>
 </div>
 </section>
@@ -1234,7 +1275,7 @@ img { max-width: 100%; }</style>
 </div>
 </section>
 <section class="faq section" id="faq">
-<div class="wrap faq-grid"><div><div class="eyebrow">Questions</div><h2>Questions? We've got answers.</h2><p class="lead">Everything you need to know about how GoReallyBig works.</p><div class="actions"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="faq" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank">Talk To Us</a></div></div>
+<div class="wrap faq-grid"><div><div class="eyebrow">Questions</div><h2>Questions? We've got answers.</h2><p class="lead">Everything you need to know about how GoReallyBig works.</p><div class="actions"><button class="cta" data-modal="Get Started">Get Started</button><a class="cta wa-cta" data-wa-context="faq" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank">Talk To Us</a></div></div>
 <div class="faq-list">
 <div class="faq-item"><button class="faq-q">I already have a website. Can you work with it?<span>+</span></button><div class="faq-a">Absolutely. We can refresh, restructure or rebuild an existing website to make it clearer, more credible and more effective.</div></div>
 <div class="faq-item"><button class="faq-q">Do I need to provide all the content?<span>+</span></button><div class="faq-a">We'll tell you what we need and help shape the information. You know your business. We know how to turn it into a website.</div></div>
@@ -1248,8 +1289,8 @@ img { max-width: 100%; }</style>
 </section>
 <section class="contact section" id="contact">
 <div class="wrap contact-grid"><div><div class="eyebrow" style="color:var(--lime)">Contact</div><h2>Ready to go really big?</h2><p class="lead">Let's build a website that makes your business easier to find, easier to trust and easier to choose.</p><p class="lead">Tell us about your business and what you need. We'll take it from there.</p>
-<div class="contact-details"><div class="contact-detail"><b>Email</b><span>info@goreallybig.com</span></div><div class="contact-detail"><b>WhatsApp</b><span>0701 728 5626</span></div></div></div>
-<form class="form" id="contactForm"><div class="form-intro"><h3 class="form-intro-heading">Tell us what you need.</h3><span>We’ll review your request and get back to you within 24 hours.</span></div><a class="wa-link" data-wa-form="contact" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank"><img alt="" aria-hidden="true" class="wa-form-icon" src="assets/whatsapp-icon-outline.svg"/><span class="wa-link-copy">Prefer WhatsApp? <strong><span class="wa-link-underlined">Start a chat instead</span></strong></span></a><div class="form-continue">Or continue with the form below</div><p class="form-required-note"><span class="req-star">*</span> Required fields are marked with *.</p><div class="fields">
+<div class="contact-details"><div class="contact-detail"><b>Email</b><span>info@goreallybig.com</span></div><div class="contact-detail"><b>WhatsApp</b><a class="contact-whatsapp" data-wa-context="header" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank" aria-label="Chat on WhatsApp at +234 9121236665"><img src="assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true"/><span>+234 9121236665</span></a></div></div></div>
+<form class="form" id="contactForm"><div class="form-intro"><h3 class="form-intro-heading">Tell us what you need.</h3><span>We’ll review your request and get back to you within 24 hours.</span></div><a class="wa-link" data-wa-form="contact" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank"><img alt="" aria-hidden="true" class="wa-form-icon" src="assets/whatsapp-icon-outline.svg"/><span class="wa-link-copy">Prefer WhatsApp? <strong><span class="wa-link-underlined">Start a chat instead</span></strong></span></a><div class="form-continue">Or continue with the form below</div><p class="form-required-note"><span class="req-star">*</span> Required fields are marked with *.</p><div class="fields">
 <div class="field"><label class="required-field" for="name">Your name</label><input id="name" placeholder="Name" required=""/></div><div class="field"><label class="required-field" for="business">Business name</label><input id="business" placeholder="Business name" required=""/></div>
 <div class="field"><label class="required-field" for="phone">Phone / WhatsApp</label><input id="phone" placeholder="Phone / WhatsApp" required="" type="tel"/></div><div class="field"><label for="email">Email <span class="field-optional">(optional)</span></label><input id="email" placeholder="Email" type="email"/></div>
 <div class="field full"><fieldset class="need-fieldset"><legend>What do you need? <span class="req-star">*</span></legend><div class="need" role="radiogroup" aria-label="What do you need?"><label class="need-option"><input type="radio" name="need" value="New website" required/><span>New website</span></label><label class="need-option"><input type="radio" name="need" value="Website makeover"/><span>Website makeover</span></label><label class="need-option"><input type="radio" name="need" value="Not sure yet"/><span>Not sure yet</span></label></div></fieldset></div>
@@ -1278,13 +1319,14 @@ img { max-width: 100%; }</style>
 <div class="footer-contact">
 <h3>Get in touch</h3>
 <a class="footer-contact-link" href="mailto:info@goreallybig.com"><span>Email</span><strong>info@goreallybig.com</strong></a>
-<a class="footer-contact-link" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank"><span>WhatsApp</span><strong>0701 728 5626</strong></a>
+<a class="footer-contact-link" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank"><span>WhatsApp</span><strong>+234 9121236665</strong></a>
 <div class="footer-social-label">Follow GoReallyBig</div>
 <div aria-label="Social media links" class="socials footer-socials">
-<a aria-label="Facebook" href="#" title="Facebook"><svg aria-hidden="true" class="grb-social-icon grb-social-facebook" viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.8V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7.2v3H10v8h3.5Z"/></svg></a>
-<a aria-label="Instagram" href="#" title="Instagram"><svg aria-hidden="true" class="grb-social-icon grb-social-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.5" cy="6.7" r="1.1"/></svg></a>
-<a aria-label="TikTok" href="#" title="TikTok"><svg aria-hidden="true" class="grb-social-icon grb-social-tiktok" viewBox="0 0 24 24"><path d="M15.1 3h3.1c.3 1.8 1.3 3.2 3 4v3.2c-1.2-.1-2.3-.5-3.3-1.1v6.1c0 3.9-2.7 6.8-6.5 6.8-3.1 0-5.5-2.3-5.5-5.3 0-3.4 2.8-5.8 6.2-5.5v3.3c-1.6-.2-2.9.7-2.9 2.2 0 1.1.9 2 2.1 2 1.4 0 2.8-1 2.8-3.2V3h1Z"/></svg></a>
-<a aria-label="X" href="#" title="X"><svg aria-hidden="true" class="grb-social-icon grb-social-x" viewBox="0 0 24 24"><path d="M4.2 3.5h4.2l4.1 5.6 4.9-5.6h2.4l-6.2 7.1 6.6 9.9H16l-4.6-6.7-5.9 6.7H3.1l7.2-8.2-6.1-8.8Zm3.1 2 9.2 13h1.7l-9.2-13H7.3Z"/></svg></a>
+<a aria-label="Facebook" href="https://www.facebook.com/goreallybig" rel="noopener noreferrer" target="_blank" title="Facebook"><svg aria-hidden="true" class="grb-social-icon grb-social-facebook" viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.8V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7.2v3H10v8h3.5Z"/></svg></a>
+<a aria-label="Instagram" href="https://www.instagram.com/goreallybig" rel="noopener noreferrer" target="_blank" title="Instagram"><svg aria-hidden="true" class="grb-social-icon grb-social-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.5" cy="6.7" r="1.1"/></svg></a>
+<a aria-label="TikTok" href="https://www.tiktok.com/@goreallybig" rel="noopener noreferrer" target="_blank" title="TikTok"><svg aria-hidden="true" class="grb-social-icon grb-social-tiktok" viewBox="0 0 24 24"><path d="M15.1 3h3.1c.3 1.8 1.3 3.2 3 4v3.2c-1.2-.1-2.3-.5-3.3-1.1v6.1c0 3.9-2.7 6.8-6.5 6.8-3.1 0-5.5-2.3-5.5-5.3 0-3.4 2.8-5.8 6.2-5.5v3.3c-1.6-.2-2.9.7-2.9 2.2 0 1.1.9 2 2.1 2 1.4 0 2.8-1 2.8-3.2V3h1Z"/></svg></a>
+<a aria-label="X" href="https://x.com/goreallybig" rel="noopener noreferrer" target="_blank" title="X"><svg aria-hidden="true" class="grb-social-icon grb-social-x" viewBox="0 0 24 24"><path d="M4.2 3.5h4.2l4.1 5.6 4.9-5.6h2.4l-6.2 7.1 6.6 9.9H16l-4.6-6.7-5.9 6.7H3.1l7.2-8.2-6.1-8.8Zm3.1 2 9.2 13h1.7l-9.2-13H7.3Z"/></svg></a>
+<a aria-label="LinkedIn" href="https://www.linkedin.com/company/goreallybig" rel="noopener noreferrer" target="_blank" title="LinkedIn"><svg aria-hidden="true" class="grb-social-icon grb-social-linkedin" viewBox="0 0 24 24"><path d="M5.1 8.2a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8ZM3.4 9.7h3.4V20H3.4V9.7Zm5.5 0h3.2v1.4h.1c.4-.8 1.5-1.8 3.2-1.8 3.4 0 4 2.2 4 5.1V20H16v-4.9c0-1.2 0-2.8-1.7-2.8s-1.9 1.3-1.9 2.7V20H8.9V9.7Z"/></svg></a>
 </div>
 <span class="footer-tagline-mobile">go. really. big.</span>
 </div>
@@ -1294,7 +1336,7 @@ img { max-width: 100%; }</style>
 <div class="modal-backdrop" id="modalBackdrop">
 <div aria-label="GoReallyBig contact form" aria-modal="true" class="modal" role="dialog">
 <div class="modal-head"><div><div class="eyebrow">GoReallyBig</div></div><button aria-label="Close" class="close" id="modalClose">×</button></div>
-<form class="modal-fields" id="modalForm"><div class="form-intro"><h3 class="form-intro-heading">Tell us what you need.</h3><span>We’ll review your request and get back to you within 24 hours.</span></div><a class="wa-link" data-wa-form="modal" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank"><img alt="" aria-hidden="true" class="wa-form-icon" src="assets/whatsapp-icon-outline.svg"/><span class="wa-link-copy">Prefer WhatsApp? <strong><span class="wa-link-underlined">Start a chat instead</span></strong></span></a><div class="form-continue">Or continue with the form below</div><p class="form-required-note"><span class="req-star">*</span> Required fields are marked with *.</p>
+<form class="modal-fields" id="modalForm"><div class="form-intro"><h3 class="form-intro-heading">Tell us what you need.</h3><span>We’ll review your request and get back to you within 24 hours.</span></div><a class="wa-link" data-wa-form="modal" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank"><img alt="" aria-hidden="true" class="wa-form-icon" src="assets/whatsapp-icon-outline.svg"/><span class="wa-link-copy">Prefer WhatsApp? <strong><span class="wa-link-underlined">Start a chat instead</span></strong></span></a><div class="form-continue">Or continue with the form below</div><p class="form-required-note"><span class="req-star">*</span> Required fields are marked with *.</p>
 <div class="field"><label class="required-field" for="mName">Your name</label><input aria-required="true" id="mName" name="name" placeholder="Name" required=""/></div>
 <div class="field"><label class="required-field" for="mBusiness">Business name</label><input id="mBusiness" name="business" placeholder="Business name" required=""/></div>
 <div class="field"><label class="required-field" for="mPhone">Phone / WhatsApp</label><input aria-required="true" id="mPhone" name="phone" placeholder="Phone / WhatsApp" required="" type="tel"/></div>
@@ -1304,7 +1346,7 @@ img { max-width: 100%; }</style>
 <div class="field"><label for="mContext">Anything we should know?</label><textarea id="mContext" placeholder="Tell us briefly about your business or what you'd like to improve."></textarea></div>
 <button class="cta" type="submit">Let's GoReallyBig</button>
 </form>
-<div class="success hidden" id="modalSuccess"><strong>Thanks. We've got it.</strong><p>Your request has been captured. We'll take it from here.</p><a class="wa-link" data-wa-success="modal" href="https://wa.me/2347017285626" rel="noopener noreferrer" target="_blank"><img class="wa-form-icon" src="assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true" />Continue on WhatsApp</a></div>
+<div class="success hidden" id="modalSuccess"><strong>Thanks. We've got it.</strong><p>Your request has been captured. We'll take it from here.</p><a class="wa-link" data-wa-success="modal" href="https://wa.me/2349121236665" rel="noopener noreferrer" target="_blank"><img class="wa-form-icon" src="assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true" />Continue on WhatsApp</a></div>
 </div>
 </div></body>
 </html>

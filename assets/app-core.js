@@ -83,7 +83,7 @@ document.querySelector('.showcase-arrow-next')?.addEventListener('click',()=>{
 });
 
 // Lightweight contextual WhatsApp links. Messages stay short and are built from the form state.
-const WA_NUMBER='2347017285626';
+const WA_NUMBER='2349121236665';
 function waUrl(message){return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;}
 function buildWaMessage(context, formType){
   const need=selectedNeed(formType);
@@ -275,7 +275,7 @@ contactForm.addEventListener('submit',async e=>{
     const p=document.createElement('p');
     const wa=document.createElement('a');
     wa.className='wa-link';
-    wa.href='https://wa.me/2347017285626';
+    wa.href='https://wa.me/2349121236665';
     wa.target='_blank';
     wa.rel='noopener noreferrer';
     wa.dataset.waSuccess='contact';
