@@ -1,4 +1,4 @@
-const LEAD_CAPTURE_URL = 'https://script.google.com/macros/s/AKfycbwisgNDtbntSx9usZlwnQoYZZDF37n_Y7rMdwMxtCWES6NcRqS5Yy9m71eGiOK8uFBS/exec';
+const LEAD_CAPTURE_URL = 'https://script.google.com/macros/s/AKfycbwndAbiMJ7TQJzI70xKpbvNTrp3CCTrHMe70V6GGITdkwnzP-uar-y294GoazLfK68/exec';
 
 const LIMITS = {
   name: 120,
