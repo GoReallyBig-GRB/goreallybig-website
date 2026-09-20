@@ -262,7 +262,16 @@ function showDuplicateNotice(form){
   notice.setAttribute('role','alert');
   notice.innerHTML='A form with these details has already been submitted. <a href="'+waUrl('Hi GoReallyBig, I have an urgent request and have already submitted a form.')+'" target="_blank" rel="noopener noreferrer">WhatsApp GoReallyBig for urgent requests.</a>';
   const note=form.querySelector('.form-note') || form.querySelector('.form-actions');
-  if(note) note.appendChild(notice);
+  if(note){
+    note.appendChild(notice);
+  }else{
+    const submitButton=form.querySelector('button[type="submit"]');
+    if(submitButton?.parentElement){
+      submitButton.parentElement.insertBefore(notice,submitButton);
+    }else{
+      form.appendChild(notice);
+    }
+  }
   setSubmitState(form,'reset');
 }
 
