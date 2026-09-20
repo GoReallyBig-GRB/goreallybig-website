@@ -256,25 +256,51 @@ async function submitLead(form,formType){
 }
 
 function showDuplicateNotice(form){
-  form.querySelector('.duplicate-notice')?.remove();
-  const notice=document.createElement('div');
-  notice.className='duplicate-notice';
-  notice.setAttribute('role','alert');
-  notice.innerHTML='A form with these details has already been submitted. <a href="'+waUrl('Hi GoReallyBig, I have an urgent request and have already submitted a form.')+'" target="_blank" rel="noopener noreferrer">WhatsApp GoReallyBig for urgent requests.</a>';
-  const note=form.querySelector('.form-note') || form.querySelector('.form-actions');
-  if(note){
-    note.appendChild(notice);
-  }else{
-    const submitButton=form.querySelector('button[type="submit"]');
-    if(submitButton?.parentElement){
-      submitButton.parentElement.insertBefore(notice,submitButton);
-    }else{
-      form.appendChild(notice);
-    }
-  }
-  setSubmitState(form,'reset');
-}
+  const urgentMessage='Hi GoReallyBig, I have an urgent request and have already submitted a form.';
+  const urgentUrl=waUrl(urgentMessage);
 
+  if(form.id==='modalForm'){
+    form.classList.add('hidden');
+
+    const modalSuccess=document.getElementById('modalSuccess');
+    modalSuccess.querySelector('strong').textContent='We already have this request.';
+    modalSuccess.querySelector('p').textContent='A form with these details has already been submitted. If this is urgent, you can contact us directly on WhatsApp.';
+    const wa=modalSuccess.querySelector('[data-wa-success="modal"]');
+    wa.href=urgentUrl;
+    wa.innerHTML='<img class="wa-form-icon" src="/assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true" />WhatsApp GoReallyBig for urgent requests.';
+    modalSuccess.classList.remove('hidden');
+    return;
+  }
+
+  form.classList.add('hidden');
+
+  let success=document.getElementById('contactDuplicate');
+  if(!success){
+    success=document.createElement('div');
+    success.id='contactDuplicate';
+    success.className='success';
+    const strong=document.createElement('strong');
+    const p=document.createElement('p');
+    const wa=document.createElement('a');
+    wa.className='wa-link';
+    wa.href=urgentUrl;
+    wa.target='_blank';
+    wa.rel='noopener noreferrer';
+    const icon=document.createElement('img');
+    icon.className='wa-form-icon';
+    icon.src='/assets/whatsapp-icon-outline.svg';
+    icon.alt='';
+    icon.setAttribute('aria-hidden','true');
+    wa.append(icon,document.createTextNode('WhatsApp GoReallyBig for urgent requests.'));
+    success.append(strong,p,wa);
+    form.parentNode.insertBefore(success,form.nextSibling);
+  }
+
+  success.querySelector('strong').textContent='We already have this request.';
+  success.querySelector('p').textContent='A form with these details has already been submitted. If this is urgent, you can contact us directly on WhatsApp.';
+  success.querySelector('a').href=urgentUrl;
+  success.classList.remove('hidden');
+}
 document.getElementById('modalForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const form=e.currentTarget;
