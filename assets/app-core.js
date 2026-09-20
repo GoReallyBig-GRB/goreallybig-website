@@ -183,23 +183,10 @@ function setSubmitState(form,state){
     button.setAttribute('aria-busy','true');
     button.classList.add('is-submitting');
     button.innerHTML='<span class="submit-spinner" aria-hidden="true"></span><span>Sending...</span>';
-  }else if(state==='waiting'){
-    button.disabled=true;
-    button.setAttribute('aria-busy','true');
-    button.classList.add('is-submitting');
-    button.innerHTML='<span class="submit-spinner" aria-hidden="true"></span><span>Still processing...</span>';
-  }else if(state==='recovery'){
-    button.disabled=true;
-    button.setAttribute('aria-busy','false');
-    button.classList.remove('is-submitting');
-    button.classList.add('is-submitted');
-    button.innerHTML='<span>Submission status unclear</span>';
   }else if(state==='success'){
     button.disabled=true;
     button.setAttribute('aria-busy','false');
-    button.classList.remove('is-submitting');
-    button.classList.add('is-submitted');
-    button.innerHTML='<span aria-hidden="true">✓</span><span>Request sent</span>';
+    button.classList.remove('is-submitting','is-submitted');
   }else if(state==='error'){
     button.disabled=false;
     button.setAttribute('aria-busy','false');
@@ -233,62 +220,17 @@ function showSubmissionStatus(form,message){
   return status;
 }
 
-function showSubmissionRecovery(form){
-  const status=showSubmissionStatus(
-    form,
-    'We’re unable to confirm your submission. Please don’t submit the form again yet, as your request may still be processing. If your request is urgent, contact us directly on WhatsApp.'
-  );
-
-  if(status){
-    const link=document.createElement('a');
-    link.href=waUrl('Hi GoReallyBig, I have an urgent request and may already have submitted a form.');
-    link.target='_blank';
-    link.rel='noopener noreferrer';
-    link.textContent='WhatsApp GoReallyBig';
-    link.style.display='inline-block';
-    link.style.marginTop='8px';
-    status.appendChild(document.createTextNode(' '));
-    status.appendChild(link);
-  }
-}
-
 async function submitLead(form,formType){
   setSubmitState(form,'sending');
 
-  let waitTimer;
-  let finalTimer;
-
   try{
-    const request=fetch(LEAD_CAPTURE_URL,{
+    const response=await fetch(LEAD_CAPTURE_URL,{
       method:'POST',
       headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
       body:formPayload(formType).toString(),
       credentials:'same-origin',
       cache:'no-store'
     });
-
-    const slowNotice=new Promise(resolve=>{
-      waitTimer=setTimeout(()=>resolve('still-processing'),15000);
-    });
-
-    let response=await Promise.race([request,slowNotice]);
-
-    if(response==='still-processing'){
-      setSubmitState(form,'waiting');
-      showSubmissionStatus(form,'We’re still processing your request. Please keep this window open.');
-
-      const finalNotice=new Promise(resolve=>{
-        finalTimer=setTimeout(()=>resolve('unable-to-confirm'),15000);
-      });
-
-      response=await Promise.race([request,finalNotice]);
-
-      if(response==='unable-to-confirm'){
-        setSubmitState(form,'recovery');
-        showSubmissionRecovery(form);
-        return 'uncertain';
-      }
-    }
 
     const result=await response.json();
 
@@ -304,12 +246,9 @@ async function submitLead(form,formType){
     return true;
   }catch(err){
     console.error('GoReallyBig lead submission failed.',err);
-    showSubmissionStatus(form,'We’re taking longer than expected. Please try again if you did not receive a confirmation email.');
+    showSubmissionStatus(form,'We could not confirm the submission. Please try again.');
     setSubmitState(form,'error');
     return false;
-  }finally{
-    clearTimeout(waitTimer);
-    clearTimeout(finalTimer);
   }
 }
 
