@@ -145,7 +145,7 @@ document.querySelectorAll('#contactForm input,#contactForm textarea,#modalForm i
 // Production form submission to the GoReallyBig Google Apps Script web app.
 // The endpoint is public by design; no secret is stored in the frontend.
 // The request uses a simple URL-encoded POST so the browser does not require a CORS preflight.
-const LEAD_CAPTURE_URL='https://script.google.com/macros/s/AKfycbwisgNDtbntSx9usZlwnQoYZZDF37n_Y7rMdwMxtCWES6NcRqS5Yy9m71eGiOK8uFBS/exec';
+const LEAD_CAPTURE_URL='/api/submit-lead';
 
 function formPayload(formType){
   const modalForm=formType==='modal';
@@ -206,21 +206,30 @@ async function submitLead(form,formType){
   setSubmitState(form,'sending');
 
   try{
-    // no-cors responses are intentionally opaque. We only use completion/failure
-    // of the browser request for UX feedback; the backend remains authoritative.
     const timeout=new Promise((_,reject)=>
       setTimeout(()=>reject(new Error('Submission timed out')),15000)
     );
 
-    await Promise.race([
+    const response=await Promise.race([
       fetch(LEAD_CAPTURE_URL,{
         method:'POST',
-        mode:'no-cors',
-        body:formPayload(formType),
-        keepalive:true
+        headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+        body:formPayload(formType).toString(),
+        credentials:'same-origin',
+        cache:'no-store'
       }),
       timeout
     ]);
+
+    const result=await response.json();
+
+    if(!response.ok || result?.ok!==true){
+      throw new Error(result?.error || 'Submission failed');
+    }
+
+    if(result.duplicate===true){
+      return 'duplicate';
+    }
 
     setSubmitState(form,'success');
     return true;
@@ -246,11 +255,26 @@ async function submitLead(form,formType){
   }
 }
 
+function showDuplicateNotice(form){
+  form.querySelector('.duplicate-notice')?.remove();
+  const notice=document.createElement('div');
+  notice.className='duplicate-notice';
+  notice.setAttribute('role','alert');
+  notice.innerHTML='A form with these details has already been submitted. <a href="'+waUrl('Hi GoReallyBig, I have an urgent request and have already submitted a form.')+'" target="_blank" rel="noopener noreferrer">WhatsApp GoReallyBig for urgent requests.</a>';
+  const note=form.querySelector('.form-note') || form.querySelector('.form-actions');
+  if(note) note.appendChild(notice);
+  setSubmitState(form,'reset');
+}
+
 document.getElementById('modalForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const form=e.currentTarget;
   if(!form.checkValidity()){form.reportValidity();return;}
   const sent=await submitLead(form,'modal');
+  if(sent==='duplicate'){
+    showDuplicateNotice(form);
+    return;
+  }
   if(!sent) return;
   form.classList.add('hidden');
   const modalSuccess=document.getElementById('modalSuccess');
@@ -264,6 +288,10 @@ contactForm.addEventListener('submit',async e=>{
   e.preventDefault();
   if(!contactForm.checkValidity()){contactForm.reportValidity();return;}
   const sent=await submitLead(contactForm,'contact');
+  if(sent==='duplicate'){
+    showDuplicateNotice(contactForm);
+    return;
+  }
   if(!sent) return;
   let success=document.getElementById('contactSuccess');
   if(!success){
