@@ -76,6 +76,7 @@ function getProductionStyles() {
 .form-continue,.modal-fields .form-continue{margin:0 0 7px!important;color:var(--navy)!important;font-size:12px!important;font-weight:800!important;line-height:1.4!important}
 .form .form-required-note,.modal-fields .form-required-note{margin:0 0 12px!important;color:#667085!important;font-size:11px!important;line-height:1.45!important}
 .form .req-star,.modal-fields .req-star{font-weight:800!important;color:inherit!important}
+.contact .success,.contact .success strong,.contact .success p{color:var(--navy)!important}
 .form .form-actions{margin-top:12px!important}
 .form .form-actions .cta,.modal-fields>.cta{width:100%!important;min-height:50px!important;margin-top:0!important;border-radius:12px!important;box-shadow:none!important;font-weight:800!important}
 .form .need-fieldset,.modal-fields .need-fieldset{border:0!important;padding:0!important;margin:0!important;min-width:0!important}
