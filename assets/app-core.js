@@ -346,9 +346,11 @@ contactForm.addEventListener('submit',async e=>{
     icon.setAttribute('aria-hidden','true');
     wa.append(icon,document.createTextNode('Continue on WhatsApp'));
     success.append(strong,p,wa);
-    contactForm.appendChild(success);
+    contactForm.parentNode.insertBefore(success,contactForm.nextSibling);
   }
+  contactForm.classList.add('hidden');
   success.querySelector('p').textContent=`Request type: ${selectedNeed('contact')}. Your request has been captured. We'll take it from here.`;
+  success.classList.remove('hidden');
   refreshWaLinks();
   success.scrollIntoView({block:'nearest'});
 });
