@@ -145,7 +145,7 @@ document.querySelectorAll('#contactForm input,#contactForm textarea,#modalForm i
 // Production form submission to the GoReallyBig Google Apps Script web app.
 // The endpoint is public by design; no secret is stored in the frontend.
 // The request uses a simple URL-encoded POST so the browser does not require a CORS preflight.
-const LEAD_CAPTURE_URL='https://script.google.com/macros/s/AKfycbwisgNDtbntSx9usZlwnQoYZZDF37n_Y7rMdwMxtCWES6NcRqS5Yy9m71eGiOK8uFBS/exec';
+const LEAD_CAPTURE_URL='/api/submit-lead';
 
 function formPayload(formType){
   const modalForm=formType==='modal';
@@ -186,9 +186,7 @@ function setSubmitState(form,state){
   }else if(state==='success'){
     button.disabled=true;
     button.setAttribute('aria-busy','false');
-    button.classList.remove('is-submitting');
-    button.classList.add('is-submitted');
-    button.innerHTML='<span aria-hidden="true">✓</span><span>Request sent</span>';
+    button.classList.remove('is-submitting','is-submitted');
   }else if(state==='error'){
     button.disabled=false;
     button.setAttribute('aria-busy','false');
@@ -202,55 +200,113 @@ function setSubmitState(form,state){
   }
 }
 
+function showSubmissionStatus(form,message){
+  const note=form.querySelector('.form-note') ||
+    form.querySelector('.form-actions') ||
+    form.lastElementChild;
+
+  if(!note) return null;
+
+  let status=form.querySelector('.submit-status');
+  if(!status){
+    status=document.createElement('div');
+    status.className='submit-status';
+    status.setAttribute('role','status');
+    status.setAttribute('aria-live','polite');
+    note.appendChild(status);
+  }
+
+  status.textContent=message;
+  return status;
+}
+
 async function submitLead(form,formType){
   setSubmitState(form,'sending');
 
   try{
-    // no-cors responses are intentionally opaque. We only use completion/failure
-    // of the browser request for UX feedback; the backend remains authoritative.
-    const timeout=new Promise((_,reject)=>
-      setTimeout(()=>reject(new Error('Submission timed out')),15000)
-    );
+    const response=await fetch(LEAD_CAPTURE_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body:formPayload(formType).toString(),
+      credentials:'same-origin',
+      cache:'no-store'
+    });
 
-    await Promise.race([
-      fetch(LEAD_CAPTURE_URL,{
-        method:'POST',
-        mode:'no-cors',
-        body:formPayload(formType),
-        keepalive:true
-      }),
-      timeout
-    ]);
+    const result=await response.json();
+
+    if(!response.ok || result?.ok!==true){
+      throw new Error(result?.error || 'Submission failed');
+    }
+
+    if(result.duplicate===true){
+      return 'duplicate';
+    }
 
     setSubmitState(form,'success');
     return true;
   }catch(err){
     console.error('GoReallyBig lead submission failed.',err);
-
-    const note=form.querySelector('.form-note') ||
-      form.querySelector('.form-actions');
-    if(note){
-      let status=form.querySelector('.submit-status');
-      if(!status){
-        status=document.createElement('div');
-        status.className='submit-status';
-        status.setAttribute('role','status');
-        status.setAttribute('aria-live','polite');
-        note.appendChild(status);
-      }
-      status.textContent='We’re taking longer than expected. Please try again if you did not receive a confirmation email.';
-    }
-
+    showSubmissionStatus(form,'We could not confirm the submission. Please try again.');
     setSubmitState(form,'error');
     return false;
   }
 }
 
+function showDuplicateNotice(form){
+  const urgentMessage='Hi GoReallyBig, I have an urgent request and have already submitted a form.';
+  const urgentUrl=waUrl(urgentMessage);
+
+  if(form.id==='modalForm'){
+    form.classList.add('hidden');
+
+    const modalSuccess=document.getElementById('modalSuccess');
+    modalSuccess.querySelector('strong').textContent='We already have this request.';
+    modalSuccess.querySelector('p').textContent='A form with these details has already been submitted. If this is urgent, you can contact us directly on WhatsApp.';
+    const wa=modalSuccess.querySelector('[data-wa-success="modal"]');
+    wa.href=urgentUrl;
+    wa.innerHTML='<img class="wa-form-icon" src="/assets/whatsapp-icon-outline.svg" alt="" aria-hidden="true" />WhatsApp GoReallyBig for urgent requests.';
+    modalSuccess.classList.remove('hidden');
+    return;
+  }
+
+  form.classList.add('hidden');
+
+  let success=document.getElementById('contactDuplicate');
+  if(!success){
+    success=document.createElement('div');
+    success.id='contactDuplicate';
+    success.className='success';
+    const strong=document.createElement('strong');
+    const p=document.createElement('p');
+    const wa=document.createElement('a');
+    wa.className='wa-link';
+    wa.href=urgentUrl;
+    wa.target='_blank';
+    wa.rel='noopener noreferrer';
+    const icon=document.createElement('img');
+    icon.className='wa-form-icon';
+    icon.src='/assets/whatsapp-icon-outline.svg';
+    icon.alt='';
+    icon.setAttribute('aria-hidden','true');
+    wa.append(icon,document.createTextNode('WhatsApp GoReallyBig for urgent requests.'));
+    success.append(strong,p,wa);
+    form.parentNode.insertBefore(success,form.nextSibling);
+  }
+
+  success.querySelector('strong').textContent='We already have this request.';
+  success.querySelector('p').textContent='A form with these details has already been submitted. If this is urgent, you can contact us directly on WhatsApp.';
+  success.querySelector('a').href=urgentUrl;
+  success.classList.remove('hidden');
+}
 document.getElementById('modalForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const form=e.currentTarget;
   if(!form.checkValidity()){form.reportValidity();return;}
   const sent=await submitLead(form,'modal');
+  if(sent==='duplicate'){
+    showDuplicateNotice(form);
+    return;
+  }
   if(!sent) return;
   form.classList.add('hidden');
   const modalSuccess=document.getElementById('modalSuccess');
@@ -264,6 +320,10 @@ contactForm.addEventListener('submit',async e=>{
   e.preventDefault();
   if(!contactForm.checkValidity()){contactForm.reportValidity();return;}
   const sent=await submitLead(contactForm,'contact');
+  if(sent==='duplicate'){
+    showDuplicateNotice(contactForm);
+    return;
+  }
   if(!sent) return;
   let success=document.getElementById('contactSuccess');
   if(!success){
@@ -286,9 +346,11 @@ contactForm.addEventListener('submit',async e=>{
     icon.setAttribute('aria-hidden','true');
     wa.append(icon,document.createTextNode('Continue on WhatsApp'));
     success.append(strong,p,wa);
-    contactForm.appendChild(success);
+    contactForm.parentNode.insertBefore(success,contactForm.nextSibling);
   }
+  contactForm.classList.add('hidden');
   success.querySelector('p').textContent=`Request type: ${selectedNeed('contact')}. Your request has been captured. We'll take it from here.`;
+  success.classList.remove('hidden');
   refreshWaLinks();
   success.scrollIntoView({block:'nearest'});
 });
