@@ -145,7 +145,7 @@ document.querySelectorAll('#contactForm input,#contactForm textarea,#modalForm i
 // Production form submission to the GoReallyBig Google Apps Script web app.
 // The endpoint is public by design; no secret is stored in the frontend.
 // The request uses a simple URL-encoded POST so the browser does not require a CORS preflight.
-const LEAD_CAPTURE_URL='https://script.google.com/macros/s/AKfycbwisgNDtbntSx9usZlwnQoYZZDF37n_Y7rMdwMxtCWES6NcRqS5Yy9m71eGiOK8uFBS/exec';
+const LEAD_CAPTURE_URL='/api/submit-lead';
 
 function formPayload(formType){
   const modalForm=formType==='modal';
@@ -206,24 +206,40 @@ async function submitLead(form,formType){
   setSubmitState(form,'sending');
 
   try{
-    // no-cors responses are intentionally opaque. We only use completion/failure
-    // of the browser request for UX feedback; the backend remains authoritative.
     const timeout=new Promise((_,reject)=>
       setTimeout(()=>reject(new Error('Submission timed out')),15000)
     );
 
-    await Promise.race([
-      fetch(LEAD_CAPTURE_URL,{
-        method:'POST',
-        mode:'no-cors',
-        body:formPayload(formType),
-        keepalive:true
-      }),
-      timeout
-    ]);
+    const request=fetch(LEAD_CAPTURE_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body:formPayload(formType).toString(),
+      credentials:'same-origin',
+      cache:'no-store'
+    }).then(async response=>{
+      let result={};
+      try{
+        result=await response.json();
+      }catch(_){
+        throw new Error('Lead service returned an invalid response.');
+      }
+
+      if(!response.ok || result.ok!==true){
+        throw new Error(result.error||'Submission could not be processed.');
+      }
+
+      return result;
+    });
+
+    const result=await Promise.race([request,timeout]);
+
+    if(result.duplicate===true){
+      setSubmitState(form,'reset');
+      return {ok:false,duplicate:true};
+    }
 
     setSubmitState(form,'success');
-    return true;
+    return {ok:true,duplicate:false};
   }catch(err){
     console.error('GoReallyBig lead submission failed.',err);
 
@@ -242,7 +258,7 @@ async function submitLead(form,formType){
     }
 
     setSubmitState(form,'error');
-    return false;
+    return {ok:false,duplicate:false};
   }
 }
 
@@ -250,10 +266,21 @@ document.getElementById('modalForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const form=e.currentTarget;
   if(!form.checkValidity()){form.reportValidity();return;}
-  const sent=await submitLead(form,'modal');
-  if(!sent) return;
+  const result=await submitLead(form,'modal');
+  if(!result.ok){
+    if(result.duplicate){
+      form.classList.add('hidden');
+      const modalSuccess=document.getElementById('modalSuccess');
+      modalSuccess.querySelector('strong').textContent='This form has already been submitted.';
+      modalSuccess.querySelector('p').textContent='A form with these details has already been submitted. WhatsApp GoReallyBig for urgent requests.';
+      modalSuccess.classList.remove('hidden');
+      refreshWaLinks();
+    }
+    return;
+  }
   form.classList.add('hidden');
   const modalSuccess=document.getElementById('modalSuccess');
+  modalSuccess.querySelector('strong').textContent="Thanks. We've got it.";
   modalSuccess.querySelector('p').textContent=`Request type: ${selectedNeed('modal')}. Your request has been captured. We'll take it from here.`;
   modalSuccess.classList.remove('hidden');
   refreshWaLinks();
@@ -263,15 +290,14 @@ const contactForm=document.getElementById('contactForm');
 contactForm.addEventListener('submit',async e=>{
   e.preventDefault();
   if(!contactForm.checkValidity()){contactForm.reportValidity();return;}
-  const sent=await submitLead(contactForm,'contact');
-  if(!sent) return;
+  const result=await submitLead(contactForm,'contact');
+  if(!result.ok && !result.duplicate) return;
   let success=document.getElementById('contactSuccess');
   if(!success){
     success=document.createElement('div');
     success.id='contactSuccess';
     success.className='success';
     const strong=document.createElement('strong');
-    strong.textContent='Thanks. We’ve got it.';
     const p=document.createElement('p');
     const wa=document.createElement('a');
     wa.className='wa-link';
@@ -288,7 +314,15 @@ contactForm.addEventListener('submit',async e=>{
     success.append(strong,p,wa);
     contactForm.appendChild(success);
   }
-  success.querySelector('p').textContent=`Request type: ${selectedNeed('contact')}. Your request has been captured. We'll take it from here.`;
+
+  if(result.duplicate){
+    success.querySelector('strong').textContent='This form has already been submitted.';
+    success.querySelector('p').textContent='A form with these details has already been submitted. WhatsApp GoReallyBig for urgent requests.';
+  }else{
+    success.querySelector('strong').textContent='Thanks. We’ve got it.';
+    success.querySelector('p').textContent=`Request type: ${selectedNeed('contact')}. Your request has been captured. We'll take it from here.`;
+  }
+
   refreshWaLinks();
   success.scrollIntoView({block:'nearest'});
 });
