@@ -188,6 +188,12 @@ function setSubmitState(form,state){
     button.setAttribute('aria-busy','true');
     button.classList.add('is-submitting');
     button.innerHTML='<span class="submit-spinner" aria-hidden="true"></span><span>Still processing...</span>';
+  }else if(state==='recovery'){
+    button.disabled=true;
+    button.setAttribute('aria-busy','false');
+    button.classList.remove('is-submitting');
+    button.classList.add('is-submitted');
+    button.innerHTML='<span>Submission status unclear</span>';
   }else if(state==='success'){
     button.disabled=true;
     button.setAttribute('aria-busy','false');
@@ -250,6 +256,7 @@ async function submitLead(form,formType){
   setSubmitState(form,'sending');
 
   let waitTimer;
+  let finalTimer;
 
   try{
     const request=fetch(LEAD_CAPTURE_URL,{
@@ -271,14 +278,14 @@ async function submitLead(form,formType){
       showSubmissionStatus(form,'We’re still processing your request. Please keep this window open.');
 
       const finalNotice=new Promise(resolve=>{
-        setTimeout(()=>resolve('unable-to-confirm'),15000);
+        finalTimer=setTimeout(()=>resolve('unable-to-confirm'),15000);
       });
 
       response=await Promise.race([request,finalNotice]);
 
       if(response==='unable-to-confirm'){
-        setSubmitState(form,'error');
-        setSubmissionRecoveryState(form);
+        setSubmitState(form,'recovery');
+        showSubmissionRecovery(form);
         return 'uncertain';
       }
     }
@@ -302,6 +309,7 @@ async function submitLead(form,formType){
     return false;
   }finally{
     clearTimeout(waitTimer);
+    clearTimeout(finalTimer);
   }
 }
 
